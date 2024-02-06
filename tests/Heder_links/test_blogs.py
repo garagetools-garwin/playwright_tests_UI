@@ -14,3 +14,4 @@ def test_header_link(page):
     expect(page).to_have_url(re.compile('https://blogs.garwin.ru/'))
     response = page.request.get('https://blogs.garwin.ru/')
     expect(response).to_be_ok()
+    #fffff
