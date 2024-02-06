@@ -5,31 +5,36 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="f8579aed-3a55-4d64-98f8-cef94dfac8ca" name="Changes" comment="s">
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_blogs.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_brands.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_contacts.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_dostavka-oplata.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_home.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_how-to-order.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_krug.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_news.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_promos.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_video.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Heder_links/test_warranty.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_200.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_API_200.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_API_status_ok.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_f.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_f2.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_header_f3.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_login.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_mocking_mod_res.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/test_mocking_on.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/webkit.py" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/for_tests/locators.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/pythonProjecttest.iml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/plywright_tests.iml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_header.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_header.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/test_header_copy.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_header_steps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_blogs.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_blogs.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_brands.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_brands.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_contacts.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_contacts.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_dostavka-oplata.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_dostavka-oplata.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_home.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_home.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_how-to-order.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_how-to-order.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_krug.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_krug.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_news.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_news.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_promos.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_promos.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_video.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_video.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/Heder_links/test_warranty.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/Heder_links/test_warranty.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/conftest.py" beforeDir="false" afterPath="$PROJECT_DIR$/for_tests/conftest.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header2.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_200.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_200.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_API_200.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_API_200.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_API_status_ok.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_API_status_ok.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_f.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_f.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_f2.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_f2.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_f3.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_f3.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_header_steps.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_header_steps.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_login.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_login.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_mocking_mod_res.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_mocking_mod_res.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/test_mocking_on.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/test_mocking_on.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/webkit.py" beforeDir="false" afterPath="$PROJECT_DIR$/test_drafts/webkit.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -72,50 +77,79 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "Python tests.pytest for promos.test_header_link.executor": "Run",
-    "Python tests.pytest for test-login.test_header_link.executor": "Run",
-    "Python tests.pytest for test_1.test_header_link.executor": "Run",
-    "Python tests.pytest for test_blogs.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_200.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_API.test_inventory.executor": "Run",
-    "Python tests.pytest for test_header_API_200.test_inventory.executor": "Run",
-    "Python tests.pytest for test_header_API_status_ok.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_f.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_f2.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_f3.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_status_ok.test_header_link.executor": "Run",
-    "Python tests.pytest for test_header_steps.test_header_link.executor": "Run",
-    "Python tests.pytest for test_home.test_header_link.executor": "Run",
-    "Python tests.pytest for test_login.test_header_link.executor": "Run",
-    "Python tests.pytest for test_mocking2.test_network.executor": "Run",
-    "Python tests.pytest for test_mocking_mod_req.test_network.executor": "Run",
-    "Python tests.pytest for test_mocking_mod_res.test_intercepted.executor": "Run",
-    "Python tests.pytest for test_mocking_mod_res.test_network.executor": "Run",
-    "Python tests.pytest for test_promos.test_header_link.executor": "Run",
-    "Python tests.pytest for test_video.test_header_link.executor": "Run",
-    "Python tests.pytest for webkit.test_header_link.executor": "Run",
-    "Python tests.pytest in Heder_links.executor": "Run",
-    "Python.main.executor": "Run",
-    "Python.webkit.executor": "Run",
-    "RunOnceActivity.OpenProjectViewOnStart": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "master",
-    "last_opened_file_path": "C:/Users/yurin.a/PycharmProjects/pythonProjecttest",
-    "settings.editor.selected.configurable": "proofread"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;Python tests.pytest for promos.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test-login.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_1.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_blogs.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_200.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_API.test_inventory.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_API_200.test_inventory.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_API_status_ok.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_f.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_f2.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_f3.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_status_ok.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_header_steps.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_home.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_login.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_mocking2.test_network.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_mocking_mod_req.test_network.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_mocking_mod_res.test_intercepted.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_mocking_mod_res.test_network.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_promos.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for test_video.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest for webkit.test_header_link.executor&quot;: &quot;Run&quot;,
+    &quot;Python tests.pytest in Heder_links.executor&quot;: &quot;Run&quot;,
+    &quot;Python.main.executor&quot;: &quot;Run&quot;,
+    &quot;Python.webkit.executor&quot;: &quot;Run&quot;,
+    &quot;RunOnceActivity.OpenProjectViewOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;last_opened_file_path&quot;: &quot;C:/Users/yurin.a/PycharmProjects/pythonProjecttest/tests/Heder_links&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;proofread&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="C:\Users\yurin.a\PycharmProjects\pythonProjecttest\tests\Heder_links" />
       <recent name="C:\Users\yurin.a\PycharmProjects\pythonProjecttest" />
       <recent name="C:\Users\yurin.a\PycharmProjects\pythonProjecttest\Heder_links" />
     </key>
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="C:\Users\yurin.a\PycharmProjects\plywright_tests\test_drafts" />
+      <recent name="C:\Users\yurin.a\PycharmProjects\plywright_tests" />
+      <recent name="C:\Users\yurin.a\PycharmProjects\pythonProjecttest\for_tests" />
+      <recent name="C:\Users\yurin.a\PycharmProjects\pythonProjecttest\tests" />
+    </key>
   </component>
-  <component name="RunManager" selected="Python tests.pytest for test_mocking_mod_res.test_intercepted">
+  <component name="RunManager" selected="Python tests.pytest for test_blogs.test_header_link">
+    <configuration default="true" type="PythonConfigurationType" factoryName="Python">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="PARAMETERS" value="" />
+      <option name="SHOW_COMMAND_LINE" value="false" />
+      <option name="EMULATE_TERMINAL" value="false" />
+      <option name="MODULE_MODE" value="false" />
+      <option name="REDIRECT_INPUT" value="false" />
+      <option name="INPUT_FILE" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="test_1" type="PythonConfigurationType" factoryName="Python" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -136,25 +170,107 @@
       <option name="INPUT_FILE" value="" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_blogs.test_header_link" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+    <configuration default="true" type="Tox" factoryName="Tox">
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
       <option name="SDK_HOME" value="" />
-      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/Heder_links" />
-      <option name="IS_MODULE_SDK" value="true" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docs" factoryName="Docutils task">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="docutils_input_file" value="" />
+      <option name="docutils_output_file" value="" />
+      <option name="docutils_params" value="" />
+      <option name="docutils_task" value="" />
+      <option name="docutils_open_in_browser" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="docs" factoryName="Sphinx task">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="docutils_input_file" value="" />
+      <option name="docutils_output_file" value="" />
+      <option name="docutils_params" value="" />
+      <option name="docutils_task" value="" />
+      <option name="docutils_open_in_browser" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="Doctests">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="SCRIPT_NAME" value="" />
+      <option name="CLASS_NAME" value="" />
+      <option name="METHOD_NAME" value="" />
+      <option name="FOLDER_NAME" value="" />
+      <option name="TEST_TYPE" value="TEST_SCRIPT" />
+      <option name="PATTERN" value="" />
+      <option name="USE_PATTERN" value="false" />
+      <method v="2" />
+    </configuration>
+    <configuration default="true" type="tests" factoryName="py.test">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
       <option name="ADD_CONTENT_ROOTS" value="true" />
       <option name="ADD_SOURCE_ROOTS" value="true" />
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;&quot;" />
+      <option name="_new_targetType" value="&quot;PATH&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for test_blogs.test_header_link" type="tests" factoryName="py.test" nameIsGenerated="true">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/Heder_links" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;--headed&quot;" />
       <option name="_new_target" value="&quot;test_blogs.test_header_link&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_header_f3.test_header_link" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+    <configuration name="pytest for test_drafts.test_header_f3.test_header_link" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -166,12 +282,12 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;--headed --slowmo 1000&quot;" />
-      <option name="_new_target" value="&quot;test_header_f3.test_header_link&quot;" />
+      <option name="_new_target" value="&quot;test_drafts.test_header_f3.test_header_link&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_mocking_mod_req.test_network" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+    <configuration name="pytest for test_drafts.test_mocking_mod_req.test_network" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -183,12 +299,12 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;--headed --slowmo 2000&quot;" />
-      <option name="_new_target" value="&quot;test_mocking_mod_req.test_network&quot;" />
+      <option name="_new_target" value="&quot;test_drafts.test_mocking_mod_req.test_network&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_mocking_mod_res.test_intercepted" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+    <configuration name="pytest for test_drafts.test_mocking_mod_res" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -200,12 +316,12 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_mocking_mod_res.test_intercepted&quot;" />
+      <option name="_new_target" value="&quot;test_drafts.test_mocking_mod_res&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
-    <configuration name="pytest for test_mocking_mod_res.test_network" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
-      <module name="pythonProjecttest" />
+    <configuration name="pytest for test_drafts.test_mocking_mod_res.test_intercepted" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="plywright_tests" />
       <option name="ENV_FILES" value="" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="PARENT_ENVS" value="true" />
@@ -217,25 +333,43 @@
       <option name="_new_keywords" value="&quot;&quot;" />
       <option name="_new_parameters" value="&quot;&quot;" />
       <option name="_new_additionalArguments" value="&quot;&quot;" />
-      <option name="_new_target" value="&quot;test_mocking_mod_res.test_network&quot;" />
+      <option name="_new_target" value="&quot;test_drafts.test_mocking_mod_res.test_intercepted&quot;" />
+      <option name="_new_targetType" value="&quot;PYTHON&quot;" />
+      <method v="2" />
+    </configuration>
+    <configuration name="pytest for tests.Heder_links.test_blogs.test_header_link" type="tests" factoryName="py.test" temporary="true" nameIsGenerated="true">
+      <module name="plywright_tests" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/tests/Heder_links" />
+      <option name="IS_MODULE_SDK" value="true" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="_new_keywords" value="&quot;&quot;" />
+      <option name="_new_parameters" value="&quot;&quot;" />
+      <option name="_new_additionalArguments" value="&quot;&quot;" />
+      <option name="_new_target" value="&quot;tests.Heder_links.test_blogs.test_header_link&quot;" />
       <option name="_new_targetType" value="&quot;PYTHON&quot;" />
       <method v="2" />
     </configuration>
     <list>
       <item itemvalue="Python.test_1" />
       <item itemvalue="Python tests.pytest for test_blogs.test_header_link" />
-      <item itemvalue="Python tests.pytest for test_mocking_mod_req.test_network" />
-      <item itemvalue="Python tests.pytest for test_mocking_mod_res.test_intercepted" />
-      <item itemvalue="Python tests.pytest for test_mocking_mod_res.test_network" />
-      <item itemvalue="Python tests.pytest for test_header_f3.test_header_link" />
+      <item itemvalue="Python tests.pytest for test_drafts.test_header_f3.test_header_link" />
+      <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_req.test_network" />
+      <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_res" />
+      <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_res.test_intercepted" />
+      <item itemvalue="Python tests.pytest for tests.Heder_links.test_blogs.test_header_link" />
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Python tests.pytest for test_mocking_mod_res.test_intercepted" />
-        <item itemvalue="Python tests.pytest for test_mocking_mod_req.test_network" />
-        <item itemvalue="Python tests.pytest for test_mocking_mod_res.test_network" />
-        <item itemvalue="Python tests.pytest for test_blogs.test_header_link" />
-        <item itemvalue="Python tests.pytest for test_header_f3.test_header_link" />
+        <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_res.test_intercepted" />
+        <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_req.test_network" />
+        <item itemvalue="Python tests.pytest for test_drafts.test_mocking_mod_res" />
+        <item itemvalue="Python tests.pytest for tests.Heder_links.test_blogs.test_header_link" />
+        <item itemvalue="Python tests.pytest for test_drafts.test_header_f3.test_header_link" />
       </list>
     </recent_temporary>
   </component>
@@ -279,7 +413,15 @@
       <option name="project" value="LOCAL" />
       <updated>1705341114242</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="s">
+      <option name="closed" value="true" />
+      <created>1707142542277</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1707142542277</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="Vcs.Log.Tabs.Properties">
@@ -310,27 +452,27 @@
           <option name="timeStamp" value="2" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_header_200.py</url>
+          <url>file://$PROJECT_DIR$/test_drafts/test_header_200.py</url>
           <line>3</line>
           <option name="timeStamp" value="9" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_login.py</url>
+          <url>file://$PROJECT_DIR$/test_drafts/test_login.py</url>
           <line>1</line>
           <option name="timeStamp" value="11" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_header.py</url>
+          <url>file://$PROJECT_DIR$/test_drafts/test_header.py</url>
           <line>3</line>
           <option name="timeStamp" value="16" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_header_steps.py</url>
+          <url>file://$PROJECT_DIR$/test_drafts/test_header_steps.py</url>
           <line>1</line>
           <option name="timeStamp" value="17" />
         </line-breakpoint>
         <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
-          <url>file://$PROJECT_DIR$/test_header_f3.py</url>
+          <url>file://$PROJECT_DIR$/test_drafts/test_header_f3.py</url>
           <line>5</line>
           <option name="timeStamp" value="19" />
         </line-breakpoint>
