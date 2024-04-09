@@ -1,6 +1,9 @@
-import re
-
+import pytest
+from playwright.sync_api import sync_playwright
 from playwright.sync_api import expect
+
+with sync_playwright() as p:
+    browser = p.chromium.launch(channel="chrome")
 
 
 def test_header_link(page):

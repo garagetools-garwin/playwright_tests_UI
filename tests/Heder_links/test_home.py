@@ -3,7 +3,7 @@ import re
 from playwright.sync_api import expect
 
 
-def test_header_link(page):
+def test_home(page):
     url = "https://garwin.ru/"
     page.goto(f'{url}', wait_until='domcontentloaded')
     page.wait_for_url(f'{url}')
