@@ -1,13 +1,15 @@
 import pytest
 
-from api_clients.api_client import ProductsApiClient
 
+@pytest.fixture(scope="session")
+def browser_context_args(browser_context_args):
+    return {
 
-@pytest.fixture()  # если токен будет постояно обнавлятся лучше оставить function
-def api_client():
-    client = ProductsApiClient()
-    return client
-
+        "viewport": {
+            "width": 1920,
+            "height": 1080,
+        }
+    }
 
 # def pytest_addoption(parser):
 #     parser.addoption(
@@ -23,18 +25,6 @@ def api_client():
 #         help="" # написать подсказку
 #     )
 
-@pytest.fixture
-def base_url(request):
-    return request.config.getoption("--url")
-
-failed_urls = []
-@pytest.fixture(scope="session", autouse=True)
-def print_failed_urls():
-    yield
-    if failed_urls:
-        print("\nFailed URLs:")
-        for url in failed_urls:
-            print(url)
-
-    # Очистить список после вывода
-    failed_urls.clear()
+# @pytest.fixture
+# def base_url(request):
+#     return request.config.getoption("--url")
