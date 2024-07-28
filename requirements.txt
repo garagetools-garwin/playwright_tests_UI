@@ -2,3 +2,14 @@ playwright==1.41.1
 pytest==8.0.0
 pytest-playwright==0.4.4
 requests==2.31.0
+pyodbc==5.1.0
+allure-pytest==2.13.5
+#testit-api-client==4.0.0
+#testit-cli==2.0.0
+#testit-adapter-pytest     3.2.2
+#testit-api-client         4.0.0
+#testit-cli                2.0.0
+#testit-python-commons     3.2.2
+#text-unidecode            1.3
+
+

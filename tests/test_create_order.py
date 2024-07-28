@@ -26,9 +26,6 @@ def test_add_to_cart_from_listing(page):
     else:
         raise ValueError("Product not available, please select another product")
 
-    # простой рабочий код
-    # page.goto("https://garwin.ru/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd")
-    # page.get_by_text(" Добавить в корзину ").click()
     page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(1).click()
     #нажимаем на оформить заказ
     page.get_by_text("Оформить заказ").click()
