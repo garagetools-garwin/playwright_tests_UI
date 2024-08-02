@@ -26,7 +26,7 @@ def test_add_to_cart_from_listing(page):
     else:
         raise ValueError("Product not available, please select another product")
 
-    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(1).click()
+    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(2).click()
     #нажимаем на оформить заказ
     page.get_by_text("Оформить заказ").click()
     #заполняем все поля, выбираем уточнить у менеджера, прописываем комментарий слово "test"
