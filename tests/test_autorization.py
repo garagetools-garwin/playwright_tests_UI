@@ -42,7 +42,7 @@ def test_autorization_google(page):
     page.locator(".VfPpkd-vQzf8d").nth(1).click()
     page.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
 
-def autorization_mail_ru(page):
+def test_autorization_mail_ru(page):
     page.goto("https://account.mail.ru")
     # page.locator("resplash-btn.resplash-btn_primary.resplash-btn_mailbox-big.icjbjfg-10hc17k").click()
     page.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
