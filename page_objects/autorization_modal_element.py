@@ -1,4 +1,4 @@
-import pytest
+import allure
 
 
 class AutorizationModalElement:
@@ -15,8 +15,10 @@ class AutorizationModalElement:
 
     #TODO Переделать open. Должен окрыватся при нажатии на иконку "Войти"
     def open(self, url):
-        self.page.goto(url + self.PATH)
+        with allure.step(f"Открываю {url + self.PATH}"):
+            self.page.goto(url + self.PATH)
 
+    @allure.step("Авторизуюсь через mail.ru")
     def get_autorization_code_mail_ru(self):
         # Открываем новую вкладку
         context = self.page.context
@@ -35,10 +37,12 @@ class AutorizationModalElement:
 
         return code
 
+    @allure.step("Отправляю код авторизации")
     def cart_autorization_send_code(self):
         self.page.locator(".kit-input.Field__Input").nth(1).fill("testgarwin_yur@mail.ru")
         self.page.locator(".Button.size--big.color--primary").click()
 
+    @allure.step("Завершаю авторизацию")
     def complete_autorization(self, code):
         self.page.locator(".kit-input.Field__Input").nth(1).fill(code)
         self.page.locator(".AuthConfirm__Form__ConfirmButton.Button.size--big.color--primary").click()

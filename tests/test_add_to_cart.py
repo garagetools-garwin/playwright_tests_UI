@@ -1,11 +1,13 @@
 """Данные тесты проверяют добавление товара в корзину"""
 
 import pytest
+import allure
 
 url = "https://garwin.ru"
 
 
 @pytest.mark.smoke
+@allure.title("Добавление товара из листинга")
 def test_add_to_cart_from_listing(page):
     page.goto(f'{url}')
     page.goto("https://garwin.ru/catalog/ruchnoy-instrument")
@@ -29,6 +31,7 @@ def test_add_to_cart_from_listing(page):
     page.close()
 
 @pytest.mark.smoke
+@allure.title("Добавление товара из корзины")
 def test_add_to_cart_from_ct(page):
     # page.goto(f"{url}/tovar/nabor-ruchnyh-instrumentov-94-predmeta", wait_until='domcontentloaded')
     page.goto("https://garwin.ru/catalog/ruchnoy-instrument")
@@ -51,7 +54,7 @@ def test_add_to_cart_from_ct(page):
 
     page.close()
 
-
+@allure.title("Добавление товара из поиска")
 def test_add_to_cart_from_search(page):
     page.goto(f'{url}')
     page.locator('.kit-input.Field__Input.disable-label').click()

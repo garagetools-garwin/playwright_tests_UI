@@ -1,5 +1,67 @@
 import pytest
+import allure
 
+# Фильтрация секций отчета
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    report = outcome.get_result()
+
+    # Удаляем ненужные секции из отчета
+    exclude_fixtures = {
+        "pytestconfig", "_verify_url", "event_loop_policy", "base_url",
+        "delete_output_dir", "playwright", "browser_type_launch_args",
+        "browser_type", "browser", "launch_browser", "browser_context_args",
+        "device", "context", "page", "page_fixture"
+    }
+
+    # Фильтруем автоматически создаваемые шаги
+    report.sections = [
+        section for section in report.sections if not any(fixture in section[0] for fixture in exclude_fixtures)
+    ]
+@pytest.fixture(scope="function")
+def page_fixture(page, request):
+    page.set_viewport_size({"width": 1920, "height": 1080})
+
+    # # Получаем имя браузера
+    # browser_name = page.context.browser.browser_type.name
+    #
+    # # Получаем версию браузера
+    # browser_version = page.context.browser.version
+    #
+    # # Добавляем сессию в отчет
+    # allure.attach(
+    #     name="browser_context",
+    #     body=f"Browser: {browser_name}\nVersion: {browser_version}",
+    #     attachment_type=allure.attachment_type.TEXT
+    # )
+    #
+    # yield page
+
+    # # Добавляем сессию в отчет
+    # allure.attach(
+    #     name="browser_context",
+    #     body=page.context.browser.browser_type.name,
+    #     attachment_type=allure.attachment_type.TEXT
+    # )
+    #
+    yield page
+
+    # Проверяем, был ли тест успешным
+    if request.node.rep_call.failed:
+        allure.attach(
+            name="failure_screenshot",
+            body=page.screenshot(full_page=True),
+            attachment_type=allure.attachment_type.PNG
+    ***REMOVED***
+        allure.attach(
+            name="page_source",
+            body=page.content(),
+            attachment_type=allure.attachment_type.HTML
+    ***REMOVED***
+
+    # Закрываем контекст браузера
+    page.context.close()
 
 def pytest_addoption(parser):
     # TODO Здесь будет настройка переключения браузера
@@ -30,6 +92,9 @@ def browser_context_args(browser_context_args):
 def base_url(request):
     url = request.config.getoption('--url')
     return url
+
+
+
 
 # def pytest_addoption(parser):
 #     parser.addoption(
