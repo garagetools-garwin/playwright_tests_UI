@@ -1,10 +1,12 @@
 import random
+import testit
 import playwright
 from bs4 import BeautifulSoup
 from playwright.sync_api import Error
 from playwright.sync_api import TimeoutError
 
 import pytest
+import allure
 from playwright.sync_api import expect
 
 from page_objects.header_element import HeaderElement
@@ -16,7 +18,7 @@ class CartPage:
     ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primary"
     CHANGE_INFO_BLOCK = ".flexRow-JCSB-AIC.InfoBlock.CartChangeInfoBlock"
     CHECKBOX_HEAD = ".flexRow-JCSB-AIC.CartAvailableListHead .Checkbox__Button"
-    CHECKBOX_PRODUCT = ".AvailableList.CartPage__AvailableProductList .Checkbox__Button"
+    CHECKBOX_PRODUCT = ".flexRow-JCSB-AIC.CartAvailableListRow .Checkbox__Button"
     AVAILABLE_PRODUCT_LIST = ".AvailableList.CartPage__AvailableProductList"
     PRODUCT_ROW = ".flexRow-JCSB-AIC.CartAvailableListRow"
     HEAD_DELETE_BUTTON = ".flexRow-AIC.CartAvailableListHead__RemoveBtn"
@@ -45,7 +47,7 @@ class CartPage:
     PROMO_CODE_HINT_ICON = ".flexRow-AIC.Tooltip.CartPromo__Tooltip"
     PROMO_CODE_HINT_POPUP = ".Tooltip__Inner.v-enter-to .Tooltip__Content"
     CANCEL_PROMO_CODE_BUTTON = ".flexRow-AIC.CartPromo__CancelButton"
-    BACK_TO_CART_BUTTON = ".Button size--big.color--secondary"
+    BACK_TO_CART_BUTTON = ".Button.size--big.color--secondary"
     NOT_AVAILABLE_FOR_ORDER_BLOCK = "div.CartUnavailableList"
 
 
@@ -59,8 +61,12 @@ class CartPage:
         self.checkbox_for_all_products = page.locator(self.CHECKBOX_HEAD).nth(0)
 
     def open(self, url):
-        self.page.goto(url + self.PATH)
+        with allure.step(f"Открываю {url + self.PATH}"):
+            self.page.goto(url + self.PATH)
 
+    """Методы добваления в корзину"""
+
+    @allure.step("Добавляю товар(stm) в корзину")
     def add_to_cart(self, url):
         urls_to_check = [
             f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd",
@@ -80,9 +86,7 @@ class CartPage:
         else:
             raise ValueError("Product not available, please select another product")
 
-    def click_order_button(self):
-        self.page.locator(self.ORDER_BUTTON).click()
-
+    @allure.step("Добавляю несколько позиций(stm) в корзину")
     def add_to_cart_multiple_products(self, base_url):
         urls_to_check = [
             f"{base_url}/tovar/bita-udarnaya-1-4-ph1-25mm",
@@ -103,6 +107,7 @@ class CartPage:
         if not any(self.page.url == url for url in urls_to_check):
             raise ValueError("Product not available, please select another product")
 
+    @allure.step("Добавляю несколько позиций в стоп-заказе в корзину")
     def add_to_cart_multiple_stop_order_products(self, base_url):
         urls_to_check = [
             f"{base_url}/tovar/elektrody-dlya-kolets-8h16-o-16",
@@ -123,6 +128,7 @@ class CartPage:
         if not any(self.page.url == url for url in urls_to_check):
             raise ValueError("Product not available, please select another product")
 
+    @allure.step("Добавляю несколько привлеченных позиций в корзину")
     def add_to_cart_not_stm_product(self, url):
         urls_to_check = [
             f"{url}/tovar/lom-oborochnyy-lo-3-0",
@@ -143,6 +149,8 @@ class CartPage:
         else:
             raise ValueError("Product not available, please select another product")
 
+    @testit.step("Lj,")
+    @allure.step("Добавляю несколько позиций без скидки в корзину")
     def add_to_cart_not_discounted_product(self, url):
         urls_to_check = [
             f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd",
@@ -163,58 +171,138 @@ class CartPage:
         else:
             raise ValueError("Product not available, please select another product")
 
+    """ Блок 'Промокод' """
+
+    @allure.step("Открываю блок 'Промокод'")
     def open_promo_code_bar(self):
         self.page.locator(".CartPromo__ToggleButton").click()
+
+    @allure.step("Закрываю блок 'Промокод'")
+    def close_promo_code_bar(self):
+        self.open_promo_code_bar()
 
     def promo_code_bar(self):
         return self.page.locator(".CartPromo__ToggleButton")
 
-    def close_promo_code_bar(self):
-        self.open_promo_code_bar()
-
+    @allure.step("Ввожу валидный промокод")
     def fill_valid_promo_code(self):
         self.page.locator(".kit-input.Field__Input.disable-label").nth(1).fill("НАЧАЛО")
 
+    @allure.step("Ввожу невалидный промокод")
     def fill_invalid_promo_code(self):
         self.page.locator(".kit-input.Field__Input.disable-label").nth(1).fill("12345DF")
 
+    @allure.step("Нажимаю 'Применить'")
     def click_apply_button(self):
         self.page.locator("//*[text()='Применить']").click()
 
+    @allure.step("Активирую валидный промокод")
     def activate_valid_promo_code(self):
         self.open_promo_code_bar()
         self.fill_valid_promo_code()
         self.click_apply_button()
 
+    @allure.step("Активирую невалидный промокод")
     def activate_invalid_promo_code(self):
         self.open_promo_code_bar()
         self.fill_invalid_promo_code()
         self.click_apply_button()
 
+    # Подсказка поля промокод
+    def promo_code_field_info(self):
+        return self.page.locator(self.PROMO_CODE_FIELD_INFO)
+
+    @allure.step("Отменяю примененный промокод")
+    def cancel_promo_code(self):
+        self.page.locator(self.CANCEL_PROMO_CODE_BUTTON).click()
+
+    @allure.step("Очищаю проле Промокод нажатием на крестик")
+    def clear_promo_code_field_by_cross(self):
+        self.page.locator(self.CLEAR_PROMO_CODE_FIELD_BUTTON).click()
+
+    # Поле промокод
+    def promo_code_field(self):
+        return self.page.locator(self.PROMO_CODE_FIELD)
+
+    @allure.step("Навожу курсор на подсказку")
+    def hover_to_promo_code_hint(self):
+        self.page.locator(self.PROMO_CODE_HINT_ICON).hover()
+
+    # Подсказка
+    def promo_code_hint_popup(self):
+        return self.page.locator(self.PROMO_CODE_HINT_POPUP)
+
+    # Текст подсказки
+    def promo_code_hint_popup_text(self):
+        return self.page.locator(self.PROMO_CODE_HINT_POPUP).inner_text()
+
+    """Корзина"""
+
+    @allure.step("Нажимаю на кнопку 'Оформить заказ'")
+    def click_order_button(self):
+        self.page.locator(self.ORDER_BUTTON).click()
+
+    @allure.step("Проверяю, что все чек-боксы включены")
     def all_checkbox_to_be_checked(self):
         for i in range(self.page.locator(self.CHECKBOX_PRODUCT).count()):
             expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(i)).to_be_checked()
 
+    @allure.step("Проверяю, что все чек-боксы выключены")
     def all_checkbox_not_to_be_checked(self):
         for i in range(self.page.locator(self.CHECKBOX_PRODUCT).count()):
             expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(i)).not_to_be_checked()
 
+    @allure.step("Включаю все чек-боксы")
     def click_to_checkbox_for_all_products(self):
         self.checkbox_for_all_products.click()
 
+    @allure.step("Включаю чек-бокс первого товара")
     def click_first_checkbox_product(self):
-        first = self.page.locator(self.CHECKBOX_PRODUCT).nth(1).click()
-        expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(1)).to_be_checked()
+        self.page.locator(self.CHECKBOX_PRODUCT).nth(0).click()
 
+    @allure.step("Включаю чек-бокс второго товара")
     def click_second_checkbox_product(self):
-        self.page.locator(self.CHECKBOX_PRODUCT).nth(2).click()
+        self.page.locator(self.CHECKBOX_PRODUCT).nth(1).click()
 
+    @allure.step("Проверяю, что чек-бокс первого товара включен")
     def first_checkbox_to_be_checked(self):
+        expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(0)).to_be_checked()
+
+    @allure.step("Проверяю, что чек-бокс второго товара включен")
+    def second_checkbox_to_be_checked(self):
         expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(1)).to_be_checked()
 
-    def second_checkbox_to_be_checked(self):
-        expect(self.page.locator(self.CHECKBOX_PRODUCT).nth(2)).to_be_checked()
+    @allure.step("Запоминаю текст скидочной плашки")
+    def text_discount_budget(self):
+        text_discount_budget = self.page.locator(self.DISCOUNT_BUDGET).inner_text()
+        return text_discount_budget
 
+    @allure.step("Запоминаю стоимость скидки")
+    def discounted_price(self):
+        text_discounted_price = self.page.locator(self.PRODUCT_PRICE_DISCOUNTED).inner_text()
+        discounted_price_number = float(text_discounted_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.'))
+        return discounted_price_number
+
+    @allure.step("Запоминаю первоначальную стоимость товара")
+    def base_price(self):
+        text_base_price = self.page.locator(self.PRODUCT_PRICE_BASE).inner_text()
+        base_price_number = float(text_base_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.'))
+        return base_price_number
+
+    # Просто возвращаю локатор дисконтной плашки
+    def discount_budget(self):
+        discount_budget = self.page.locator(self.DISCOUNT_BUDGET)
+        return discount_budget
+
+    @allure.step("Запоминаю количество товаров отмеченых на удаление")
+    def text_delete_button(self):
+        text_delete_button = self.page.locator(self.HEAD_DELETE_BUTTON_TEXT).inner_text()
+        parts = text_delete_button.split()
+        number_part = parts[1]
+        number_in_btn_text = int(number_part.strip("()"))
+        return number_in_btn_text
+
+    @allure.step("Считаю количество включеных чек-боксов")
     def count_all_checked_checkbox(self):
         checkboxes = self.page.locator(self.CHECKBOX_PRODUCT)
         count = 0
@@ -223,82 +311,46 @@ class CartPage:
                 count += 1
         return count
 
-    def text_discount_budget(self):
-        text_discount_budget = self.page.locator(self.DISCOUNT_BUDGET).inner_text()
-        return text_discount_budget
-
-    def discounted_price(self):
-        text_discounted_price = self.page.locator(self.PRODUCT_PRICE_DISCOUNTED).inner_text()
-        discounted_price_number = float(text_discounted_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.'))
-        return discounted_price_number
-
-    def base_price(self):
-        text_base_price = self.page.locator(self.PRODUCT_PRICE_BASE).inner_text()
-        base_price_number = float(text_base_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.'))
-        return base_price_number
-
-    def discount_budget(self):
-        discount_budget = self.page.locator(self.DISCOUNT_BUDGET)
-        return discount_budget
-
-    def text_delete_button(self):
-        text_delete_button = self.page.locator(self.HEAD_DELETE_BUTTON_TEXT).inner_text()
-        parts = text_delete_button.split()
-        number_part = parts[1]
-        number_in_btn_text = int(number_part.strip("()"))
-        return number_in_btn_text
-
+    @allure.step("Проверяю, что число напротив кнопки 'Удалить' соответствует действительности")
     def number_on_the_button_is_correct(self):
         checked_count = self.count_all_checked_checkbox()
         number_in_delete_button_text = self.text_delete_button()
         assert checked_count == number_in_delete_button_text, \
             f"Количество отмеченных чекбоксов ({checked_count}) не соответствует числу в тексте кнопки удаления ({number_in_delete_button_text})"
 
+    @allure.step("Нажимаю на кнопку 'Удалить'")
     def click_head_delete_button(self):
         self.page.locator(self.HEAD_DELETE_BUTTON).click()
 
-    def click_head_not_availavle_delete_button(self):
-        self.page.locator(self.NOT_AVAILABLE_HEAD_DELETE_BUTTON).click()
-
+    @allure.step("Подтверждаю удаление")
     def confirm_deletion(self):
         self.page.locator(self.CONFIRM_DELETE_BUTTON).click()
 
+    @allure.step("Отменяю удаление")
     def cancel_deletion(self):
         self.page.locator(self.CANCEL_DELETE_BUTTON).click()
 
+    @allure.step("Проверяю, что товар удален из корзины")
     def product_removed_from_cart(self):
         self.all_checkbox_not_to_be_checked()
 
+    @allure.step("Удаляю товар нажатием на крестик")
     def click_cross_button_delete(self):
         self.page.locator(self.CART_LIST_ROW_DELETE_BUTTON).nth(0).click()
 
-    def click_cross_button_delete_in_changed_list(self):
-        self.page.locator(self.CART_CHANGET_LIST_ROW_DELETE_BUTTON).nth(0).click()
-
-    def click_cross_button_delete_in_not_availeble_list(self):
-        self.page.locator(self.NOT_AVAILABLE_LIST_ROW_DELETE_BUTTON).nth(0).click()
-
-    def save_name_product_in_change_info_list(self):
-        element_cart = self.page.locator(".flexColumn.KitModal__Inner .ProductCartInfo__Title").nth(0)
-        text_ct_cart = element_cart.inner_text()
-        return text_ct_cart
-
-    def save_name_product_in_cart_list(self):
-        element_cart = self.page.locator(".ProductCartInfo__Title").nth(0)
-        text_ct_cart = element_cart.inner_text()
-        return text_ct_cart
-
-    def save_name_product_in_not_availeble_list(self):
-        element_cart = self.page.locator("div.CartUnavailableList .ProductCartInfo__Title").nth(0)
-        text_ct_cart = element_cart.inner_text()
-        return text_ct_cart
-
+    @allure.step("Проверяю, что товара нет в корзине")
     def delete_product_by_cross(self):
         product_name = self.save_name_product_in_cart_list()
         self.click_cross_button_delete()
         expect(self.page.get_by_text(product_name)).not_to_be_visible()
 
+    @allure.step("Запоминаю название товара в корзине")
+    def save_name_product_in_cart_list(self):
+        element_cart = self.page.locator(".ProductCartInfo__Title").nth(0)
+        text_ct_cart = element_cart.inner_text()
+        return text_ct_cart
 
+    @allure.step("Считаю сумму всего товара в корзине")
     def calculate_total_price(self):
         # Находим все элементы .Price__Value внутри .AvailableList.CartPage__AvailableProductList
         prices = self.page.locator('.AvailableList.CartPage__AvailableProductList .Price__Value').all()
@@ -321,27 +373,26 @@ class CartPage:
             # Добавляем к общей сумме
             total_price_listing += price_number
 
-        print(total_price_listing)
         return total_price_listing
 
+    @allure.step("Запоминаю цены всех товаров в корзине")
     def get_cart_prices(self):
         prices = self.page.locator('.AvailableList.CartPage__AvailableProductList .Price__Value')
         prices_texts = prices.all_inner_texts()
-        print(f"Found prices: {prices_texts}")  # Вывод всех найденных цен для проверки
         return [int(price.replace('\xa0', '').replace(' ', '')) for price in prices_texts]
 
+    @allure.step("Проверяю, что сумма цен в корзинее равна сумме в блоке калькуляции")
     def compare_prices(self, total_price_listing):
         total_price_calculation_block_text = self.page.locator(self.ORDER_TOTAL_PRICE).inner_text()
         total_price_calculation_block = int(total_price_calculation_block_text.replace('\xa0', '').replace(' ', ''))
-        print(total_price_calculation_block)
-        print(type(total_price_calculation_block), type(total_price_listing))
         assert total_price_calculation_block == total_price_listing
 
+    @allure.step("Проверяю, что сумма в блоке калькуляции равна 0")
     def order_price_is_zero(self):
         price = self.page.locator(self.ORDER_TOTAL_PRICE).inner_text()
-        print(int(price))
         assert int(price) == 0
 
+    @allure.step("Считаю сумму выделенного товара")
     def calculate_total_price_for_checked_products(self):
         try:
             # Находим все строки товаров
@@ -382,62 +433,53 @@ class CartPage:
             print(f"An error occurred: {e}")
             return 0
 
+    @allure.step("Нажимаю на кнопку 'Подробнее'")
     def click_details_button(self):
         self.page.locator(self.DETALES_BUTTON).click()
 
+    @allure.step("Нажимаю на кнопку 'Ок'")
     def click_ok_button(self):
         self.page.locator(self.OK_BUTTON).click()
 
+    @allure.step("Нажимаю на кнопку 'Распечатать'")
     def click_print_button(self):
+        self.page.evaluate("(() => {window.waitForPrintDialog = new Promise(f => window.print = f);})()")
         self.page.locator(self.PRINT_BUTTON).click()
 
+    @allure.step("Запоминаю количество товара в счетчике")
     def get_quantity_of_product(self):
         quantity = self.page.locator(".PrintProduct__Quantity")
         quantity_texts = quantity.all_inner_texts()
         print(f"Quantity found: {quantity_texts}")
         return [int(quantity.replace(' шт.', '')) for quantity in quantity_texts]
 
+    @allure.step("Запоминаю сумму заказа из блока калькуляции")
     def order_total_price(self):
         price_text = self.page.locator(self.ORDER_TOTAL_PRICE).inner_text()
         price = float(price_text.replace('\xa0', '').replace(' ', '').replace(',', '.'))
         return price
 
+    @allure.step("Проверяю, что окно удаления товара больше не отображается")
     def deletion_modal_not_visible(self):
-        expect(self.page.locator(self.DETALES_BUTTON)).not_to_be_visible()
+        expect(self.page.locator(self.DELETION_MODAL)).not_to_be_visible()
 
+    @allure.step("Проверяю, что корзина пуста")
     def cart_is_empty(self):
         expect(self.page.locator(self.CART_IS_EMPTY)).to_be_visible()
 
+    @allure.step("Нажимаю на кнопку 'На главную'")
     def click_home_button(self):
         self.page.locator(self.HOME_BUTTON).click()
 
+    @allure.step("Нажимаю на кнопку 'Авторизоватся'")
     def click_autorization_button(self):
         self.page.locator(self.AUTORIZATION_BUTTON).click()
 
+    @allure.step("Проверяю, что кнопка 'Оформить заказ' не активна")
     def order_button_is_disabled(self):
         expect(self.page.locator(self.ORDER_BUTTON)).to_be_disabled()
 
-    def promo_code_field_info(self):
-        return self.page.locator(self.PROMO_CODE_FIELD_INFO)
-
-    def cancel_promo_code(self):
-        self.page.locator(self.CANCEL_PROMO_CODE_BUTTON).click()
-
-    def clear_promo_code_field_by_cross(self):
-        self.page.locator(self.CLEAR_PROMO_CODE_FIELD_BUTTON).click()
-
-    def promo_code_field(self):
-        return self.page.locator(self.PROMO_CODE_FIELD)
-
-    def hover_to_promo_code_hint(self):
-        self.page.locator(self.PROMO_CODE_HINT_ICON).hover()
-
-    def promo_code_hint_popup(self):
-        return self.page.locator(self.PROMO_CODE_HINT_POPUP)
-
-    def promo_code_hint_popup_text(self):
-        return self.page.locator(self.PROMO_CODE_HINT_POPUP).inner_text()
-
+    @allure.step("Нажимаю на кнопку 'Распечатать'")
     def info_change_block_activation(self, page, base_url):
         cart_page = CartPage(page)
         cart_page.add_to_cart_multiple_products(base_url)
@@ -445,6 +487,25 @@ class CartPage:
         cart_page.activate_valid_promo_code()
         cart_page.click_details_button()
 
+    """Блок изменения информации"""
+
+    @allure.step("Запоминаю название товара в списке блока изменения информации")
+    def save_name_product_in_change_info_list(self):
+        element_cart = self.page.locator(".flexColumn.KitModal__Inner .ProductCartInfo__Title").nth(0)
+        text_ct_cart = element_cart.inner_text()
+        return text_ct_cart
+
+    @allure.step("Удаляю товар из блока изменения информации")
+    def click_cross_button_delete_in_changed_list(self):
+        self.page.locator(self.CART_CHANGET_LIST_ROW_DELETE_BUTTON).nth(0).click()
+
+    @allure.step("Возвращаюсь в корзину через кнопку 'Вернутся в корзину'")
+    def click_back_to_cart_button(self):
+        self.page.locator(self.BACK_TO_CART_BUTTON).click()
+
+    """Блок Недоступный для заказа"""
+
+    @allure.step("Активирую блок товара недоступного для заказа")
     def not_available_for_order_block_activation(self, page, base_url):
         cart_page = CartPage(page)
         header = HeaderElement(page)
@@ -452,8 +513,19 @@ class CartPage:
         cart_page.open(base_url)
         header.change_location("Вахрушево")
 
-    def click_back_to_cart_button(self):
-        self.page.locator(self.BACK_TO_CART_BUTTON).click()
+    @allure.step("Нажимаю на кнопку 'Удалить все'")
+    def click_head_not_availavle_delete_button(self):
+        self.page.locator(self.NOT_AVAILABLE_HEAD_DELETE_BUTTON).click()
+
+    @allure.step("Удаляю позицию в списке недоступного товара")
+    def click_cross_button_delete_in_not_availeble_list(self):
+        self.page.locator(self.NOT_AVAILABLE_LIST_ROW_DELETE_BUTTON).nth(0).click()
+
+    @allure.step("Запоминаю название товара в списке товара недоступного к заказу")
+    def save_name_product_in_not_availeble_list(self):
+        element_cart = self.page.locator("div.CartUnavailableList .ProductCartInfo__Title").nth(0)
+        text_ct_cart = element_cart.inner_text()
+        return text_ct_cart
 
 
 
@@ -473,8 +545,3 @@ class CartPage:
     #
     #     return random_checkbox, random_index
 
-
-    #TODO Cделать локаторы CHECKBOX_HEAD и CHECKBOX_PRODUCT уникальными, потому что они находят абсолютно одини и те же чекбоксы, после этого переназначить детей в первом и втором чек-боксе
-
-
-    # def fill_promo_code

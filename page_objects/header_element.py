@@ -1,5 +1,6 @@
 import random
 import playwright
+import allure
 from bs4 import BeautifulSoup
 from playwright.sync_api import Error
 from playwright.sync_api import TimeoutError
@@ -18,11 +19,14 @@ class HeaderElement:
         self.page = page
 
     def open(self, url):
-        self.page.goto(url)
+        with allure.step(f"Открываю {url}"):
+            self.page.goto(url)
 
+    @allure.step("Нажимаю на кнопку выбора локации")
     def click_location_button(self):
         self.page.locator(self.LOCATION_BUTTON).click()
 
+    @allure.step("Меняю населенный пункт")
     def change_location(self, location):
         self.click_location_button()
         self.page.locator(self.LOCATION_FIELD).type(location)
