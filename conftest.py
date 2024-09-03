@@ -1,11 +1,15 @@
 import pytest
 import allure
+import os
 
 # Фильтрация секций отчета
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
     report = outcome.get_result()
+
+    # Добавляем информацию о результате теста в запрос
+    setattr(item, "rep_" + report.when, report)
 
     # Удаляем ненужные секции из отчета
     exclude_fixtures = {
@@ -22,6 +26,10 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture(scope="function")
 def page_fixture(page, request):
     page.set_viewport_size({"width": 1920, "height": 1080})
+
+    # Начало записи трассировки
+    trace_path = os.path.join(os.getcwd(), f'traces/{request.node.name}.zip')
+    page.context.tracing.start(screenshots=True, snapshots=True)
 
     # # Получаем имя браузера
     # browser_name = page.context.browser.browser_type.name
@@ -49,6 +57,12 @@ def page_fixture(page, request):
 
     # Проверяем, был ли тест успешным
     if request.node.rep_call.failed:
+        # Сохраняем трассировку
+        page.context.tracing.stop(path=trace_path)
+
+        # Добавляем трассировку как артефакт в Allure-отчет
+        allure.attach.file(trace_path, name="trace", attachment_type=allure.attachment_type.ZIP)
+
         allure.attach(
             name="failure_screenshot",
             body=page.screenshot(full_page=True),
@@ -59,6 +73,9 @@ def page_fixture(page, request):
             body=page.content(),
             attachment_type=allure.attachment_type.HTML
         )
+    else:
+        # Если тест успешен, просто останавливаем трассировку без сохранения
+        page.context.tracing.stop()
 
     # Закрываем контекст браузера
     page.context.close()
@@ -77,15 +94,6 @@ def pytest_addoption(parser):
         # "--url", default="https://stage.garagetools.ru/"
     )
 
-@pytest.fixture(scope="session")
-def browser_context_args(browser_context_args):
-    return {
-
-        "viewport": {
-            "width": 1920,
-            "height": 1080,
-        }
-    }
 
 
 @pytest.fixture(scope="session")
