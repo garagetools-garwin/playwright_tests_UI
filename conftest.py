@@ -61,7 +61,7 @@ def page_fixture(page, request):
         page.context.tracing.stop(path=trace_path)
 
         # Добавляем трассировку как артефакт в Allure-отчет
-        allure.attach.file(trace_path, name="trace", attachment_type=allure.attachment_type.ZIP)
+        allure.attach.file(trace_path, name="trace", attachment_type='application/zip', extension='.zip')
 
         allure.attach(
             name="failure_screenshot",
