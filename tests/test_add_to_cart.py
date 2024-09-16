@@ -21,7 +21,7 @@ def test_add_to_cart_from_listing(page):
     # Извлекаем текст
     text_ct_listing = element_listing.inner_text()
     # Находим первый обьект в классе (первую карточку)(в корзине)
-    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(1).click()
+    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(2).click()
     element_cart = page.locator(".ProductCartInfo__Title").nth(0)
     # Извлекаем текст
     text_ct_cart = element_cart.inner_text()
@@ -44,7 +44,7 @@ def test_add_to_cart_from_ct(page):
     # Проверяем, что счетчик корзины стал равен 1
     badge_text = page.locator(".Badge__Text").nth(0)
     assert badge_text.inner_text() == "1"
-    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(1).click()
+    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(2).click()
     # Находим первый обьект в классе (первую карточку)(в корзине)
     element_cart = page.locator(".ProductCartInfo__Title").nth(0)
     # Извлекаем текст
@@ -66,7 +66,7 @@ def test_add_to_cart_from_search(page):
     # Проверяем, что счетчик корзины стал равен 1
     badge_text = page.locator(".Badge__Text").nth(0)
     assert badge_text.inner_text() == "1"
-    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(1).click()
+    page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(2).click()
     # Находим первый обьект в классе (первую карточку)(в корзине)
     element_cart = page.locator(".ProductCartInfo__Title").nth(0)
     # Извлекаем текст

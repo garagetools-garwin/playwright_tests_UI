@@ -11,15 +11,15 @@ url = "https://garwin.ru"
 
 
 @allure.title("Авторизация через mail.ru")
-def test_autorization_mail_ru(page):
-    page.goto("https://account.mail.ru")
+def test_autorization_mail_ru(page_fixture):
+    page_fixture.goto("https://account.mail.ru")
     # page.locator("resplash-btn.resplash-btn_primary.resplash-btn_mailbox-big.icjbjfg-10hc17k").click()
-    page.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
-    page.locator('[data-test-id="next-button"]').click()
-    page.locator('[type="password"]').fill("MuIPU&iasb21")
-    page.locator('[data-test-id="submit-button"]').click()
-    page.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
-    code = page.locator('span[style="font-weight:bold;"]').inner_text()
+    page_fixture.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
+    page_fixture.locator('[data-test-id="next-button"]').click()
+    page_fixture.locator('[type="password"]').fill("MuIPU&iasb21")
+    page_fixture.locator('[data-test-id="submit-button"]').click()
+    page_fixture.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
+    code = page_fixture.locator('span[style="font-weight:bold;"]').inner_text()
     print(code)
 
 
