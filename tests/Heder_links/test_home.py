@@ -1,8 +1,9 @@
 import re
-
+import pytest
 from playwright.sync_api import expect
 
 
+@pytest.mark.test_for_ci
 def test_home(page_fixture):
     url = "https://garwin.ru/"
     page_fixture.goto(f'{url}', wait_until='domcontentloaded')
