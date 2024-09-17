@@ -85,7 +85,7 @@ jobs:
         if: always()
         run: |
           pip install testit-cli
-          testit
+          testit results import \
             -u https://team-wuas.testit.software/ \
             -pt ${{ secrets.TMS_TOKEN }} \
             -pi 87c7eb78-be36-4e13-9e36-651ca3d5f060 \
