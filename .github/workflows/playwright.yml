@@ -38,10 +38,13 @@ jobs:
       - name: Ensure browsers are installed
         run: python -m playwright install --with-deps
 
+      - name: Set up environment
+        run: |
+          sed -i 's/{TMS_PRIVATE_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+
       # Запуск тестов
       - name: Run tests
-        run: pytest --clean-alluredir --junitxml=results/test-results.xml -m test_for_ci
-
+        run: pytest --testit --clean-alluredir --junitxml=results/test-results.xml -m test_for_ci
 
       # Загрузка артефактов
       - name: Uploading artefacts
