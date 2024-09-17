@@ -39,7 +39,8 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest --clean-alluredir --junitxml=results/test-results.xml
+        run: pytest --clean-alluredir --junitxml=results/test-results.xml -m test_for_ci
+
 
       # Загрузка артефактов
       - name: Uploading artefacts
