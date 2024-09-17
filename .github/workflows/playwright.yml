@@ -85,12 +85,9 @@ jobs:
         if: always()
         run: |
           pip install testit-cli
-          testit [-h] [-u https://demo.testit.software]
-              [-pt T2lKd2pLZGI4WHRhaVZUejNl]
-              [-pi 5236eb3f-7c05-46f9-a609-dc0278896464]
-              [-ci 15dbb164-c1aa-4cbf-830c-8c01ae14f4fb]
-              [-ti 3802f329-190c-4617-8bb0-2c3696abeb8f]
-              [-tn SET_TESTRUN_NAME] [-cv false] [-sh] [-ipn True or False]
-              [-rd DIR] [-rh localhost:5672] [-ru user] [-rp password]
-              [-re exchange] [-mh localhost:9000] [-mak accesskey]
-              [-msk secretkey]
+          testit results import \
+            --url <YOUR_INSTANCE_URL> \
+            --project-id 5236eb3f-7c05-46f9-a609-dc0278896464 \
+            --configuration-id 15dbb164-c1aa-4cbf-830c-8c01ae14f4fb \
+            --testrun-name "GitHub test run" \
+            --results results/test-results.xml
