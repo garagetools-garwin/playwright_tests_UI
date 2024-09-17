@@ -83,9 +83,9 @@ jobs:
         if: always()
         run: |
           pip install testit-cli
-          testit
-            -pt ${{ secrets.TMS_TOKEN }}
+          testit \
             -u https://team-wuas.testit.software/ \
+            -pt ${{ secrets.TMS_TOKEN }} \            
             -pi 87c7eb78-be36-4e13-9e36-651ca3d5f060 \
             -ci 36238c9d-da5e-4cca-a8c4-f0d8316d3f6b \
             -tn "GitHub test run" \
