@@ -1,5 +1,5 @@
 import allure
-
+import os
 
 class AutorizationModalElement:
 
@@ -23,12 +23,12 @@ class AutorizationModalElement:
         # Открываем новую вкладку
         context = self.page.context
         new_page = context.new_page()
-
+        user_pass = os.getenv('USER_PASS')
         # Переходим на страницу авторизации в новой вкладке
         new_page.goto("https://account.mail.ru")
         new_page.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
         new_page.locator('[data-test-id="next-button"]').click()
-        new_page.locator('[type="password"]').fill("MuIPU&iasb21")
+        new_page.locator('[type="password"]').fill(f"{user_pass}")
         new_page.locator('[data-test-id="submit-button"]').click()
         new_page.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
         code = new_page.locator('span[style="font-weight:bold;"]').nth(0).inner_text()

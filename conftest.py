@@ -1,6 +1,9 @@
 import pytest
 import allure
 import os
+from dotenv import load_dotenv
+import configparser
+import pytest
 
 # Фильтрация секций отчета
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
@@ -100,6 +103,35 @@ def pytest_addoption(parser):
 def base_url(request):
     url = request.config.getoption('--url')
     return url
+#
+#
+# # Фикстура для выполнения кода перед тестами
+# @pytest.fixture(scope="session", autouse=True)
+# def set_token_in_config():
+#     # Загружаем переменные из файла .env
+#     load_dotenv()
+#
+#     # Создаём объект конфигурации
+#     config = configparser.ConfigParser()
+#
+#     # Читаем файл config.ini
+#     config.read('connection_config.ini')
+#
+#     # Получаем значение переменной из .env
+#     env_token = os.getenv('TMS_PRIVATE_TOKEN')
+#     print(os.getenv("TMS_PRIVATE_TOKEN"))
+#
+#     if env_token is None:
+#         raise ValueError("Переменная окружения 'TMS_TOKEN' не задана!")
+#
+#     # Замена плейсхолдера {TMS_TOKEN} на значение переменной окружения
+#     config.set('testit', 'privateToken', env_token)
+#
+#     # Сохраняем изменения в файл config.ini
+#     with open('connection_config.ini', 'w') as configfile:
+#         config.write(configfile)
+#
+#     print("Переменная успешно подставлена в config.ini")
 
 
 
