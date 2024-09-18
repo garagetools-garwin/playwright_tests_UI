@@ -1,2 +1,0 @@
-"Status","Start Time","Stop Time","Duration in ms","Parent Suite","Suite","Sub Suite","Test Class","Test Method","Name","Description"
-"passed","Tue Sep 17 11:25:08 GMT 2024","Tue Sep 17 11:25:12 GMT 2024","3856","tests.Heder_links","test_home","","","","test_home[chromium]",""
