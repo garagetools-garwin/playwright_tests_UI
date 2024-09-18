@@ -40,7 +40,7 @@ jobs:
 
       - name: Set up environment
         run: |
-          sed -i 's/{TMS_PRIVATE_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+          sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
 
       # Запуск тестов
       - name: Run tests
