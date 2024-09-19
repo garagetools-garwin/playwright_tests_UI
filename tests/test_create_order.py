@@ -39,13 +39,14 @@ def test_add_to_cart_from_listing(page_fixture, base_url):
 
     time.sleep(360)
 
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
-***REMOVED***
+
+    connection = pyodbc.connect(
+        'DRIVER={ODBC Driver 17 for SQL Server};'
+        f'SERVER={db_server};'
+        f'DATABASE={db_name};'
+        f'UID={db_user};'
+        f'PWD={db_password}'
+    )
 
     try:
         with connection.cursor() as cursor:
