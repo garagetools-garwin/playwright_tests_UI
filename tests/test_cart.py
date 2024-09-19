@@ -23,6 +23,7 @@ def test_cart_autorization_modal(page_fixture, base_url):
 
 
 @pytest.mark.smoke
+@pytest.mark.skip("Временно, пока не напишу новый метод на авторизацию")
 @allure.title("Переход в чек-аут")
 def test_cart_checkout(page_fixture, base_url):
     cart_page = CartPage(page_fixture)

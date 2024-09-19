@@ -11,6 +11,7 @@ url = "https://garwin.ru"
 
 
 @allure.title("Авторизация через mail.ru")
+@pytest.mark.skip("Архив")
 def test_autorization_mail_ru(page_fixture):
     page_fixture.goto("https://account.mail.ru")
     # page.locator("resplash-btn.resplash-btn_primary.resplash-btn_mailbox-big.icjbjfg-10hc17k").click()
