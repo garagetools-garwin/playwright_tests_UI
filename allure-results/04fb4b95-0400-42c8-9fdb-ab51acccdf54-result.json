@@ -1,0 +1,1 @@
+{"name": "Добавление товара из корзины", "status": "passed", "parameters": [{"name": "browser_name", "value": "'chromium'"}], "start": 1726570653624, "stop": 1726570658332, "uuid": "4d641db5-ea20-4d59-bde1-d65b003c3661", "testCaseId": "e030bed708e4a69b40bc4df3ed111693", "fullName": "tests.test_add_to_cart#test_add_to_cart_from_ct"}

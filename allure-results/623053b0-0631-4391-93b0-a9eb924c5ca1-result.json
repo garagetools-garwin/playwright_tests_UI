@@ -1,0 +1,1 @@
+{"name": "test_header_link[chromium]", "status": "passed", "parameters": [{"name": "browser_name", "value": "'chromium'"}], "start": 1726563663565, "stop": 1726563665113, "uuid": "d611e1fc-4cb0-4318-abf5-4da6139452a4", "testCaseId": "e26a62d11f5cc88130a0e1fc8a12cd17", "fullName": "tests.Heder_links.test_brands#test_header_link"}
