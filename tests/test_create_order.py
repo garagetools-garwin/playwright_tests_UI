@@ -7,6 +7,9 @@ import os
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 
+db_server = os.getenv('DB_SERVER')
+db_name = os.getenv('DB_NAME')
+db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')
 
 #@pytest.mark.skip("Временно, пока не начимся удалять заказы из аналитики и закрывать в 1С")
