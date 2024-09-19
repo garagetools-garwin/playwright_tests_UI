@@ -1,1 +1,0 @@
-{"name": "test_home[chromium]", "status": "passed", "parameters": [{"name": "browser_name", "value": "'chromium'"}], "start": 1726563847419, "stop": 1726563849110, "uuid": "d0d90f7c-a8dc-4f85-beec-19adfe5408f9", "testCaseId": "9dffd2ce2ac38357a9a398411921597a", "fullName": "tests.Heder_links.test_home#test_home"}
