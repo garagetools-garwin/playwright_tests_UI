@@ -41,7 +41,7 @@ def autorization_archive(page):
         .locator("div")
         .filter(has_text=re.compile(r"^test_num$"))
         .get_by_role("paragraph")
-***REMOVED***
+    )
     # Проверяем, что иконка профиля содержит нужный нам текст
     expect(locator).to_have_text("test_num")
     page.get_by_role("banner").locator("div").filter(has_text=re.compile(r"^test_num$")).click()

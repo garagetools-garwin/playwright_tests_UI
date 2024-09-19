@@ -70,12 +70,12 @@ def page_fixture(page, request):
             name="failure_screenshot",
             body=page.screenshot(full_page=True),
             attachment_type=allure.attachment_type.PNG
-    ***REMOVED***
+        )
         allure.attach(
             name="page_source",
             body=page.content(),
             attachment_type=allure.attachment_type.HTML
-    ***REMOVED***
+        )
     else:
         # Если тест успешен, просто останавливаем трассировку без сохранения
         page.context.tracing.stop()
@@ -95,7 +95,7 @@ def pytest_addoption(parser):
     parser.addoption(
         "--url", default="https://garwin.ru"
         # "--url", default="https://stage.garagetools.ru/"
-***REMOVED***
+    )
 
 
 
@@ -141,14 +141,14 @@ def base_url(request):
 #         "--url",
 #         default="https://garwin.ru", #времено, возможно тут должен быть другой url
 #         help="This is request url"
-# ***REMOVED***
+#     )
 #
 #     parser.addoption(
 #         "--env",
 #         default="prod",
 #         choices=["prod", "stage"],  # времено, возможно тут должен быть другой url
 #         help="" # написать подсказку
-# ***REMOVED***
+#     )
 
 # @pytest.fixture
 # def base_url(request):
@@ -163,15 +163,15 @@ def base_url(request):
 #     parser.addoption(
 #         "--playwright-browser", default="chromium", choices=["chromium", "firefox", "webkit", "chrome"],
 #         help="Browser to run tests"
-# ***REMOVED***
+#     )
 #     parser.addoption(
 #         "--headless", action="store_true",
 #         help="Run tests in headless mode"
-# ***REMOVED***
+#     )
 #     parser.addoption(
 #         "--url", default="https://garwin.ru"
 #         #         "--url", default="https://stage.garagetools.ru/"
-# ***REMOVED***
+#     )
 #
 # @pytest.fixture(scope="session")
 # def browser_context_args(request):
@@ -198,7 +198,7 @@ def base_url(request):
 #             browser = p.chromium.launch(
 #                 channel="chrome",
 #                 headless=browser_context_args['headless']
-#         ***REMOVED***
+#             )
 #         yield browser
 #         browser.close()
 #
@@ -206,7 +206,7 @@ def base_url(request):
 # def context(browser, base_url, browser_context_args):
 #     context = browser.new_context(
 #         viewport=browser_context_args['viewport']
-# ***REMOVED***
+#     )
 #     yield context
 #     context.close()
 #
