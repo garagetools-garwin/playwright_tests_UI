@@ -12,9 +12,9 @@ db_name = os.getenv('DB_NAME')
 db_user = os.getenv('DB_USER')
 db_password = os.getenv('DB_PASSWORD')
 
-@pytest.mark.skip("Временно, пока не начимся удалять заказы из аналитики и закрывать в 1С")
+@pytest.mark.skip("Временно, пока не научимся удалять заказы из аналитики и закрывать в 1С")
 @pytest.mark.smoke
-def test_add_to_cart_from_listing(page_fixture, base_url):
+def test_create_order(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     autorization = AutorizationModalElement(page_fixture)
     cart_page.add_to_cart(base_url)
