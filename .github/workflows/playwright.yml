@@ -48,8 +48,7 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest
-
+        run: pytest --testit
       # Загрузка артефактов
       - name: Uploading artefacts
         uses: actions/upload-artifact@v4
