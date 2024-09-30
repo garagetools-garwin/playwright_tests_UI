@@ -15,7 +15,7 @@ from page_objects.header_element import HeaderElement
 class CartPage:
 
     PATH = "/cart"
-    ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primaryy"
+    ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primary"
     CHANGE_INFO_BLOCK = ".flexRow-JCSB-AIC.InfoBlock.CartChangeInfoBlock"
     CHECKBOX_HEAD = ".flexRow-JCSB-AIC.CartAvailableListHead .Checkbox__Button"
     CHECKBOX_PRODUCT = ".flexRow-JCSB-AIC.CartAvailableListRow .Checkbox__Button"
