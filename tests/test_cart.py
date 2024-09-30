@@ -40,17 +40,6 @@ def test_cart_checkout(page_fixture, base_url):
         expect(page_fixture).to_have_url(f"{base_url}/checkout")
 
 
-@pytest.mark.smoke
-@allure.title("Активация блока изменения информации")
-def test_cart_info_change_block_activation(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
-    with allure.step("Проверяю, что блок изменения информации отображается на странице"):
-        expect(cart_page.change_info_block).to_be_visible()
-
-
 @allure.title("Выделение всего товара")
 def test_cart_checkbox_for_all_products(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
@@ -133,17 +122,6 @@ def test_calculation_block_calculate_price_of_some_products(page_fixture, base_u
     cart_page.calculate_total_price_for_checked_products()
 
 
-@allure.title("Активация окна изменения цены")
-def test_cart_info_change_modal_activation(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
-    cart_page.click_details_button()
-    with allure.step("Проверяю, что окно изменения информации отображается на странице"):
-        expect(cart_page.change_info_modal).to_be_visible()
-
-
 @allure.title("Отправка на печать")
 def test_cart_print_form_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
@@ -205,15 +183,7 @@ def test_cart_calculation_block_calculate_price_of_some_products(page_fixture, b
 """3 блок"""
 
 
-@allure.title("Закрытие блока изменения информации")
-def test_cart_info_change_block_close(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
-    cart_page.click_ok_button()
-    with allure.step("Проверяю, что блок изменения информации больше не отображается на странице"):
-        expect(cart_page.change_info_block).not_to_be_visible()
+
 
 
 @allure.title("Удаление всего товара (Корзина)")
@@ -274,6 +244,7 @@ def test_test_order_button_is_blocked(page_fixture, base_url):
 
 
 @allure.title("Применение валидного промокода")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_cart_aplying_a_valid_promo_code(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -286,6 +257,7 @@ def test_cart_aplying_a_valid_promo_code(page_fixture, base_url):
 
 
 @allure.title("Применение невалидного промокода")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_cart_aplying_a_invalid_promo_code(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -304,6 +276,7 @@ def test_cart_aplying_a_invalid_promo_code(page_fixture, base_url):
 
 
 @allure.title("Раскрытие блока 'Промокод'")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_opening_promo_code_block(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -319,6 +292,7 @@ def test_opening_promo_code_block(page_fixture, base_url):
 
 
 @allure.title("Применение валидного промокода к неподходящему товару")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_cart_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_stm_product(base_url)
@@ -331,6 +305,7 @@ def test_cart_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_u
 
 
 @allure.title("Отмена промокода")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_canceling_promo_code(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -350,6 +325,7 @@ def test_canceling_promo_code(page_fixture, base_url):
 
 
 @allure.title("Очистка поля 'Промокод'")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_cleaning_intput_promo_code(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -360,7 +336,9 @@ def test_cleaning_intput_promo_code(page_fixture, base_url):
     with allure.step("Проверяю, что поле 'Промокод' - пустое"):
         expect(cart_page.promo_code_field()).to_have_attribute("data-empty", "true")
 
+
 @allure.title("Активация подсказки")
+@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
 def test_activating_a_hint(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
@@ -376,7 +354,32 @@ def test_activating_a_hint(page_fixture, base_url):
 """Окно изменения цены"""
 
 
+@allure.title("Активация окна изменения цены")
+@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+def test_cart_info_change_modal_activation(page_fixture, base_url):
+    cart_page = CartPage(page_fixture)
+    cart_page.add_to_cart_not_discounted_product(base_url)
+    cart_page.open(base_url)
+    cart_page.activate_valid_promo_code()
+    cart_page.click_details_button()
+    with allure.step("Проверяю, что окно изменения информации отображается на странице"):
+        expect(cart_page.change_info_modal).to_be_visible()
+
+
+@allure.title("Закрытие блока изменения информации")
+@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+def test_cart_info_change_block_close(page_fixture, base_url):
+    cart_page = CartPage(page_fixture)
+    cart_page.add_to_cart_not_discounted_product(base_url)
+    cart_page.open(base_url)
+    cart_page.activate_valid_promo_code()
+    cart_page.click_ok_button()
+    with allure.step("Проверяю, что блок изменения информации больше не отображается на странице"):
+        expect(cart_page.change_info_block).not_to_be_visible()
+
+
 @allure.title("Удаление товара нажатием на крестик (Окно изменения цены)")
+@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_block_activation(page_fixture, base_url)
@@ -394,6 +397,7 @@ def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
 
 
 @allure.title("Вернутся в корзину через кнопку 'Вернутся в корзину'")
+@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_back_to_cart_from_modal_1(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_block_activation(page_fixture, base_url)
@@ -405,6 +409,7 @@ def test_back_to_cart_from_modal_1(page_fixture, base_url):
 
 
 @allure.title("Вернутся в корзину через нажатие на пространство вне окна")
+@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_back_to_cart_from_modal_2(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_block_activation(page_fixture, base_url)
