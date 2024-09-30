@@ -11,18 +11,18 @@ from page_objects.header_element import HeaderElement
 
 
 
-@pytest.mark.smoke
 @pytest.mark.testit_case_title("Активация блока изменения информации_testIT1")
 @testit.title("Активация блока изменения информации_testIT2")
 @allure.title("Активация блока изменения информации")
-def test_cart_info_change_block_activation(page_fixture, base_url):
+def cart_info_change_block_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
     cart_page.open(base_url)
     cart_page.activate_valid_promo_code()
     expect(cart_page.change_info_block).to_be_visible()
 
-@pytest.mark.smoke
+@pytest.mark.testit_case_title("Открытие модального окна авторизации_testIT1")
+@testit.title("Открытие модального окна авторизации_testIT2")
 @allure.title("Открытие модального окна авторизации")
 def test_cart_autorization_modal(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
