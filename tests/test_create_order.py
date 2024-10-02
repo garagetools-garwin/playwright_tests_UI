@@ -20,7 +20,7 @@ def test_create_order(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
-    autorization.cart_autorization_send_code()
+    autorization.cart_autorization_send_code_mail_ru()
     code = autorization.get_autorization_code_mail_ru()
     autorization.complete_autorization(code)
     cart_page.click_order_button()

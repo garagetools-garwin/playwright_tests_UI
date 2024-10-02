@@ -1,5 +1,10 @@
+import time
+
 import allure
 import os
+
+import requests
+
 
 class AutorizationModalElement:
 
@@ -31,15 +36,21 @@ class AutorizationModalElement:
         new_page.locator('[type="password"]').fill(f"{user_pass}")
         new_page.locator('[data-test-id="submit-button"]').click()
         new_page.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
-        code = new_page.locator('span[style="font-weight:bold;"]').nth(0).inner_text()
+        code_auth = new_page.locator('span[style="font-weight:bold;"]').nth(0).inner_text()
 
         new_page.close()
 
-        return code
+        return code_auth
 
     @allure.step("Отправляю код авторизации")
-    def cart_autorization_send_code(self):
+    def cart_autorization_send_code_mail_ru(self):
         self.page.locator(".kit-input.Field__Input").nth(1).fill("testgarwin_yur@mail.ru")
+        self.page.locator(".Button.size--big.color--primary").click()
+
+    @allure.step("Отправляю код авторизации")
+    def cart_autorization_send_code_testmail_app(self):
+        testmail_adress = os.getenv("TESTMAIL_ADRESS")
+        self.page.locator(".kit-input.Field__Input").nth(1).fill(f"{testmail_adress}")
         self.page.locator(".Button.size--big.color--primary").click()
 
     @allure.step("Завершаю авторизацию")
@@ -47,7 +58,21 @@ class AutorizationModalElement:
         self.page.locator(".kit-input.Field__Input").nth(1).fill(code)
         self.page.locator(".AuthConfirm__Form__ConfirmButton.Button.size--big.color--primary").click()
 
+    @allure.step("Авторизуюсь через testmail.app")
+    def get_autorization_code_testmail_app(self):
+        time.sleep(5)
+        testmail_json = os.getenv("TESTMAIL_JSON")
+        response = requests.get(url=f"{testmail_json}")
+        response_json = response.json()
+        email_text = response_json["emails"][0]["text"]
+        code = email_text.split(" ")[1]
+        print(code)
+        return code
 
+    def autorization_testmail_app(self):
+        self.cart_autorization_send_code_testmail_app()
+        code = self.get_autorization_code_testmail_app()
+        self.complete_autorization(code)
 
 
     # def autorization_modal_is_visible(self):

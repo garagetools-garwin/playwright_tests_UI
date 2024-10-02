@@ -1,5 +1,4 @@
 """В этом файле хранятся тесты для корзины"""
-import time
 import pytest
 import allure
 from playwright.sync_api import expect
@@ -23,7 +22,7 @@ def test_cart_autorization_modal(page_fixture, base_url):
 
 
 @pytest.mark.smoke
-@pytest.mark.skip("Временно, пока не напишу новый метод на авторизацию")
+# @pytest.mark.skip("Временно, пока не напишу новый метод на авторизацию")
 @allure.title("Переход в чек-аут")
 def test_cart_checkout(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
@@ -31,9 +30,7 @@ def test_cart_checkout(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
-    autorization.cart_autorization_send_code()
-    code = autorization.get_autorization_code_mail_ru()
-    autorization.complete_autorization(code)
+    autorization.autorization_testmail_app()
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
     cart_page.click_order_button()
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
@@ -181,9 +178,6 @@ def test_cart_calculation_block_calculate_price_of_some_products(page_fixture, b
 
 
 """3 блок"""
-
-
-
 
 
 @allure.title("Удаление всего товара (Корзина)")
@@ -451,15 +445,3 @@ def test_delete_all_products_in_not_available_for_order_block(page_fixture, base
     cart_page.click_head_not_availavle_delete_button()
     with allure.step("Проверяю, что блок 'Недоступно для заказа' больше не отображается"):
         expect(cart_page.not_available_for_order_block).not_to_be_visible()
-
-
-
-
-
-
-
-
-
-
-
-

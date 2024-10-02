@@ -1,18 +1,35 @@
+import os
 import re
 import time
 import allure
+import requests
 
 from playwright.sync_api import expect
 import pytest
+from page_objects.autorization_modal_element import AutorizationModalElement
 
 url = "https://garwin.ru"
 
 """Этот тест проверяет работу авторизации"""
 
 
+@pytest.mark.skip("Пропущен для экономии отправленых сообщения, авторизация проходит в тесте'Переход в чек-аут'")
+@allure.title("Авторизуюсь через testmail.app")
+def test_autorization_code_testmail_app(page_fixture, base_url):
+    autorization = AutorizationModalElement(page_fixture)
+    page_fixture.goto(f'{url}')
+    page_fixture.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(0).click()
+    autorization.cart_autorization_send_code_testmail_app()
+    code = autorization.get_autorization_code_testmail_app()
+    autorization.complete_autorization(code)
+    username = page_fixture.locator("p.NavigationButton__Text").nth(1).inner_text()
+    with allure.step("Проверяю, что имя пользователя отображается в хедере"):
+        assert username == "Test Test"
+
+
 @allure.title("Авторизация через mail.ru")
-@pytest.mark.skip("Архив")
-def test_autorization_mail_ru(page_fixture):
+@pytest.mark.skip("Архив. mail.ru бокирует запуск в CI по тому что идет обращения с разных IP")
+def autorization_mail_ru(page_fixture):
     page_fixture.goto("https://account.mail.ru")
     # page.locator("resplash-btn.resplash-btn_primary.resplash-btn_mailbox-big.icjbjfg-10hc17k").click()
     page_fixture.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
@@ -28,7 +45,7 @@ def test_autorization_mail_ru(page_fixture):
 
 
 @pytest.mark.skip("Архив")
-@allure.title("Авторизация (Архив)")
+@allure.title("Авторизация с паролем (Архив)")
 def autorization_archive(page):
     page.goto(f'{url}', wait_until='domcontentloaded')
     page.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(0).click()

@@ -1,7 +1,9 @@
 """в этом файле я тестирую уменьшение количество фикстур в set up"""
+import os
 import time
 import pytest
 import allure
+import requests
 from playwright.sync_api import expect
 import testit
 
@@ -33,6 +35,16 @@ def test_cart_autorization_modal(page_fixture, base_url):
     with allure.step("Проверяю, что окно аторизаци отображается на странице"):
         expect(autorization.autorization_modal).to_be_visible()
 
+
+@allure.title("Тест для определения кода авторизации")
+def get_cart_autorization_code():
+    testmail_json = os.getenv("TESTMAIL_JSON")
+    response = requests.get(url=f"{testmail_json}")
+    response_json = response.json()
+    email_text = response_json["emails"][0]["text"]
+    auth_code = email_text.split(" ")[1]
+    print(auth_code)
+    return auth_code
 
 
 
