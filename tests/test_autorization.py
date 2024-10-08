@@ -25,19 +25,26 @@ def test_autorization_code_testmail_app(page_fixture, base_url):
     username = page_fixture.locator("p.NavigationButton__Text").nth(1).inner_text()
     with allure.step("Проверяю, что имя пользователя отображается в хедере"):
         assert username == "Test Test"
+    page_fixture.context.storage_state(path="auth_state.json")
 
 
 @allure.title("Авторизация через mail.ru")
-@pytest.mark.skip("Архив. mail.ru бокирует запуск в CI по тому что идет обращения с разных IP")
+@pytest.mark.skip("Архив. mail.ru бокирует запуск в CI по тому что идет обращения с разных IP, тест можно использовать локально")
 def autorization_mail_ru(page_fixture):
+    autorization = AutorizationModalElement(page_fixture)
     page_fixture.goto("https://account.mail.ru")
     # page.locator("resplash-btn.resplash-btn_primary.resplash-btn_mailbox-big.icjbjfg-10hc17k").click()
     page_fixture.locator('[name="username"]').fill("testgarwin_yur@mail.ru")
     page_fixture.locator('[data-test-id="next-button"]').click()
-    page_fixture.locator('[type="password"]').fill("MuIPU&iasb21")
+    page_fixture.locator('[type="password"]').fill("")
     page_fixture.locator('[data-test-id="submit-button"]').click()
     page_fixture.get_by_text("Авторизация на сайте Гарвин").nth(0).click()
     code = page_fixture.locator('span[style="font-weight:bold;"]').inner_text()
+    autorization.complete_autorization(code)
+    username = page_fixture.locator("p.NavigationButton__Text").nth(1).inner_text()
+    with allure.step("Проверяю, что имя пользователя отображается в хедере"):
+        assert username == "Test Test"
+    page_fixture.context.storage_state(path="auth_state.json")
     print(code)
 
 

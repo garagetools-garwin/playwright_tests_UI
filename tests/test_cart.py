@@ -1,15 +1,23 @@
 """В этом файле хранятся тесты для корзины"""
 import pytest
 import allure
-from playwright.sync_api import expect
+from playwright.sync_api import expect, sync_playwright
 
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.header_element import HeaderElement
 
+# @pytest.fixture(scope="function")
+# def authenticated_context():
+#     with sync_playwright() as p:
+#         browser = p.chromium.launch()
+#         # Загружаем сохраненное состояние
+#         context = browser.new_context(storage_state="auth_state.json")
+#         yield context
+#         browser.close()
 
 @pytest.mark.smoke
-@pytest.mark.testit_case_title("Проверка первой успешной загрузки файла")
+@pytest.mark.testit_case_title("Проверка первой")
 @allure.title("Открытие модального окна авторизации")
 def test_cart_autorization_modal(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
