@@ -65,6 +65,7 @@ class CartPage:
             self.page.goto(url + self.PATH)
 
     """Методы добваления в корзину"""
+    #.ProductCardControls__AddToCartButton.Button.flexRow.size--normal.color--primary - кнопка добавления в корзину
 
     @allure.step("Добавляю товар(stm) в корзину")
     def add_to_cart(self, url):

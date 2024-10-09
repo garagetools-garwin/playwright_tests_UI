@@ -1,3 +1,6 @@
+import json
+import time
+from urllib.parse import urlparse, parse_qs
 import pytest
 import allure
 import os
@@ -14,6 +17,13 @@ def pytest_runtest_makereport(item, call):
     # Добавляем информацию о результате теста в запрос
     setattr(item, "rep_" + report.when, report)
 
+"""Фикстура для подмены нового контекста авторизованным"""
+@pytest.fixture(scope="function")
+def authorized_context():
+    # Передаем состояние авторизации для создания контекста
+    return {
+        "storage_state": "auth_state.json",
+    }
 
 @pytest.fixture(scope="function")
 def page_fixture(page, request):
@@ -23,6 +33,19 @@ def page_fixture(page, request):
     trace_path = os.path.join(os.getcwd(), f'traces/{request.node.name}.zip')
     page.context.tracing.start(screenshots=True, snapshots=True)
 
+    # Сетевой лог
+    network_logs = []
+
+    # Перехват запросов, можно закоментить для удобства отладки тестов
+    page.on("requestfinished", lambda request: network_logs.append({
+        "url": request.url,
+        "method": request.method,
+        "status": request.response().status,
+        "headers": request.response().headers,
+        "body": request.post_data if request.post_data else "No data",
+        "query_params": parse_qs(urlparse(request.url).query)
+    }))
+
     yield page
 
     # Проверяем, был ли тест успешным
@@ -30,8 +53,20 @@ def page_fixture(page, request):
         # Сохраняем трассировку
         page.context.tracing.stop(path=trace_path)
 
+        # Автоматическое создание директорий по пути логов
+        log_path = os.path.join(os.getcwd(), f'logs/{request.node.name}_network_logs.json')
+        os.makedirs(os.path.dirname(log_path), exist_ok=True)
+
+        # Сохранение сетевых логов в JSON
+        with open(log_path, 'w') as log_file:
+            json.dump(network_logs, log_file, indent=4)
+
         # Добавляем трассировку как артефакт в Allure-отчет
-        allure.attach.file(trace_path, name="trace", attachment_type='application/zip', extension='.zip')
+        allure.attach.file(
+            trace_path,
+            name="trace",
+            attachment_type='application/zip',
+            extension='.zip')
 
         allure.attach(
             name="failure_screenshot",
@@ -42,6 +77,11 @@ def page_fixture(page, request):
             name="page_source",
             body=page.content(),
             attachment_type=allure.attachment_type.HTML
+        )
+        allure.attach.file(
+            log_path,
+            name="network_logs",
+            attachment_type=allure.attachment_type.JSON
         )
     else:
         # Если тест успешен, просто останавливаем трассировку без сохранения
