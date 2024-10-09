@@ -60,7 +60,7 @@ class AutorizationModalElement:
 
     @allure.step("Авторизуюсь через testmail.app")
     def get_autorization_code_testmail_app(self):
-        time.sleep(5)
+        time.sleep(8)
         testmail_json = os.getenv("TESTMAIL_JSON")
         response = requests.get(url=f"{testmail_json}")
         response_json = response.json()
