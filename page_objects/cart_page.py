@@ -102,7 +102,7 @@ class CartPage:
             self.page.goto(url)
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator("text=Добавить в корзину").click()
+                self.page.locator("text= Добавить в корзину ").click()
             except Exception as e:
                 print(f"Add to cart button not found on {url}. Exception: {e}")
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
