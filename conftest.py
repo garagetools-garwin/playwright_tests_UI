@@ -17,17 +17,26 @@ def pytest_runtest_makereport(item, call):
     # Добавляем информацию о результате теста в запрос
     setattr(item, "rep_" + report.when, report)
 
-"""Фикстура для подмены нового контекста авторизованным"""
-@pytest.fixture(scope="function")
-def authorized_context():
-    # Передаем состояние авторизации для создания контекста
-    return {
-        "storage_state": "auth_state.json",
-    }
+
 
 @pytest.fixture(scope="function")
-def page_fixture(page, request):
+def page_fixture(browser, request):
+    # Получаем метку, чтобы определить, нужен ли storage_state
+    use_auth = request.node.get_closest_marker("auth")
+
+    if use_auth:
+        # Создаём новый контекст с сохранённым состоянием авторизации, если метка присутствует
+        context = browser.new_context(storage_state="auth_state.json")
+    else:
+        # Стандартный контекст без авторизации
+        context = browser.new_context()
+
+    # Создаём новую страницу в контексте
+    page = context.new_page()
+
     page.set_viewport_size({"width": 1920, "height": 1080})
+
+
 
     # Начало записи трассировки
     trace_path = os.path.join(os.getcwd(), f'traces/{request.node.name}.zip')
@@ -37,14 +46,14 @@ def page_fixture(page, request):
     network_logs = []
 
     # Перехват запросов, можно закоментить для удобства отладки тестов
-    page.on("requestfinished", lambda request: network_logs.append({
-        "url": request.url,
-        "method": request.method,
-        "status": request.response().status,
-        "headers": request.response().headers,
-        "body": request.post_data if request.post_data else "No data",
-        "query_params": parse_qs(urlparse(request.url).query)
-    }))
+    # page.on("requestfinished", lambda request: network_logs.append({
+    #     "url": request.url,
+    #     "method": request.method,
+    #     "status": request.response().status,
+    #     "headers": request.response().headers,
+    #     "body": request.post_data if request.post_data else "No data",
+    #     "query_params": parse_qs(urlparse(request.url).query)
+    # }))
 
     yield page
 
@@ -104,6 +113,16 @@ def pytest_addoption(parser):
         # "--url", default="https://stage.garagetools.ru/"
     )
 
+
+"""Фикстура для подмены нового контекста авторизованным"""
+
+
+@pytest.fixture(scope="function")
+def authorized_context(browser):
+    # Передаем состояние авторизации для создания контекста
+    return {
+        "storage_state": "auth_state.json"
+    }
 
 @pytest.fixture(scope="session")
 def base_url(request):

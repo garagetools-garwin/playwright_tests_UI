@@ -31,7 +31,7 @@ def test_add_to_cart_from_listing(page_fixture):
     page_fixture.close()
 
 @pytest.mark.smoke
-@allure.title("Добавление товара из корзины")
+@allure.title("Добавление товара из карточки товара")
 def test_add_to_cart_from_ct(page_fixture):
     # page.goto(f"{url}/tovar/nabor-ruchnyh-instrumentov-94-predmeta", wait_until='domcontentloaded')
     page_fixture.goto("https://garwin.ru/catalog/ruchnoy-instrument")
@@ -40,7 +40,7 @@ def test_add_to_cart_from_ct(page_fixture):
     # Извлекаем текст
     text_ct_listing = element_listing.inner_text()
     page_fixture.locator('.ProductListingOverlayLink').nth(0).click()
-    page_fixture.locator('.ProductCardControls__Button').click()
+    page_fixture.locator('.ProductDetailControls__AddToCartButton.Button').click()
     # Проверяем, что счетчик корзины стал равен 1
     badge_text = page_fixture.locator(".Badge__Text").nth(0)
     assert badge_text.inner_text() == "1"

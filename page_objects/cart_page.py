@@ -30,7 +30,7 @@ class CartPage:
     CONFIRM_DELETE_BUTTON = ".Button.size--big.color--primary"
     CANCEL_DELETE_BUTTON = ".Button.size--big.color--tertiary"
     ORDER_TOTAL_PRICE = ".flexRow-AIFE.Price.OrderTotal__Price .Price__Value"
-    DETALES_BUTTON = ".CartChangeInfoBlock__Actions__Element.Button.size--normal.color--tertiary"
+    DETALES_BUTTON = ".CartChanges__Actions__Element.Button.size--normal.color--tertiary"
     OK_BUTTON = ".CartChangeInfoBlock__Actions__Element.Button.size--normal.color--secondary"
     CHANGE_INF0_MODAL = ".flexColumn.KitModal__Inner"
     DELETION_MODAL = ".flexColumn.KitModal__Inner"
@@ -50,9 +50,6 @@ class CartPage:
     BACK_TO_CART_BUTTON = ".Button.size--big.color--secondary"
     NOT_AVAILABLE_FOR_ORDER_BLOCK = "div.CartUnavailableList"
 
-
-
-
     def __init__(self, page):
         self.page = page
         self.change_info_block = page.locator(self.CHANGE_INFO_BLOCK)
@@ -66,6 +63,12 @@ class CartPage:
 
     """Методы добваления в корзину"""
     #.ProductCardControls__AddToCartButton.Button.flexRow.size--normal.color--primary - кнопка добавления в корзину
+
+    @allure.step("Очищаю корзину")
+    def cart_deletion_all_products(self):
+        self.click_head_delete_button()
+        self.confirm_deletion()
+        self.cart_is_empty()
 
     @allure.step("Добавляю товар(stm) в корзину")
     def add_to_cart(self, url):

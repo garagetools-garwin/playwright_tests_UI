@@ -1,20 +1,12 @@
 """В этом файле хранятся тесты для корзины"""
 import pytest
 import allure
-from playwright.sync_api import expect, sync_playwright
+from playwright.sync_api import expect
 
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.header_element import HeaderElement
-
-# @pytest.fixture(scope="function")
-# def authenticated_context():
-#     with sync_playwright() as p:
-#         browser = p.chromium.launch()
-#         # Загружаем сохраненное состояние
-#         context = browser.new_context(storage_state="auth_state.json")
-#         yield context
-#         browser.close()
+from page_objects.checkout_page import CheckoutPage
 
 @pytest.mark.smoke
 @pytest.mark.testit_case_title("Проверка первой")
@@ -30,7 +22,6 @@ def test_cart_autorization_modal(page_fixture, base_url):
 
 
 @pytest.mark.smoke
-# @pytest.mark.skip("Временно, пока не напишу новый метод на авторизацию")
 @allure.title("Переход в чек-аут")
 def test_cart_checkout(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
@@ -242,130 +233,25 @@ def test_test_order_button_is_blocked(page_fixture, base_url):
     cart_page.order_button_is_disabled()
 
 
-"""Промокод"""
-
-
-@allure.title("Применение валидного промокода")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_cart_aplying_a_valid_promo_code(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
-    with allure.step("Проверяю, что скидка на плашке равна 5%"):
-        assert cart_page.text_discount_budget() == "-5%"
-    with allure.step("Проверяю, что цена товара равна его первоначальной стоимости - 5%"):
-        assert cart_page.discounted_price() == round(cart_page.base_price() * 0.95, 1)
-
-
-@allure.title("Применение невалидного промокода")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_cart_aplying_a_invalid_promo_code(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    with allure.step("Запоминую цену товара до активации промокода"):
-        pre_action_price = cart_page.order_total_price()
-        cart_page.activate_invalid_promo_code()
-    with allure.step("Запоминую цену товара после активации промокода"):
-        post_action_price = cart_page.order_total_price()
-    with allure.step("Проверяю, что цена товара не изменилась"):
-        assert pre_action_price == post_action_price
-    with allure.step("Проверяю, что плашка со скидкой не отображается"):
-        expect(cart_page.discount_budget()).not_to_be_visible()
-    with allure.step("Проверяю, что на странице отображается подсказка 'Промокод не действителен'"):
-        expect(cart_page.promo_code_field_info()).to_have_text("Промокод не действителен")
-
-
-@allure.title("Раскрытие блока 'Промокод'")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_opening_promo_code_block(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.open_promo_code_bar()
-    with allure.step("Запоминаю положение блока 'Промокод'"):
-        promo_code_bar_status = cart_page.promo_code_bar()
-    with allure.step("Проверяю, что блок 'Промокод' - раскрыт "):
-        expect(promo_code_bar_status).to_have_class('CartPromo__ToggleButton active')
-    cart_page.close_promo_code_bar()
-    with allure.step("Проверяю, что блок 'Промокод' - закрыт "):
-        expect(promo_code_bar_status).not_to_have_class('CartPromo__ToggleButton active')
-
-
-@allure.title("Применение валидного промокода к неподходящему товару")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_cart_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_stm_product(base_url)
-    cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
-    with allure.step("Проверяю, что плашка со скидкой не отображается"):
-        expect(cart_page.discount_budget()).not_to_be_visible()
-    with allure.step("Проверяю, что на странице отображается подсказка 'В корзине нет товаров, к которым можно применить введенный промокод'"):
-        expect(cart_page.promo_code_field_info()).to_have_text("В корзине нет товаров, к которым можно применить введенный промокод")
-
-
-@allure.title("Отмена промокода")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_canceling_promo_code(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    with allure.step("Запоминую цену товара до активации промокода"):
-        pre_action_price = cart_page.order_total_price()
-    cart_page.activate_valid_promo_code()
-    cart_page.cancel_promo_code()
-    with allure.step("Запоминую цену товара после отмены промокода"):
-        post_action_price = cart_page.order_total_price()
-    with allure.step("Проверяю, что цена до ативации промокода и после его отмены -равны"):
-        assert pre_action_price == post_action_price
-    with allure.step("Проверяю, что плашка со скидкой не отображается"):
-        expect(cart_page.discount_budget()).not_to_be_visible()
-    with allure.step("Проверяю, что поле 'Промокод' - пустое"):
-        expect(cart_page.promo_code_field()).to_have_attribute("data-empty", "true")
-
-
-@allure.title("Очистка поля 'Промокод'")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_cleaning_intput_promo_code(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.open_promo_code_bar()
-    cart_page.fill_valid_promo_code()
-    cart_page.clear_promo_code_field_by_cross()
-    with allure.step("Проверяю, что поле 'Промокод' - пустое"):
-        expect(cart_page.promo_code_field()).to_have_attribute("data-empty", "true")
-
-
-@allure.title("Активация подсказки")
-@pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
-def test_activating_a_hint(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    cart_page.open(base_url)
-    cart_page.open_promo_code_bar()
-    cart_page.hover_to_promo_code_hint()
-    with allure.step("Проверяю, что подсказка отображается на странице"):
-        expect(cart_page.promo_code_hint_popup()).to_be_visible()
-    with allure.step("Проверяю, что текст подсказки соответствует шаблону"):
-        assert cart_page.promo_code_hint_popup_text() == "Промокод действует на отдельные товары и в ограниченный период времени. Подробные условия действия промокода вы можете узнать в описании акции, при получении промокода или у наших специалистов."
-
 
 """Окно изменения цены"""
 
-
+@pytest.mark.auth
 @allure.title("Активация окна изменения цены")
 @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_cart_info_change_modal_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
     cart_page.add_to_cart_not_discounted_product(base_url)
+    page_fixture.goto(base_url)
+    checkout_page.open(base_url)
+    checkout_page.activate_valid_promo_code()
     cart_page.open(base_url)
-    cart_page.activate_valid_promo_code()
     cart_page.click_details_button()
     with allure.step("Проверяю, что окно изменения информации отображается на странице"):
         expect(cart_page.change_info_modal).to_be_visible()
+    cart_page.cart_deletion_all_products()
+
 
 
 @allure.title("Закрытие блока изменения информации")
@@ -453,3 +339,115 @@ def test_delete_all_products_in_not_available_for_order_block(page_fixture, base
     cart_page.click_head_not_availavle_delete_button()
     with allure.step("Проверяю, что блок 'Недоступно для заказа' больше не отображается"):
         expect(cart_page.not_available_for_order_block).not_to_be_visible()
+
+
+"""Архив (блок Промокод был вырезан из корзины"""
+"""Промокод"""
+
+#
+# @allure.title("Применение валидного промокода")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def cart_aplying_a_valid_promo_code(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     cart_page.activate_valid_promo_code()
+#     with allure.step("Проверяю, что скидка на плашке равна 5%"):
+#         assert cart_page.text_discount_budget() == "-5%"
+#     with allure.step("Проверяю, что цена товара равна его первоначальной стоимости - 5%"):
+#         assert cart_page.discounted_price() == round(cart_page.base_price() * 0.95, 1)
+#
+#
+# @allure.title("Применение невалидного промокода")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_cart_aplying_a_invalid_promo_code(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     with allure.step("Запоминую цену товара до активации промокода"):
+#         pre_action_price = cart_page.order_total_price()
+#         cart_page.activate_invalid_promo_code()
+#     with allure.step("Запоминую цену товара после активации промокода"):
+#         post_action_price = cart_page.order_total_price()
+#     with allure.step("Проверяю, что цена товара не изменилась"):
+#         assert pre_action_price == post_action_price
+#     with allure.step("Проверяю, что плашка со скидкой не отображается"):
+#         expect(cart_page.discount_budget()).not_to_be_visible()
+#     with allure.step("Проверяю, что на странице отображается подсказка 'Промокод не действителен'"):
+#         expect(cart_page.promo_code_field_info()).to_have_text("Промокод не действителен")
+#
+#
+# @allure.title("Раскрытие блока 'Промокод'")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_opening_promo_code_block(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     cart_page.open_promo_code_bar()
+#     with allure.step("Запоминаю положение блока 'Промокод'"):
+#         promo_code_bar_status = cart_page.promo_code_bar()
+#     with allure.step("Проверяю, что блок 'Промокод' - раскрыт "):
+#         expect(promo_code_bar_status).to_have_class('CartPromo__ToggleButton active')
+#     cart_page.close_promo_code_bar()
+#     with allure.step("Проверяю, что блок 'Промокод' - закрыт "):
+#         expect(promo_code_bar_status).not_to_have_class('CartPromo__ToggleButton active')
+#
+#
+# @allure.title("Применение валидного промокода к неподходящему товару")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_cart_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_stm_product(base_url)
+#     cart_page.open(base_url)
+#     cart_page.activate_valid_promo_code()
+#     with allure.step("Проверяю, что плашка со скидкой не отображается"):
+#         expect(cart_page.discount_budget()).not_to_be_visible()
+#     with allure.step("Проверяю, что на странице отображается подсказка 'В корзине нет товаров, к которым можно применить введенный промокод'"):
+#         expect(cart_page.promo_code_field_info()).to_have_text("В корзине нет товаров, к которым можно применить введенный промокод")
+#
+#
+# @allure.title("Отмена промокода")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_canceling_promo_code(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     with allure.step("Запоминую цену товара до активации промокода"):
+#         pre_action_price = cart_page.order_total_price()
+#     cart_page.activate_valid_promo_code()
+#     cart_page.cancel_promo_code()
+#     with allure.step("Запоминую цену товара после отмены промокода"):
+#         post_action_price = cart_page.order_total_price()
+#     with allure.step("Проверяю, что цена до ативации промокода и после его отмены -равны"):
+#         assert pre_action_price == post_action_price
+#     with allure.step("Проверяю, что плашка со скидкой не отображается"):
+#         expect(cart_page.discount_budget()).not_to_be_visible()
+#     with allure.step("Проверяю, что поле 'Промокод' - пустое"):
+#         expect(cart_page.promo_code_field()).to_have_attribute("data-empty", "true")
+#
+#
+# @allure.title("Очистка поля 'Промокод'")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_cleaning_intput_promo_code(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     cart_page.open_promo_code_bar()
+#     cart_page.fill_valid_promo_code()
+#     cart_page.clear_promo_code_field_by_cross()
+#     with allure.step("Проверяю, что поле 'Промокод' - пустое"):
+#         expect(cart_page.promo_code_field()).to_have_attribute("data-empty", "true")
+#
+#
+# @allure.title("Активация подсказки")
+# @pytest.mark.skip("Архив. блок 'Промокод' удалили из корзины")
+# def test_activating_a_hint(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.add_to_cart_not_discounted_product(base_url)
+#     cart_page.open(base_url)
+#     cart_page.open_promo_code_bar()
+#     cart_page.hover_to_promo_code_hint()
+#     with allure.step("Проверяю, что подсказка отображается на странице"):
+#         expect(cart_page.promo_code_hint_popup()).to_be_visible()
+#     with allure.step("Проверяю, что текст подсказки соответствует шаблону"):
+#         assert cart_page.promo_code_hint_popup_text() == "Промокод действует на отдельные товары и в ограниченный период времени. Подробные условия действия промокода вы можете узнать в описании акции, при получении промокода или у наших специалистов."
