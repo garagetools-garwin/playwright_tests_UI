@@ -1,5 +1,6 @@
 import json
 import time
+from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 import pytest
 import allure
@@ -36,10 +37,16 @@ def page_fixture(browser, request):
 
     page.set_viewport_size({"width": 1920, "height": 1080})
 
+    # Получение текущей даты и времени
+    current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+    # Формирование имени файла с трассировкой
+    trace_path = os.path.join(
+        os.getcwd(),
+        f'traces/{request.node.name}_{current_time}.zip'
+    )
 
-    # Начало записи трассировки
-    trace_path = os.path.join(os.getcwd(), f'traces/{request.node.name}.zip')
+    os.makedirs(os.path.dirname(trace_path), exist_ok=True)
     page.context.tracing.start(screenshots=True, snapshots=True)
 
     # Сетевой лог
@@ -52,6 +59,13 @@ def page_fixture(browser, request):
         "status": request.response().status,
         "headers": request.response().headers,
         "body": request.post_data if request.post_data else "No data",
+        "query_params": parse_qs(urlparse(request.url).query)
+    }))
+
+    page.on("requestfailed", lambda request: network_logs.append({
+        "url": request.url,
+        "method": request.method,
+        "error": request.failure().error_text,
         "query_params": parse_qs(urlparse(request.url).query)
     }))
 
