@@ -118,4 +118,3 @@ def checkout_activating_a_hint(page_fixture, base_url):
         expect(cart_page.promo_code_hint_popup()).to_be_visible()
     with allure.step("Проверяю, что текст подсказки соответствует шаблону"):
         assert cart_page.promo_code_hint_popup_text() == "Промокод действует на отдельные товары и в ограниченный период времени. Подробные условия действия промокода вы можете узнать в описании акции, при получении промокода или у наших специалистов."
-

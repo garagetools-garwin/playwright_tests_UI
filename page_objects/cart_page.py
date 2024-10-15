@@ -10,6 +10,7 @@ import allure
 from playwright.sync_api import expect
 
 from page_objects.header_element import HeaderElement
+from page_objects.checkout_page import CheckoutPage
 
 
 class CartPage:
@@ -31,7 +32,7 @@ class CartPage:
     CANCEL_DELETE_BUTTON = ".Button.size--big.color--tertiary"
     ORDER_TOTAL_PRICE = ".flexRow-AIFE.Price.OrderTotal__Price .Price__Value"
     DETALES_BUTTON = ".CartChanges__Actions__Element.Button.size--normal.color--tertiary"
-    OK_BUTTON = ".CartChangeInfoBlock__Actions__Element.Button.size--normal.color--secondary"
+    OK_BUTTON = ".CartChanges__Actions__Element.Button.size--normal.color--secondary"
     CHANGE_INF0_MODAL = ".flexColumn.KitModal__Inner"
     DELETION_MODAL = ".flexColumn.KitModal__Inner"
     PRINT_BUTTON = ".CartAvailableListHead__PrintBtn.flexRow-AIC"
@@ -154,7 +155,72 @@ class CartPage:
             raise ValueError("Product not available, please select another product")
 
     @testit.step("Lj,")
-    @allure.step("Добавляю несколько позиций без скидки в корзину")
+    @allure.step("Добавляю товар без скидки в корзину")
+    def check_or_add_to_cart_not_discounted_product(self, url):
+        # Переход на страницу с товаром
+        self.page.goto(f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd")
+
+        # Проверка на наличие текста "Оформить заказ"
+        try:
+            if self.page.locator("text=Оформить заказ").first.is_visible():
+                return  # Выход из функции, так как "Оформить заказ" найден
+        except Exception as e:
+            print(f"Ошибка при проверке текста 'Оформить заказ': {e}")
+
+        try:
+            # Пытаемся найти и нажать кнопку "Добавить в корзину" для первого товара
+            self.page.get_by_text("Добавить в корзину").click()
+            print("Первый товар успешно добавлен в корзину.")
+            return  # Прерываем выполнение, если товар добавлен
+        except Exception as e:
+            print(f"Не удалось найти кнопку 'Добавить в корзину' на первом товаре: {e}")
+
+            # Если первый товар не был добавлен, переходим ко второму товару
+        try:
+            self.page.goto(f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm")
+            self.page.get_by_text("Добавить в корзину").click()
+            print("Второй товар успешно добавлен в корзину.")
+        except Exception as e:
+            # Если кнопка не найдена, выбрасываем ошибку
+            raise ValueError(f"Не удалось найти кнопку 'Добавить в корзину' на втором товаре: {e}")
+
+    @testit.step("Lj,")
+    @allure.step("Добавляю товар без скидки в корзину")
+    def check_or_add_to_cart_multiple_stm_products(self, url):
+        # Переход на страницу с товаром
+        self.page.goto(f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd")
+
+        # Проверка на наличие текста "Оформить заказ"
+        try:
+            if self.page.locator("text=Оформить заказ").first.is_visible():
+                return  # Выход из функции, так как "Оформить заказ" найден
+        except Exception as e:
+            print(f"Ошибка при проверке текста 'Оформить заказ': {e}")
+
+        try:
+            urls_to_check = [
+                f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm",
+                f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd",
+                f"{url}/tovar/klyuch-rozhkovyy-12h14mm1"
+            ]
+
+            for url in urls_to_check:
+                self.page.goto(url)
+                try:
+                    # Попытка найти и нажать кнопку "Добавить в корзину"
+                    self.page.locator("text=Добавить в корзину").click()
+                except Exception as e:
+                    print(f"Add to cart button not found on {url}. Exception: {e}")
+                    continue  # Переходим к следующей ссылке, если кнопка не найдена
+
+            # Проверка, если ни один товар не был добавлен в корзину
+            if not any(self.page.url == url for url in urls_to_check):
+                raise ValueError("Product not available, please select another product")
+        except Exception as e:
+            print(f"Add to cart button not found on {url}. Exception: {e}")
+
+    @testit.step("Lj,")
+    @allure.step("Добавляю товар без скидки в корзину")
     def add_to_cart_not_discounted_product(self, url):
         urls_to_check = [
             f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd",
@@ -483,13 +549,32 @@ class CartPage:
     def order_button_is_disabled(self):
         expect(self.page.locator(self.ORDER_BUTTON)).to_be_disabled()
 
-    @allure.step("Нажимаю на кнопку 'Распечатать'")
+    # @allure.step("Активирую блок изменения информации (Архив)")
+    # def info_change_block_activation(self, page, base_url):
+    #     cart_page = CartPage(page)
+    #     cart_page.add_to_cart_multiple_products(base_url)
+    #     cart_page.open(base_url)
+    #     cart_page.activate_valid_promo_code()
+    #     cart_page.click_details_button()
+
+    @allure.step("Активирую модальное окно изменения информации")
+    def info_change_modal_activation(self, page, base_url):
+        cart_page = CartPage(page)
+        checkout_page = CheckoutPage(page)
+        cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
+        checkout_page.open(base_url)
+        checkout_page.price_changes_with_a_promo_code()
+        cart_page.open(base_url)
+        cart_page.click_details_button()
+
+    @allure.step("Активирую блок изменения информации")
     def info_change_block_activation(self, page, base_url):
         cart_page = CartPage(page)
-        cart_page.add_to_cart_multiple_products(base_url)
+        checkout_page = CheckoutPage(page)
+        cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
+        checkout_page.open(base_url)
+        checkout_page.price_changes_with_a_promo_code()
         cart_page.open(base_url)
-        cart_page.activate_valid_promo_code()
-        cart_page.click_details_button()
 
     """Блок изменения информации"""
 

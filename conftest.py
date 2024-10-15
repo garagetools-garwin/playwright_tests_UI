@@ -46,14 +46,14 @@ def page_fixture(browser, request):
     network_logs = []
 
     # Перехват запросов, можно закоментить для удобства отладки тестов
-    # page.on("requestfinished", lambda request: network_logs.append({
-    #     "url": request.url,
-    #     "method": request.method,
-    #     "status": request.response().status,
-    #     "headers": request.response().headers,
-    #     "body": request.post_data if request.post_data else "No data",
-    #     "query_params": parse_qs(urlparse(request.url).query)
-    # }))
+    page.on("requestfinished", lambda request: network_logs.append({
+        "url": request.url,
+        "method": request.method,
+        "status": request.response().status,
+        "headers": request.response().headers,
+        "body": request.post_data if request.post_data else "No data",
+        "query_params": parse_qs(urlparse(request.url).query)
+    }))
 
     yield page
 

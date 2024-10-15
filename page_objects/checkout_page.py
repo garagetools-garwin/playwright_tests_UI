@@ -39,16 +39,18 @@ class CheckoutPage:
     """ Блок 'Промокод' """
 
     @allure.step("Активирую валидный промокод")
-    def activate_valid_promo_code(self):
+    def price_changes_with_a_promo_code(self):
         self.open_promo_code_bar()
         self.check_promo_code()
-        self.fill_valid_promo_code()
-        self.click_apply_button()
+
 
     @allure.step("Отменяю промокод если он был установлен")
     def check_promo_code(self):
         if self.page.locator(self.CANCEL_PROMO_CODE_BUTTON).is_visible():
             self.page.locator(self.CANCEL_PROMO_CODE_BUTTON).click()
+        else:
+            self.fill_valid_promo_code()
+            self.click_apply_button()
 
     @allure.step("Открываю блок 'Промокод'")
     def open_promo_code_bar(self):
