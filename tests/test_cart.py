@@ -34,6 +34,7 @@ def test_cart_checkout(page_fixture, base_url):
     cart_page.click_order_button()
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
         expect(page_fixture).to_have_url(f"{base_url}/checkout")
+    page_fixture.context.storage_state(path="auth_state.json")
 
 
 @allure.title("Выделение всего товара")
