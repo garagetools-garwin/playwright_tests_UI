@@ -239,7 +239,7 @@ def test_test_order_button_is_blocked(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Активация окна изменения цены")
-@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_cart_info_change_modal_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
@@ -256,7 +256,7 @@ def test_cart_info_change_modal_activation(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Закрытие блока изменения информации")
-@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_cart_info_change_block_close(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_block_activation(page_fixture, base_url)
@@ -268,7 +268,7 @@ def test_cart_info_change_block_close(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Удаление товара нажатием на крестик (Окно изменения цены)")
-@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_modal_activation(page_fixture, base_url)
@@ -289,7 +289,7 @@ def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Вернутся в корзину через кнопку 'Вернутся в корзину'")
-@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_back_to_cart_from_modal_1(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_modal_activation(page_fixture, base_url)
@@ -303,7 +303,7 @@ def test_back_to_cart_from_modal_1(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Вернутся в корзину через нажатие на пространство вне окна")
-@pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_back_to_cart_from_modal_2(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.info_change_modal_activation(page_fixture, base_url)
@@ -314,6 +314,87 @@ def test_back_to_cart_from_modal_2(page_fixture, base_url):
     with allure.step("Проверяю, что пользователь находится в корзине"):
         expect(page_fixture).to_have_url(f"{base_url}/cart")
     cart_page.cart_deletion_all_products()
+
+# """Окно изменения цены""" (старый, можно спользовать со стандартным процесом авторизации)
+#
+#
+# @pytest.mark.auth
+# @allure.title("Активация окна изменения цены")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# def test_cart_info_change_modal_activation(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     checkout_page = CheckoutPage(page_fixture)
+#     cart_page.check_or_add_to_cart_not_discounted_product(base_url)
+#     checkout_page.open(base_url)
+#     checkout_page.price_changes_with_a_promo_code()
+#     cart_page.open(base_url)
+#     cart_page.click_details_button()
+#     with allure.step("Проверяю, что окно изменения информации отображается на странице"):
+#         expect(cart_page.change_info_modal).to_be_visible()
+#     cart_page.click_back_to_cart_button()
+#     cart_page.cart_deletion_all_products()
+#
+#
+# @pytest.mark.auth
+# @allure.title("Закрытие блока изменения информации")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# def test_cart_info_change_block_close(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.info_change_block_activation(page_fixture, base_url)
+#     cart_page.click_ok_button()
+#     with allure.step("Проверяю, что блок изменения информации больше не отображается на странице"):
+#         expect(cart_page.change_info_block).not_to_be_visible()
+#     cart_page.cart_deletion_all_products()
+#
+#
+# @pytest.mark.auth
+# @allure.title("Удаление товара нажатием на крестик (Окно изменения цены)")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.info_change_modal_activation(page_fixture, base_url)
+#     with allure.step("Запоминаю название товара в корзине"):
+#         product_name_cart_list = cart_page.save_name_product_in_cart_list()
+#     with allure.step("Запоминаю название товара в списке окна изменения цены"):
+#         product_name_change_info_list = cart_page.save_name_product_in_change_info_list()
+#     cart_page.click_cross_button_delete_in_changed_list()
+#     with allure.step("Проверяю, что товар больше не отображается в корзине"):
+#         expect(page_fixture.get_by_text(product_name_cart_list)).not_to_be_visible()
+#     with allure.step("Проверяю, что товар больше не отображается в списке окна изменения цены"):
+#         expect(page_fixture.get_by_text(product_name_change_info_list)).not_to_be_visible()
+#     with allure.step("Проверяю, что окно изменения цены осталось на странице"):
+#         expect(cart_page.change_info_modal).to_be_visible()
+#     cart_page.click_back_to_cart_button()
+#     cart_page.cart_deletion_all_products()
+#
+#
+# @pytest.mark.auth
+# @allure.title("Вернутся в корзину через кнопку 'Вернутся в корзину'")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# def test_back_to_cart_from_modal_1(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.info_change_modal_activation(page_fixture, base_url)
+#     cart_page.click_back_to_cart_button()
+#     with allure.step("Проверяю, что окно изменения цены больше не отображается на странице"):
+#         expect(cart_page.change_info_modal).not_to_be_visible()
+#     with allure.step("Проверяю, что пользователь находится в корзине"):
+#         expect(page_fixture).to_have_url(f"{base_url}/cart")
+#     cart_page.cart_deletion_all_products()
+#
+#
+# @pytest.mark.auth
+# @allure.title("Вернутся в корзину через нажатие на пространство вне окна")
+# @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
+# def test_back_to_cart_from_modal_2(page_fixture, base_url):
+#     cart_page = CartPage(page_fixture)
+#     cart_page.info_change_modal_activation(page_fixture, base_url)
+#     with allure.step("Нажимаю на пространство вне окна"):
+#         page_fixture.mouse.click(0, 0)
+#     with allure.step("Проверяю, что окно изменения цены больше не отображается на странице"):
+#         expect(cart_page.change_info_modal).not_to_be_visible()
+#     with allure.step("Проверяю, что пользователь находится в корзине"):
+#         expect(page_fixture).to_have_url(f"{base_url}/cart")
+#     cart_page.cart_deletion_all_products()
 
 
 """Блок 'Недоступно для заказа'"""

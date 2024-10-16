@@ -1,8 +1,6 @@
 import json
-import time
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
-import pytest
 import allure
 import os
 from dotenv import load_dotenv
@@ -62,12 +60,15 @@ def page_fixture(browser, request):
         "query_params": parse_qs(urlparse(request.url).query)
     }))
 
-    page.on("requestfailed", lambda request: network_logs.append({
-        "url": request.url,
-        "method": request.method,
-        "error": request.failure().error_text,
-        "query_params": parse_qs(urlparse(request.url).query)
-    }))
+    page.on("requestfailed", lambda request: (
+        network_logs.append({
+            "url": request.url,
+            "method": request.method,
+            "error": getattr(request.failure, "error_text", "Unknown error"),
+            "query_params": parse_qs(urlparse(request.url).query)
+        }),
+        print(f"Request failed with error: {getattr(request.failure, 'error_text', 'Unknown error')}")
+    ))
 
     yield page
 
@@ -76,11 +77,13 @@ def page_fixture(browser, request):
         # Сохраняем трассировку
         page.context.tracing.stop(path=trace_path)
 
-        # Автоматическое создание директорий по пути логов
-        log_path = os.path.join(os.getcwd(), f'logs/{request.node.name}_network_logs.json')
+        # Формирование имени файла с логами
+        log_path = os.path.join(
+            os.getcwd(),
+            f'logs/{request.node.name}_{current_time}_network_logs.json'
+        )
         os.makedirs(os.path.dirname(log_path), exist_ok=True)
 
-        # Сохранение сетевых логов в JSON
         with open(log_path, 'w') as log_file:
             json.dump(network_logs, log_file, indent=4)
 
