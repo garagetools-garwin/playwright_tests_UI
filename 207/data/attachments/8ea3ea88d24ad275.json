@@ -1,0 +1,155 @@
+[
+    {
+        "url": "https://garwin.ru/",
+        "method": "GET",
+        "status": 502,
+        "headers": {
+            "alt-svc": "h3=\":443\"; ma=86400",
+            "cache-control": "private, max-age=0, no-store, no-cache, must-revalidate, post-check=0, pre-check=0",
+            "cf-ray": "8daab1e3582414e9-LAX",
+            "content-length": "6298",
+            "content-type": "text/html; charset=UTF-8",
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "expires": "Thu, 01 Jan 1970 00:00:01 GMT",
+            "nel": "{\"success_fraction\":0,\"report_to\":\"cf-nel\",\"max_age\":604800}",
+            "referrer-policy": "same-origin",
+            "report-to": "{\"endpoints\":[{\"url\":\"https:\\/\\/a.nel.cloudflare.com\\/report\\/v4?s=PK02M20GmkWLI863nSiL1%2FvpiuI7m2DSgk5YEJWti94IUmyAjllyBtvD7Mcw5bfFQ%2FqobmDjC6WHqH%2FYRdFAqN1k5hSVVdgpaXZU80rGAGqiAH%2FBbKLFntByxrw%3D\"}],\"group\":\"cf-nel\",\"max_age\":604800}",
+            "server": "cloudflare",
+            "server-timing": "cfL4;desc=\"?proto=TCP&rtt=8281&sent=6&recv=9&lost=0&retrans=0&sent_bytes=2911&recv_bytes=1198&delivery_rate=347529&cwnd=253&unsent_bytes=0&cid=d2e638dda8b61dfa&ts=2208&x=0\"",
+            "x-frame-options": "SAMEORIGIN"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/styles/main.css",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "content-encoding": "gzip",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "W/\"671bcbc4-1f4d\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "text/css",
+            "cache-control": "max-age=7200, public",
+            "cf-ray": "8daab1f12e0114e9-LAX",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/images/cf-icon-browser.png",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "\"671bcbc4-1e4\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "image/png",
+            "cache-control": "max-age=7200, public",
+            "accept-ranges": "bytes",
+            "cf-ray": "8daab1f14e1614e9-LAX",
+            "content-length": "484",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/images/cf-icon-ok.png",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "\"671bcbc4-3b2\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "image/png",
+            "cache-control": "max-age=7200, public",
+            "accept-ranges": "bytes",
+            "cf-ray": "8daab1f14e1714e9-LAX",
+            "content-length": "946",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/images/cf-icon-cloud.png",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "\"671bcbc4-5cc\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "image/png",
+            "cache-control": "max-age=7200, public",
+            "accept-ranges": "bytes",
+            "cf-ray": "8daab1f14e1814e9-LAX",
+            "content-length": "1484",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/images/cf-icon-server.png",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "\"671bcbc4-568\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "image/png",
+            "cache-control": "max-age=7200, public",
+            "accept-ranges": "bytes",
+            "cf-ray": "8daab1f14e1a14e9-LAX",
+            "content-length": "1384",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    },
+    {
+        "url": "https://garwin.ru/cdn-cgi/images/cf-icon-error.png",
+        "method": "GET",
+        "status": 200,
+        "headers": {
+            "date": "Wed, 30 Oct 2024 10:24:20 GMT",
+            "x-content-type-options": "nosniff",
+            "last-modified": "Fri, 25 Oct 2024 16:48:04 GMT",
+            "server": "cloudflare",
+            "etag": "\"671bcbc4-356\"",
+            "x-frame-options": "DENY",
+            "vary": "Accept-Encoding",
+            "content-type": "image/png",
+            "cache-control": "max-age=7200, public",
+            "accept-ranges": "bytes",
+            "cf-ray": "8daab1f14e1c14e9-LAX",
+            "content-length": "854",
+            "expires": "Wed, 30 Oct 2024 12:24:20 GMT"
+        },
+        "body": "No data",
+        "query_params": {}
+    }
+]
