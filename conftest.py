@@ -19,7 +19,7 @@ def pytest_runtest_makereport(item, call):
 
 
 @pytest.fixture(scope="function")
-def page_fixture(browser, request):
+def page_fixture(browser, request, base_url):
     # Получаем метку, чтобы определить, нужен ли storage_state
     use_auth = request.node.get_closest_marker("auth")
 
@@ -34,6 +34,11 @@ def page_fixture(browser, request):
     page = context.new_page()
 
     page.set_viewport_size({"width": 1920, "height": 1080})
+    # Задаем куки онбордингов для того, чтобы они не всплывали в тестах
+    context.add_cookies([{"name": "onboarding__search", "value": "true", "url": f"{base_url}"},
+                         {"name": "onboarding__filters", "value": "true", "url": f"{base_url}"},
+                         {"name": "onboarding__legalEntities", "value": "true", "url": f"{base_url}"}
+                         ])
 
     # Получение текущей даты и времени
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")

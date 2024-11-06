@@ -4,9 +4,19 @@
 2) Можно будет заменить привычную конструкцию self.page.locator(selector) на get_element
 """
 
-# class BasePage:
-#     def __init__(self, page):
-#         self.page = page
+class BasePage:
+    def __init__(self, page):
+        self.page = page
+
+    def close_onboarding(self, url):
+        self.page.goto(url)
+        self.page.locator("button.OnboardingWidget__Closer").click()
+
+
+
+
+
+
 #
 #     def get_element(self, selector: str, timeout=3000):
 #         """
