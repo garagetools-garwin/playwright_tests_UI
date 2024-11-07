@@ -244,6 +244,8 @@ def test_test_order_button_is_blocked(page_fixture, base_url):
 def test_cart_info_change_modal_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
     cart_page.check_or_add_to_cart_not_discounted_product(base_url)
     checkout_page.open(base_url)
     checkout_page.price_changes_with_a_promo_code()
