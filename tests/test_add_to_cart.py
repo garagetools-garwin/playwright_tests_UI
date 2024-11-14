@@ -3,16 +3,19 @@
 import pytest
 import allure
 
+from page_objects.listing_element import ListingElement
+
 url = "https://garwin.ru"
 
 
 @pytest.mark.smoke
 @allure.title("Добавление товара из листинга")
 def test_add_to_cart_from_listing(page_fixture):
+    listing_element = ListingElement(page_fixture)
     page_fixture.goto(f'{url}')
     page_fixture.goto("https://garwin.ru/catalog/ruchnoy-instrument")
     # Добавляем первую карточку в листинге
-    page_fixture.get_by_text("В корзину").nth(0).click()
+    listing_element.add_to_cart()
     # Проверяем, что счетчик корзины стал равен 1
     badge_text = page_fixture.locator(".Badge__Text").nth(0)
     assert badge_text.inner_text() == "1"

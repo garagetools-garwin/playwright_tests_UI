@@ -83,7 +83,7 @@ class CartPage:
 
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.get_by_text(" Добавить в корзину ").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -103,7 +103,7 @@ class CartPage:
             self.page.goto(url)
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator("text= Добавить в корзину ").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
             except Exception as e:
                 print(f"Add to cart button not found on {url}. Exception: {e}")
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -124,7 +124,7 @@ class CartPage:
             self.page.goto(url)
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator("text=Добавить в корзину").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
             except Exception as e:
                 print(f"Add to cart button not found on {url}. Exception: {e}")
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -146,7 +146,7 @@ class CartPage:
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
                 # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.get_by_text(" Добавить в корзину ").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -169,7 +169,7 @@ class CartPage:
 
         try:
             # Пытаемся найти и нажать кнопку "Добавить в корзину" для первого товара
-            self.page.get_by_text("Добавить в корзину").click()
+            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
             print("Первый товар успешно добавлен в корзину.")
             return  # Прерываем выполнение, если товар добавлен
         except Exception as e:
@@ -178,7 +178,7 @@ class CartPage:
             # Если первый товар не был добавлен, переходим ко второму товару
         try:
             self.page.goto(f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm")
-            self.page.get_by_text("Добавить в корзину").click()
+            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
             print("Второй товар успешно добавлен в корзину.")
         except Exception as e:
             # Если кнопка не найдена, выбрасываем ошибку
@@ -208,7 +208,7 @@ class CartPage:
                 self.page.goto(url)
                 try:
                     # Попытка найти и нажать кнопку "Добавить в корзину"
-                    self.page.locator("text=Добавить в корзину").click()
+                    self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 except Exception as e:
                     print(f"Add to cart button not found on {url}. Exception: {e}")
                     continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -233,7 +233,7 @@ class CartPage:
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
                 # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.get_by_text(" Добавить в корзину ").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
