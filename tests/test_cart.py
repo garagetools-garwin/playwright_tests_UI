@@ -18,7 +18,7 @@ def test_cart_autorization_modal(page_fixture, base_url):
     cart_page.open(base_url)
     cart_page.click_order_button()
     with allure.step("Проверяю, что окно аторизаци отображается на странице"):
-        expect(autorization.autorization_modal).not_to_be_visible()
+        expect(autorization.autorization_modal).to_be_visible()
 
 
 @pytest.mark.smoke
