@@ -15,6 +15,9 @@ def pytest_runtest_makereport(item, call):
     report = outcome.get_result()
     # Добавляем информацию о результате теста в запрос
     setattr(item, "rep_" + report.when, report)
+    # Добавляем метку "Test Rerun" для перезапущенных тестов
+    if report.outcome == "failed" and item.get_closest_marker("rerun"):
+        allure.dynamic.label("rerun", "Test Rerun")
 
 
 
