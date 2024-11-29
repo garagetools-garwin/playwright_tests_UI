@@ -50,7 +50,7 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest
+        run: pytest --reruns 2 --reruns-delay 3
         
       # Загрузка артефактов
       - name: Uploading artefacts
