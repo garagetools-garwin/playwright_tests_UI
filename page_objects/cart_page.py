@@ -568,20 +568,15 @@ class CartPage:
     @allure.step("Активирую модальное окно изменения информации")
     def info_change_modal_activation(self, page, base_url):
         cart_page = CartPage(page)
-        checkout_page = CheckoutPage(page)
-        cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
-        checkout_page.open(base_url)
-        checkout_page.price_changes_with_a_promo_code()
-        cart_page.open(base_url)
+        cart_page.info_change_block_activation(page, base_url)
         cart_page.click_details_button()
 
     @allure.step("Активирую блок изменения информации")
     def info_change_block_activation(self, page, base_url):
         cart_page = CartPage(page)
-        checkout_page = CheckoutPage(page)
-        cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
-        checkout_page.open(base_url)
-        checkout_page.price_changes_with_a_promo_code()
+        header = HeaderElement(page)
+        cart_page.check_or_add_to_cart_not_discounted_product(base_url)
+        header.switch_customer()
         cart_page.open(base_url)
 
     """Блок изменения информации"""
