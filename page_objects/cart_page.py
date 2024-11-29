@@ -575,7 +575,7 @@ class CartPage:
     def info_change_block_activation(self, page, base_url):
         cart_page = CartPage(page)
         header = HeaderElement(page)
-        cart_page.check_or_add_to_cart_not_discounted_product(base_url)
+        cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
         header.switch_customer()
         cart_page.open(base_url)
 
