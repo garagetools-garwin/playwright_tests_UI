@@ -137,7 +137,10 @@ class CartPage:
     def add_to_cart_not_stm_product(self, url):
         urls_to_check = [
             f"{url}/tovar/lom-oborochnyy-lo-3-0",
-            f"{url}/tovar/nasos-drenazhnyy-pogruzhnoy-4-gnom-25-20"
+            f"{url}/tovar/nasos-drenazhnyy-pogruzhnoy-4-gnom-25-20",
+            f"{url}/tovar/kontsevaya-mera-dliny-5-mm",
+            f"{url}/tovar/shtangentsirkul-noniusnyy-0-02-mm-0-100-mm-podvizhnaya-ramka-sbornaya",
+            f"{url}/tovar/shtangentsirkul-noniusnyy-0-02-mm-0-130-mm-s-mikropodachey"
         ]
 
         for url in urls_to_check:
