@@ -18,7 +18,6 @@ from page_objects.header_element import HeaderElement
 #TODO перевести методы связаные с блоком калькуляции в checkout_page
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение валидного промокода")
 def test_checkout_aplying_a_valid_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -38,7 +37,6 @@ def test_checkout_aplying_a_valid_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение невалидного промокода")
 def test_checkout_aplying_a_invalid_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -60,7 +58,6 @@ def test_checkout_aplying_a_invalid_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Раскрытие блока 'Промокод'")
 def test_checkout_promo_code_block(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -80,7 +77,6 @@ def test_checkout_promo_code_block(page_fixture, base_url):
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение валидного промокода к неподходящему товару")
 def test_checkout_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -96,7 +92,6 @@ def test_checkout_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, ba
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Отмена промокода")
 def test_checkout_canceling_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -119,7 +114,6 @@ def test_checkout_canceling_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Очистка поля 'Промокод'")
 def test_checkout_cleaning_intput_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -136,7 +130,6 @@ def test_checkout_cleaning_intput_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
-@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Активация подсказки")
 def test_checkout_activating_a_hint(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)

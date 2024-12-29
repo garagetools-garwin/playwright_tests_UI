@@ -59,24 +59,24 @@ def page_fixture(browser, request, base_url):
     network_logs = []
 
     # Перехват запросов, можно закоментить для удобства отладки тестов
-    page.on("requestfinished", lambda request: network_logs.append({
-        "url": request.url,
-        "method": request.method,
-        "status": request.response().status,
-        "headers": request.response().headers,
-        "body": request.post_data if request.post_data else "No data",
-        "query_params": parse_qs(urlparse(request.url).query)
-    }))
-
-    page.on("requestfailed", lambda request: (
-        network_logs.append({
-            "url": request.url,
-            "method": request.method,
-            "error": getattr(request.failure, "error_text", "Unknown error"),
-            "query_params": parse_qs(urlparse(request.url).query)
-        }),
-        print(f"Request failed with error: {getattr(request.failure, 'error_text', 'Unknown error')}")
-    ))
+    # page.on("requestfinished", lambda request: network_logs.append({
+    #     "url": request.url,
+    #     "method": request.method,
+    #     "status": request.response().status,
+    #     "headers": request.response().headers,
+    #     "body": request.post_data if request.post_data else "No data",
+    #     "query_params": parse_qs(urlparse(request.url).query)
+    # }))
+    #
+    # page.on("requestfailed", lambda request: (
+    #     network_logs.append({
+    #         "url": request.url,
+    #         "method": request.method,
+    #         "error": getattr(request.failure, "error_text", "Unknown error"),
+    #         "query_params": parse_qs(urlparse(request.url).query)
+    #     }),
+    #     print(f"Request failed with error: {getattr(request.failure, 'error_text', 'Unknown error')}")
+    # ))
 
     yield page
 
