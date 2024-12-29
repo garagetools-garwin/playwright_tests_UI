@@ -1,4 +1,5 @@
 """Данные тесты проверяют добавление товара в корзину"""
+import time
 
 import pytest
 import allure
@@ -13,6 +14,7 @@ url = "https://garwin.ru"
 def test_add_to_cart_from_listing(page_fixture):
     listing_element = ListingElement(page_fixture)
     page_fixture.goto(f'{url}')
+    time.sleep(2) #TODO: Убрать когда закончится акция деда мороза
     page_fixture.goto("https://garwin.ru/catalog/ruchnoy-instrument")
     # Добавляем первую карточку в листинге
     listing_element.add_to_cart()

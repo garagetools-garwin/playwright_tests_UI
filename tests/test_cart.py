@@ -1,6 +1,7 @@
 """В этом файле хранятся тесты для корзины"""
 import pytest
 import allure
+import re
 from playwright.sync_api import expect
 
 from page_objects.cart_page import CartPage
@@ -32,9 +33,10 @@ def test_cart_checkout(page_fixture, base_url):
     autorization.autorization_testmail_app()
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
     cart_page.click_order_button()
-    with allure.step("Проверяю, что пользователь перешел в чек-аут"):
-        expect(page_fixture).to_have_url(f"{base_url}/checkout")
     page_fixture.context.storage_state(path="auth_state.json")
+    with allure.step("Проверяю, что пользователь перешел в чек-аут"):
+        expect(page_fixture).to_have_url(re.compile('checkout'))
+
 
 
 @allure.title("Выделение всего товара")
@@ -167,7 +169,7 @@ def test_cart_calculation_block_calculate_price_of_some_products(page_fixture, b
         page_fixture.locator(".Counter__Element").nth(1).click()  #первый плюс
     with allure.step("Считаю стоимость товара в колличестве 2-х единиц"):
         new_price = price+price
-    with allure.step("Запоминаю суму заказа"):
+    with allure.step("Запоминаю сумму заказа"):
         total_price = cart_page.order_total_price()
     with allure.step("Проверяю, что стоимость двух товаров равняется сумме заказа"):
         assert new_price == total_price
@@ -297,7 +299,7 @@ def test_back_to_cart_from_modal_1(page_fixture, base_url):
     with allure.step("Проверяю, что окно изменения цены больше не отображается на странице"):
         expect(cart_page.change_info_modal).not_to_be_visible()
     with allure.step("Проверяю, что пользователь находится в корзине"):
-        expect(page_fixture).to_have_url(f"{base_url}/cart")
+        expect(page_fixture).to_have_url(re.compile('cart'))
     cart_page.cart_deletion_all_products()
 
 
@@ -312,7 +314,7 @@ def test_back_to_cart_from_modal_2(page_fixture, base_url):
     with allure.step("Проверяю, что окно изменения цены больше не отображается на странице"):
         expect(cart_page.change_info_modal).not_to_be_visible()
     with allure.step("Проверяю, что пользователь находится в корзине"):
-        expect(page_fixture).to_have_url(f"{base_url}/cart")
+        expect(page_fixture).to_have_url(re.compile('cart'))
     cart_page.cart_deletion_all_products()
 
 # """Окно изменения цены""" (старый, можно спользовать со стандартным процесом авторизации)

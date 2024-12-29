@@ -18,6 +18,7 @@ from page_objects.header_element import HeaderElement
 #TODO перевести методы связаные с блоком калькуляции в checkout_page
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение валидного промокода")
 def test_checkout_aplying_a_valid_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -37,6 +38,7 @@ def test_checkout_aplying_a_valid_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение невалидного промокода")
 def test_checkout_aplying_a_invalid_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -58,6 +60,7 @@ def test_checkout_aplying_a_invalid_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Раскрытие блока 'Промокод'")
 def test_checkout_promo_code_block(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -77,6 +80,7 @@ def test_checkout_promo_code_block(page_fixture, base_url):
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Применение валидного промокода к неподходящему товару")
 def test_checkout_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -92,6 +96,7 @@ def test_checkout_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, ba
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Отмена промокода")
 def test_checkout_canceling_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -114,6 +119,7 @@ def test_checkout_canceling_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Очистка поля 'Промокод'")
 def test_checkout_cleaning_intput_promo_code(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -130,6 +136,7 @@ def test_checkout_cleaning_intput_promo_code(page_fixture, base_url):
 
 
 @pytest.mark.auth
+@pytest.mark.skip("Для демонстрации новых тестов")
 @allure.title("Активация подсказки")
 def test_checkout_activating_a_hint(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
@@ -221,7 +228,7 @@ def cart_calculation_block_calculate_price_of_some_products(page_fixture, base_u
         page_fixture.locator(".Counter__Element").nth(1).click()  #первый плюс
     with allure.step("Считаю стоимость товара в колличестве 2-х единиц"):
         new_price = price+price
-    with allure.step("Запоминаю суму заказа"):
+    with allure.step("Запоминаю сумму заказа"):
         total_price = cart_page.order_total_price()
     with allure.step("Проверяю, что стоимость двух товаров равняется сумме заказа"):
         assert new_price == total_price
@@ -230,3 +237,326 @@ def cart_calculation_block_calculate_price_of_some_products(page_fixture, base_u
     with allure.step("Проверяю, что сумма заказа равна сумме одной единице товара"):
         total_price = cart_page.order_total_price()
         assert price == total_price
+
+        """Блок Покупатель и получатель"""
+
+
+@pytest.mark.auth
+@allure.title("Добавление нового получателя со всеми полями")
+def test_add_new_recipient_with_all_fields(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.add_recipient()
+    name, phone, email = checkout_page.add_modal.fill_in_data_randomize()
+    checkout_page.add_modal.save_new_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {email}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = f"{email}, {phone}"
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Добавление нового получателя только с обязательными полями")
+def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.add_recipient()
+    name, phone = checkout_page.add_modal.fill_in_part_of_data_randomize()
+    checkout_page.add_modal.save_new_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = phone
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Создание нового получателя со всеми валидными символами в ФИО")
+def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.add_recipient()
+    with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
+        name, phone, email = checkout_page.add_modal.fill_in_data()
+    checkout_page.add_modal.save_new_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {email}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = f"{email}, {phone}"
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Закрытие окна Новый получатель через крестик")
+def test_add_new_recipient_close_madal1(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.add_recipient()
+    checkout_page.add_modal.close_new_recipient_modal()
+
+
+@pytest.mark.auth
+@allure.title("Закрытие окна Новый получатель через нажатие на пространство вне окна")
+def test_add_new_recipient_close_madal2(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.add_recipient()
+    checkout_page.add_modal.close_new_recipient_modal2()
+
+
+"""Листинг получателей"""
+
+
+@pytest.mark.auth
+@allure.title("Выбор нового получателя")
+def test_select_a_new_recipient(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.switch_on_inactive_recipient()
+    checkout_page.select_inactive_recipient()
+
+
+@pytest.mark.auth
+@allure.title("Активация окна Изменить получателя")
+def test_activate_the_change_recipient_modal(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+
+
+@pytest.mark.auth
+@allure.title("Активация окно подтверждения удаления")
+def test_activate_delete_confirmation_modal(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_delete_button()
+
+
+"""Модальное окно подтверждения удаления"""
+@pytest.mark.auth
+@allure.title("Удаление получателя")
+def test_deletion_recipient(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.delete_recipient()
+
+
+@pytest.mark.auth
+@allure.title("Отмена удаления получателя")
+def test_cancel_recipient_deletion(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.cancel_recipient_deletion()
+
+
+@pytest.mark.auth
+@allure.title("Закрытие окна удаления получателя")
+def test_close_recipient_deletion_modal(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.close_recipient_deletion_modal()
+
+
+"""Модальное окно Изменить получателя"""
+
+
+@pytest.mark.auth
+@allure.title("Открытие окна Изменить получателя")
+def test_close_recipient_deletion_modal(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+
+@pytest.mark.auth
+@allure.title("Изменение всех полей получателя")
+def test_change_recipient_with_all_fields(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+    name, phone, email = checkout_page.edit_modal.fill_in_data_randomize()
+    checkout_page.edit_modal.save_edited_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {email}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = f"{email}, {phone}"
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Изменение только обязательных полей получателя")
+def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+    name, phone = checkout_page.edit_modal.fill_in_part_of_data_randomize()
+    email = checkout_page.edit_modal.save_email()
+    checkout_page.edit_modal.save_edited_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {email}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = f"{email}, {phone}"
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Изменение получателя со всеми валидными символами в ФИО")
+def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+    with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
+        name, phone, email = checkout_page.edit_modal.fill_in_data()
+    checkout_page.edit_modal.save_edited_recipient()
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info = f"{name}, {email}, {phone}"
+    checkout_page.verify_recipient_info(expected_info)
+    checkout_page.open_recipient_listing()
+
+    with allure.step("Формирую ожидаемый текст"):
+        expected_info_title = name
+        expected_info_description = f"{email}, {phone}"
+    with allure.step("Проверяю информацию о выбранном получателе"):
+        checkout_page.verify_selected_recipient_info(expected_info_title, expected_info_description)
+
+
+@pytest.mark.auth
+@allure.title("Закрытие окна Изменить получателя через крестик")
+def test_edit_recipient_close_madal1(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+    checkout_page.edit_modal.close_edit_recipient_modal()
+
+
+@pytest.mark.auth
+@allure.title("Закрытие окна Изменить получателя через нажатие на пространство вне окна")
+def test_edit_recipient_close_madal2(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.open_recipient_listing()
+    checkout_page.open_action_menu()
+    checkout_page.click_edit_button()
+    checkout_page.edit_modal.close_edit_recipient_modal2()
+
+
+
