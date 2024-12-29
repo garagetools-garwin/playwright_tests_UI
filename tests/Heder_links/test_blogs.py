@@ -96,9 +96,8 @@ from playwright.sync_api import expect
 # testit.links - links in the autotest card
 # testit.namespace - directory in the TMS system (default - directory's name of test)
 # testit.classname - subdirectory in the TMS system (default - file's name of test)
-def test_header_link(page_fixture):
-    url = "https://garwin.ru/"
-    page_fixture.goto(f'{url}', wait_until='domcontentloaded')
+def test_header_link(page_fixture, base_url):
+    page_fixture.goto(f'{base_url}', wait_until='domcontentloaded')
     with page_fixture.expect_popup() as page1_info:
         page_fixture.get_by_role("link", name="Статьи", exact=True).click()
     page1 = page1_info.value
