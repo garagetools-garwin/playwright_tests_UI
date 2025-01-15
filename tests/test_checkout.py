@@ -552,4 +552,72 @@ def test_edit_recipient_close_madal2(page_fixture, base_url):
     checkout_page.edit_modal.close_edit_recipient_modal2()
 
 
+"""Блок Получение"""
+
+@pytest.mark.auth
+@allure.title("Открытие листинга адресов пользователем с адресами")
+def test_adress_listing_activation(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    with allure.step("Провряю, что листинг адресов отображается на странице"):
+        expect(checkout_page.adress_listing.adress_listing_modal()).to_be_visible()
+
+""""""
+@pytest.mark.auth
+@allure.title("Открытие карт")
+def test_map_opening(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.adress_listing.click_add_adress_button()
+    with allure.step("Провряю, что карты отображается на странице"):
+        expect(checkout_page.adress_listing.map_modal()).to_be_visible()
+
+@pytest.mark.auth
+@allure.title("Создание ПВЗ")
+def test_pvz_creating(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.adress_listing.click_add_adress_button()
+
+    # Выбор ПВЗ с конкретными координатами
+    target_lat = "59.905663"
+    target_lon = "30.27575"
+    checkout_page.adress_listing.select_pickup_point(target_lat, target_lon)
+
+    # Выбор ПВЗ с конкретным ID
+    target_id = "ea46425d-ece1-4098-8596-ea200f01a7c9"
+    checkout_page.adress_listing.select_pickup_point_by_id(target_id)
+
+@pytest.mark.auth
+@allure.title("Редактирование ПВЗ")
+def test_pvz_editing(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    # Нажать редактировать
+    # Убедится, что в окне с каратми активна кнопка ПВЗ
+    # Выьрать другой ПВЗ
+    # Перейти в листинг
+    # Проверить, что есть новый ПВЗ
+    # Проверить, что старого ПВЗ нет
+
 
