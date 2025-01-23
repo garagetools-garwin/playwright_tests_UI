@@ -333,6 +333,8 @@ class DeleteConformationModal:
 
     def __init__(self, page):
         self.recipient_listing = RecipientListing(page)
+        self.adress_listing = AdressListing(page)
+        self.obtaining_block = ObtainingBlock(page)
         self.page = page
 
     @allure.step("Подтвреждаю удаление")
@@ -374,6 +376,36 @@ class DeleteConformationModal:
 
         for description in recipient_descriptions:
             assert description != actual_description, f"Найдено совпадение с эталонным значением: {description}"
+
+    @allure.step("Удаляю адрес")
+    def delete_adress(self):
+        self.adress_listing.click_delete_button()
+        with allure.step("Нахожу блок с активной радиокнопкой"):
+            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
+            parent_block = self.page.locator(self.adress_listing.CHECKED_ADRESS_BLOCK)
+            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
+
+        with allure.step("Считаю количество записей в листинге(до удаления)"):
+            adress_titles = self.page.locator(self.adress_listing.INFO_TITLE).all_text_contents()
+
+            number_of_records_before_deleting = 0
+            for title in adress_titles:
+                number_of_records_before_deleting += 1
+            print(number_of_records_before_deleting)
+
+            self.delete_confirm()
+            self.obtaining_block.adress_listing_activation()
+
+        with allure.step("Считаю количество записей в листинге(после удаления)"):
+            adress_titles = self.page.locator(self.adress_listing.INFO_TITLE).all_text_contents()
+
+            number_of_records_after_deleting = 0
+            for title in adress_titles:
+                number_of_records_after_deleting += 1
+            print(number_of_records_after_deleting)
+
+        with allure.step("Проверяю, что запись была удалена"):
+            assert number_of_records_before_deleting == number_of_records_after_deleting + 1
 
     @allure.step("Отменяю удаление")
     def cancel_recipient_deletion(self):
@@ -442,6 +474,7 @@ class ObtainingBlock:
 
     CHANGE_BUTTON = "#shipping .SectionInfo__Button"
     ADRESS_INFO = "#shipping .CheckoutSection__Body span.SectionInfo__Title"
+    TYPE_PICKUP_POINT = "#shipping .CheckoutSection__Body span.SectionInfo__Info"
     PICKUP_POINT_ADRESS = "#shipping .SectionInfo__Title"
     PICKUP_POINT_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Пункт выдачи')"
     COURIER_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Курьером')"
@@ -510,7 +543,6 @@ class AdressListing:
         :param latitude: Широта пункта.
         :param longitude: Долгота пункта.
         """
-        self.page.locator(self.map.MAP_MODAL).wait_for()
 
         # Формируем и отправляем кастомное событие через evaluate
         self.page.evaluate(
@@ -566,7 +598,10 @@ class AdressListing:
             self.page.locator(self.ADRESS_SELECTION_BUTTON).click()
 
         with allure.step("Извлекаю текст из блока Получение"):
-            actual_info_check_out = self.page.locator(self.obtaining_block.ADRESS_INFO).inner_text()
+            actual_type_check_out = self.page.locator(self.obtaining_block.TYPE_PICKUP_POINT).inner_text()
+            actual_type_check_out = actual_type_check_out.replace(':', '')
+            actual_description_check_out = self.page.locator(self.obtaining_block.ADRESS_INFO).inner_text()
+            actual_info_check_out = f"{actual_type_check_out}, {actual_description_check_out}"
 
         with allure.step("Сравниваю информацию в блоке Получние с адресом выбранным в листинге "):
             assert actual_info_check_out.lower() == actual_info_listing.lower(), f"Expected '{actual_info_listing}', but got '{actual_info_check_out}'"
@@ -583,8 +618,6 @@ class AdressListing:
     @allure.step("Нажимаю на Редактировать")
     def click_edit_button(self):
         self.page.locator(self.EDIT_BUTTON).click()
-        with allure.step("Проверяю, что окно Изменить получателя отображается на странице"):
-            expect(self.page.locator(self.CHANGE_ADRESS_MODAL)).to_be_visible()
 
     @allure.step("Нажимаю на Удалить")
     def click_delete_button(self):
@@ -593,7 +626,7 @@ class AdressListing:
             expect(self.page.locator(self.DELETE_CONFIRMATION_MODAL)).to_be_visible()
 
 
-    #TODO LJLTKFNM
+    #TODO доделать
     @allure.step(
         "Проверяю, что новый адрес появился в листинге, его информация соответствует заданной, он активен")
     def verify_selected_adress_info(self, expected_description): #Добавить expected_title если будем проверять тип точки
@@ -634,6 +667,9 @@ class Map:
     COURIER_ADRESS_BUTTON = "button.CheckoutChooseMethod__Button span:has-text('Курьером')"
     PICK_UP_HERE_BUTTON = "button.ShippingForm__Choose"
     PICKUP_POINT_ADRESS = ".ShippingStoreCard__Description"
+    PICKUP_POINT_CARD_INFO = "div.ShippingStoreCard"
+    COURIER_BUTTON = "button span:has-text('Курьером')"
+    ADRESS_TEXTAREA = "textarea[placeholder='Адрес']"
 
     def __init__(self, page):
         self.page = page
@@ -663,9 +699,18 @@ class Map:
     def click_pick_up_here_button(self):
         return self.page.locator(self.PICK_UP_HERE_BUTTON).click()
 
+    @allure.step("Выбираю доставку курьером")
+    def click_courier_button(self):
+        return self.page.locator(self.COURIER_BUTTON).click()
+
     # Локатор адреса ПВЗ в модалке Карты
     def pickup_point_adress(self):
         return self.page.locator(self.PICKUP_POINT_ADRESS)
+
+    @allure.step("Открываю Карту")
+    def pickup_point_card_info(self):
+        return self.page.locator(self.PICKUP_POINT_CARD_INFO)
+
 
 
 """Блок Доставка"""
