@@ -630,6 +630,10 @@ def test_pickup_point_adding(page_fixture, base_url):
 
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
+    with allure.step("Удаляю запись"):
+        checkout_page.adress_listing.open_action_menu()
+        checkout_page.delete_conformation_modal.delete_adress()
+
 
 @pytest.mark.auth
 @allure.title("Редактирование ПВЗ")
@@ -652,7 +656,7 @@ def test_pickup_point_editing(page_fixture, base_url):
         checkout_page.map.click_pick_up_here_button()
 
     with allure.step("Редактирую адрес"):
-        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.obtaining_block.pickup_point_adress_listing_activation()
         checkout_page.adress_listing.open_action_menu()
         checkout_page.adress_listing.click_edit_button()
 
@@ -683,111 +687,100 @@ def test_pickup_point_editing(page_fixture, base_url):
 
         checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
-# TODO: долделать два теста ниже
-# @pytest.mark.auth
-# @allure.title("Добавление адреса курьера")
-# def test_courier_adress_adding(page_fixture, base_url):
-#     checkout_page = CheckoutPage(page_fixture)
-#     cart_page = CartPage(page_fixture)
-#     cart_page.open(base_url)
-#     cart_page.clear_cart()
-#     cart_page.add_to_cart(base_url)
-#     checkout_page.open(base_url)
-#     checkout_page.obtaining_block.adress_listing_activation()
-#     checkout_page.adress_listing.click_add_adress_button()
-#     checkout_page.map.click_courier_button()
-#
-#     with allure.step("Проверяю, что появилось поле Адрес"): #ADRESS_TEXTAREA
-#         expect(checkout_page.map.pickup_point_button_status()).to_have_class(
-#             'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
-#
-#     # Выбор ПВЗ с кастомным событием
-#     pickup_point_id = "75048c93-dfb2-422d-b17b-ff95ad2193c8"
-#     target_lat = 59.88164
-#     target_lon = 30.273926
-#     checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
-#
-#     with allure.step("Проверяю, что точка выбрана (отображается кнопка Забиру здесь)"):
-#         expect(checkout_page.map.pick_up_here_button()).to_be_visible()
-#
-#     with allure.step("Запоминаю адрес ПВЗ в модальном окне Карты"):
-#         map_modal_adress = checkout_page.map.pickup_point_adress().inner_text()
-#
-#     checkout_page.map.click_pick_up_here_button()
-#
-#     with allure.step("Запоминаю адрес ПВЗ в блоке Получение"):
-#         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
-#
-#     with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
-#         assert map_modal_adress == obtaining_block_adress
-#
-#     checkout_page.obtaining_block.adress_listing_activation()
-#
-#     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
-    #
-    # @pytest.mark.auth
-    # @allure.title("Редактирование ПВЗ")
-    # def test_courier_adress_editing(page_fixture, base_url):
-    #     checkout_page = CheckoutPage(page_fixture)
-    #     cart_page = CartPage(page_fixture)
-    #     cart_page.open(base_url)
-    #     cart_page.clear_cart()
-    #     cart_page.add_to_cart(base_url)
-    #     checkout_page.open(base_url)
-    #
-    #     with allure.step("Создаю новый адрес"):
-    #         checkout_page.obtaining_block.adress_listing_activation()
-    #         checkout_page.adress_listing.click_add_adress_button()
-    #         # Выбор ПВЗ с кастомным событием
-    #         pickup_point_id = "75048c93-dfb2-422d-b17b-ff95ad2193c8"
-    #         target_lat = 59.88164
-    #         target_lon = 30.273926
-    #         checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
-    #         checkout_page.map.click_pick_up_here_button()
-    #
-    #     with allure.step("Редактирую адрес"):
-    #         checkout_page.obtaining_block.adress_listing_activation()
-    #         checkout_page.adress_listing.open_action_menu()
-    #         # TODO: начинается проблема с тем, что нужно отредактировать и адрес курьера
-    #         checkout_page.adress_listing.click_edit_button()
-    #
-    #         with allure.step("Проверяю, что на странице отображается карточка ПВЗ"):
-    #             expect(checkout_page.map.pickup_point_card_info()).to_be_visible()
-    #
-    #         # Выбор ПВЗ с кастомным событием
-    #         pickup_point_id = "62e10ad2-164c-4e9e-9e73-f4f096cdddb1"
-    #         target_lat = 59.880017
-    #         target_lon = 30.395683
-    #         checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
-    #
-    #         with allure.step("Запоминаю адрес ПВЗ в модальном окне Карты"):
-    #             map_modal_adress = checkout_page.map.pickup_point_adress().inner_text()
-    #
-    #         with allure.step("Проверяю, что адрес соответствует ожидаемому"):
-    #             assert map_modal_adress == "г Санкт-Петербург, ул Софийская, д 14 к 2б"
-    #
-    #         checkout_page.map.click_pick_up_here_button()
-    #
-    #         with allure.step("Запоминаю адрес ПВЗ в блоке Получение"):
-    #             obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
-    #
-    #         with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
-    #             assert map_modal_adress == obtaining_block_adress
-    #
-    #         checkout_page.obtaining_block.adress_listing_activation()
-    #
-    #         checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
+        with allure.step("Удаляю запись"):
+            checkout_page.adress_listing.open_action_menu()
+            checkout_page.delete_conformation_modal.delete_adress()
 
+#TODO: долделать два теста ниже
+@pytest.mark.auth
+@allure.title("Добавление адреса курьера")
+def test_courier_adress_adding(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.adress_listing.click_add_adress_button()
+    checkout_page.map.click_courier_button()
 
+    with allure.step("Проверяю, что появилось поле Адрес"):
+        expect(checkout_page.map.adress_textaria_status()).to_be_visible()
 
+    with allure.step("Ввожу адрес в поле Адрес"):
+        checkout_page.map.type_in_textaria("г Санкт-Петербург, ул Ленина, д 31")
 
-    # Нажать редактировать
-    # Убедится, что в окне с каратми активна кнопка ПВЗ
-    # Выьрать другой ПВЗ
-    # Перейти в листинг
-    # Проверить, что есть новый ПВЗ
-    # Проверить, что старого ПВЗ нет
+    with allure.step("Запоминаю адрес ПВЗ в модальном окне Карты"):
+        map_modal_adress = checkout_page.map.text_from_first_adress_in_list().inner_text()
 
+    checkout_page.map.click_first_adress_in_list()
+    checkout_page.map.click_pick_up_here_button()
+
+    with allure.step("Запоминаю адрес ПВЗ в блоке Получение"):
+        obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
+
+    with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
+        assert map_modal_adress == obtaining_block_adress
+
+    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
+
+    with allure.step("Удаляю запись"):
+        checkout_page.adress_listing.open_action_menu()
+        checkout_page.delete_conformation_modal.delete_adress()
+
+@pytest.mark.auth
+@allure.title("Редактирование ПВЗ")
+def test_courier_adress_editing(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+
+    with allure.step("Создаю новый адрес"):
+        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.adress_listing.click_add_adress_button()
+        checkout_page.map.click_courier_button()
+
+        with allure.step("Ввожу адрес в поле Адрес"):
+            checkout_page.map.type_in_textaria("Санкт-Петербург, Невский проспект, 64")
+
+        checkout_page.map.click_first_adress_in_list()
+        checkout_page.map.click_pick_up_here_button()
+
+        with allure.step("Запоминаю адрес ПВЗ в блоке Получение"):
+            obtaining_block_adress_first = checkout_page.obtaining_block.pickup_point_adress().inner_text()
+
+    with allure.step("Редактирую адрес"):
+        checkout_page.obtaining_block.courier_adress_listing_activation()
+        checkout_page.adress_listing.open_action_menu()
+        checkout_page.adress_listing.click_edit_button()
+        checkout_page.map.type_in_textaria("г Санкт-Петербург, ул Ленина, д 31")
+
+        with allure.step("Запоминаю адрес ПВЗ в модальном окне Карты"):
+            map_modal_adress = checkout_page.map.text_from_first_adress_in_list().inner_text()
+
+        checkout_page.map.click_first_adress_in_list()
+        checkout_page.map.click_pick_up_here_button()
+
+    with allure.step("Запоминаю адрес ПВЗ в блоке Получение"):
+        obtaining_block_adress_second = checkout_page.obtaining_block.pickup_point_adress().inner_text()
+
+    with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
+        assert map_modal_adress == obtaining_block_adress_second
+
+    with allure.step("Проверяю, что новый адрес отличается от предыдушего"):
+        assert obtaining_block_adress_first != obtaining_block_adress_second
+
+    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
+
+    with allure.step("Удаляю запись"):
+        checkout_page.adress_listing.open_action_menu()
+        checkout_page.delete_conformation_modal.delete_adress()
 
 @pytest.mark.auth
 @allure.title("Активация окна Удалить адрес")
@@ -855,4 +848,72 @@ def test_adress_listing_activation_from_courier_button(page_fixture, base_url):
     checkout_page.open(base_url)
     checkout_page.obtaining_block.courier_adress_listing_activation()
     checkout_page.adress_listing.check_all_courier_adress()
+
+
+@pytest.mark.auth
+@allure.title("Переход в карты через листинг адресов курьера")
+def test_courier_button_preselected(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.courier_adress_listing_activation()
+    checkout_page.adress_listing.check_all_courier_adress()
+    checkout_page.adress_listing.click_add_adress_button()
+
+    with allure.step("Проверяю, что кнопка Курьером предвыбрана"):
+        expect(checkout_page.map.courier_button_status()).to_have_class('CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+
+@pytest.mark.auth
+@allure.title("Откработка кнопки Назад")
+def test_back_button(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.pickup_point_adress_listing_activation()
+
+    with allure.step("Перехожу на страницу ПВЗ"):
+        # Выбор ПВЗ с кастомным событием
+        pickup_point_id = "75048c93-dfb2-422d-b17b-ff95ad2193c8"
+        target_lat = 59.88164
+        target_lon = 30.273926
+        checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
+
+    with allure.step("Возвращаюсь со страницы ПВЗ"):
+        checkout_page.map.click_back_button()
+
+    with allure.step("Проверяю, что отображается панель управления модального окна Карты"):
+        expect(checkout_page.map.control_panel()).to_be_visible()
+
+    with allure.step("Возвращаюсь с модального окна карты в чек-аут"):
+        checkout_page.map.click_back_button()
+
+    with allure.step("Проверяю, что модальное окна Карты - закрыто"):
+        expect(checkout_page.map.map_modal()).not_to_be_visible()
+
+    checkout_page.obtaining_block.courier_adress_listing_activation()
+    checkout_page.adress_listing.click_add_adress_button()
+
+    with allure.step("Ввожу адрес в поле Адрес"):
+        checkout_page.map.type_in_textaria("г Санкт-Петербург, ул Ленина, д 31")
+
+    checkout_page.map.click_first_adress_in_list()
+
+    with allure.step("Возвращаюсь с модального окна карты в чек-аут"):
+        checkout_page.map.click_back_button()
+
+    with allure.step("Проверяю, что модальное окна Карты - закрыто"):
+        expect(checkout_page.map.map_modal()).not_to_be_visible()
+
+
+
+#TODO: сделать удаление получателя после создания
+#TODO: Перед изменение получателя и адреса всегда создавать нового получателя и удалять его
+#TODO: После изменения создания и удаление получателя адреса проверять их title и description
+#TODO: рассмотреть вариант при изменении адреса менять его на GDP и наоборот
 

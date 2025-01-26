@@ -481,6 +481,7 @@ class ObtainingBlock:
 
     def __init__(self, page):
         self.page = page
+        self.adress_listing = AdressListing(page)
 
     @allure.step("Открываю листинг адресов")
     def adress_listing_activation(self):
@@ -498,7 +499,10 @@ class ObtainingBlock:
     def courier_adress_listing_activation(self):
         self.page.locator(self.COURIER_BUTTON).click()
 
-
+    # @allure.step("Удвляб адрес")
+    # def address_deletion(self):
+    #     self.adress_listing.open_action_menu()
+    #     self.delete_conformation_modal.delete_adress()
 
 
 """Листинг адресов"""
@@ -668,8 +672,12 @@ class Map:
     PICK_UP_HERE_BUTTON = "button.ShippingForm__Choose"
     PICKUP_POINT_ADRESS = ".ShippingStoreCard__Description"
     PICKUP_POINT_CARD_INFO = "div.ShippingStoreCard"
-    COURIER_BUTTON = "button span:has-text('Курьером')"
+    COURIER_BUTTON = ".CheckoutChooseMethod button span:has-text('Курьером')"
     ADRESS_TEXTAREA = "textarea[placeholder='Адрес']"
+    ADRESS_IN_ADRESS_LIST = "button.CheckoutAddressPoint__Overlay"
+    TEXT_FROM_ADRESS_IN_ADRESS_LIST = "div.CheckoutAddressPoint p"
+    BACK_BUTTON = "button.CheckoutButtonPrev"
+    CONTROL_PANEL = "div.CheckoutChooseMethod"
 
     def __init__(self, page):
         self.page = page
@@ -686,6 +694,15 @@ class Map:
     # Та часть элемента где хранится статус "Выбран"
     def pickup_point_button_status(self):
         return self.page.locator(self.PICKUP_POINT_BUTTON).locator('xpath=ancestor::button')
+
+    def courier_button_status(self):
+        return self.page.locator(self.COURIER_ADRESS_BUTTON).locator('xpath=ancestor::button')
+
+    def adress_textaria_status(self):
+        return self.page.locator(self.ADRESS_TEXTAREA)
+
+    def type_in_textaria(self, text):
+        return self.page.locator(self.ADRESS_TEXTAREA).fill(text)
 
     @allure.step("Открываю Карту")
     def pickup_point_button(self):
@@ -710,6 +727,22 @@ class Map:
     @allure.step("Открываю Карту")
     def pickup_point_card_info(self):
         return self.page.locator(self.PICKUP_POINT_CARD_INFO)
+
+    @allure.step("Выбираю первый адрес в списке")
+    def click_first_adress_in_list(self):
+        return self.page.locator(self.ADRESS_IN_ADRESS_LIST).first.click()
+
+    @allure.step("Выбираю первый адрес в списке")
+    def text_from_first_adress_in_list(self):
+        return self.page.locator(self.TEXT_FROM_ADRESS_IN_ADRESS_LIST).first
+
+    @allure.step("Надимаю кнопку Назад")
+    def click_back_button(self):
+        return self.page.locator(self.BACK_BUTTON).click()
+
+    # Панель контроля (ПУНКТ ВЫДАЧИ, КУРЬЕРОМ)
+    def control_panel(self):
+        return self.page.locator(self.CONTROL_PANEL)
 
 
 
