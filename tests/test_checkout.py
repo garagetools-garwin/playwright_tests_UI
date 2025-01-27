@@ -1,4 +1,6 @@
 """В этом файле хранятся тесты для чекаут"""
+import time
+
 import pytest
 import allure
 
@@ -648,6 +650,7 @@ def test_pickup_point_editing(page_fixture, base_url):
     with allure.step("Создаю новый адрес"):
         checkout_page.obtaining_block.adress_listing_activation()
         checkout_page.adress_listing.click_add_adress_button()
+
         # Выбор ПВЗ с кастомным событием
         pickup_point_id = "75048c93-dfb2-422d-b17b-ff95ad2193c8"
         target_lat = 59.88164
@@ -669,11 +672,11 @@ def test_pickup_point_editing(page_fixture, base_url):
         target_lon = 30.395683
         checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
 
+        with allure.step("Проверяю, что адрес соответствует ожидаемому"):
+            expect(checkout_page.map.pickup_point_adress()).to_have_text("г Санкт-Петербург, ул Софийская, д 14 к 2б")
+
         with allure.step("Запоминаю адрес ПВЗ в модальном окне Карты"):
             map_modal_adress = checkout_page.map.pickup_point_adress().inner_text()
-
-        with allure.step("Проверяю, что адрес соответствует ожидаемому"):
-            assert map_modal_adress == "г Санкт-Петербург, ул Софийская, д 14 к 2б"
 
         checkout_page.map.click_pick_up_here_button()
 
@@ -731,7 +734,7 @@ def test_courier_adress_adding(page_fixture, base_url):
         checkout_page.delete_conformation_modal.delete_adress()
 
 @pytest.mark.auth
-@allure.title("Редактирование ПВЗ")
+@allure.title("Редактирование адреса курьера")
 def test_courier_adress_editing(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
