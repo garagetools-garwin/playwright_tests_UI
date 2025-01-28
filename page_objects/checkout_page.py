@@ -499,6 +499,10 @@ class ObtainingBlock:
     def courier_adress_listing_activation(self):
         self.page.locator(self.COURIER_BUTTON).click()
 
+    @allure.step("Запоминаю адрес в блоке Получение")
+    def check_out_adress(self):
+        return self.page.locator(self.ADRESS_INFO).inner_text()
+
     # @allure.step("Удвляб адрес")
     # def address_deletion(self):
     #     self.adress_listing.open_action_menu()
@@ -612,7 +616,15 @@ class AdressListing:
 
     @allure.step("Открываю экшн меню")
     def open_action_menu(self):
-        self.page.locator(self.ACTION_MENU).nth(0).click()
+        with allure.step("Нахожу блок с активной радиокнопкой"):
+            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
+            parent_block = self.page.locator(self.CHECKED_ADRESS_BLOCK)
+            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
+
+        with allure.step("Нажимаю на экшн меню"):
+            parent_block.locator(self.ACTION_MENU).click()
+
+        # self.page.locator(self.ACTION_MENU).nth(0).click()
         with allure.step("Проверяю, что экшн меню открыто"):
             expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
         with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
@@ -660,6 +672,20 @@ class AdressListing:
         assert all(re.search('Доставка по адресу', title) for title in adress_titles), \
             f"{'Доставка по адресу'} не найдена в списке: {adress_titles}"
 
+    @allure.step("Запоминаю выбранный адрес в листинге адресов")
+    def get_selected_adress_info(self): #Добавить expected_title если будем проверять тип точки
+        with allure.step("Нахожу блок с активной радиокнопкой"):
+            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
+            parent_block = self.page.locator(self.CHECKED_ADRESS_BLOCK)
+            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
+
+        with allure.step("Ищу информацию в выбранном блоке"):
+            # Извлекаем текст заголовка и описания
+            # actual_title = parent_block.locator(self.INFO_TITLE).inner_text()
+            return parent_block.locator(self.INFO_DESCRIPTION).inner_text()
+
+
+
 
 """Модальное окно Карты"""
 
@@ -674,6 +700,11 @@ class Map:
     PICKUP_POINT_CARD_INFO = "div.ShippingStoreCard"
     COURIER_BUTTON = ".CheckoutChooseMethod button span:has-text('Курьером')"
     ADRESS_TEXTAREA = "textarea[placeholder='Адрес']"
+    APARTMENT_INPUT = "input[placeholder='Квартира']"
+    ENTRYWAY_INPUT = "input[placeholder='Подъезд']"
+    FLOOR_INPUT = "input[placeholder='Этаж']"
+    INTERCOM_INPUT = "input[placeholder='Домофон']"
+    COMMENTARY_TEXTAREA = "textarea[placeholder='Комментарий']"
     ADRESS_IN_ADRESS_LIST = "button.CheckoutAddressPoint__Overlay"
     TEXT_FROM_ADRESS_IN_ADRESS_LIST = "div.CheckoutAddressPoint p"
     BACK_BUTTON = "button.CheckoutButtonPrev"
@@ -703,6 +734,23 @@ class Map:
 
     def type_in_textaria(self, text):
         return self.page.locator(self.ADRESS_TEXTAREA).fill(text)
+
+    @allure.step("Заполняю дополнительные поля")
+    def filling_in_additional_fields(self):
+        # Заполняем поля
+        aprtment = str(random.randint(1, 999))
+        entryway = str(random.randint(1, 20))
+        floor = str(random.randint(1, 20))
+        intercom = str(random.randint(100, 999))
+        commentary = "Прошу позвонить, за 10 мин до приезда"
+
+        self.page.locator(self.APARTMENT_INPUT).fill(aprtment)
+        self.page.locator(self.ENTRYWAY_INPUT).fill(entryway)
+        self.page.locator(self.FLOOR_INPUT).fill(floor)
+        self.page.locator(self.INTERCOM_INPUT).fill(intercom)
+        self.page.locator(self.COMMENTARY_TEXTAREA).fill(commentary)
+
+        return aprtment, entryway, floor, intercom, commentary
 
     @allure.step("Открываю Карту")
     def pickup_point_button(self):
@@ -743,6 +791,22 @@ class Map:
     # Панель контроля (ПУНКТ ВЫДАЧИ, КУРЬЕРОМ)
     def control_panel(self):
         return self.page.locator(self.CONTROL_PANEL)
+
+    @allure.step("Запоминаю данные с дополнительных полях")
+    def get_additional_fields_info(self):
+        aprtment_element = self.page.locator(self.APARTMENT_INPUT)
+        aprtment = aprtment_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
+        entryway_element = self.page.locator(self.ENTRYWAY_INPUT)
+        entryway = entryway_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
+        floor_element = self.page.locator(self.FLOOR_INPUT)
+        floor = floor_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
+        intercom_element = self.page.locator(self.INTERCOM_INPUT)
+        intercom = intercom_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
+        commentary_element = self.page.locator(self.COMMENTARY_TEXTAREA)
+        commentary = commentary_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
+
+        return aprtment, entryway, floor, intercom, commentary
+
 
 
 
