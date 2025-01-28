@@ -878,8 +878,7 @@ def test_back_button(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.pickup_point_adress_listing_activation()
-    checkout_page.adress_listing.click_add_adress_button()
+    checkout_page.obtaining_block.adress_listing_activation()
 
     with allure.step("Перехожу на страницу ПВЗ"):
         # Выбор ПВЗ с кастомным событием
