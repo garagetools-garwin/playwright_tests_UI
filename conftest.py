@@ -6,6 +6,7 @@ import os
 from dotenv import load_dotenv
 import configparser
 import pytest
+from page_objects.checkout_page import CheckoutPage
 
 
 # Фильтрация секций отчета
@@ -153,6 +154,29 @@ def authorized_context(browser):
 def base_url(request):
     url = request.config.getoption('--url')
     return url
+
+"""Фикстуры для тестов"""
+
+@pytest.fixture
+def delete_address_fixture(request, page_fixture, base_url):
+    """Фикстура для удаления записи после завершения теста."""
+    checkout_page = CheckoutPage (page_fixture)
+    address_created = False  # Локальный флаг в рамках фикстуры
+
+    def mark_as_created():
+        nonlocal address_created
+        address_created = True
+
+    def teardown():
+        if address_created:
+            with allure.step("Удаляю запись"):
+                checkout_page.open(base_url)
+                checkout_page.obtaining_block.adress_listing_activation()
+                checkout_page.adress_listing.open_action_menu()
+                checkout_page.delete_conformation_modal.delete_adress()
+
+    request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
+    return mark_as_created
 
 #
 #
