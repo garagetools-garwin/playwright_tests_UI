@@ -736,7 +736,7 @@ class Map:
     def text_from_first_adress_in_list(self):
         return self.page.locator(self.TEXT_FROM_ADRESS_IN_ADRESS_LIST).first
 
-    @allure.step("Надимаю кнопку Назад")
+    @allure.step("Нажимаю кнопку Назад")
     def click_back_button(self):
         return self.page.locator(self.BACK_BUTTON).click()
 
