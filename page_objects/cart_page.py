@@ -395,7 +395,7 @@ class CartPage:
     def click_head_delete_button(self):
         self.page.locator(self.HEAD_DELETE_BUTTON).click()
 
-    @allure.step("Нажимаю на кнопку 'Удалить'")
+    @allure.step("Очищаю корзину")
     def clear_cart(self):
         if self.page.locator(self.HEAD_DELETE_BUTTON).is_visible(timeout="5000"):
             self.click_head_delete_button()
