@@ -694,7 +694,7 @@ def test_pickup_point_editing(page_fixture, base_url):
             checkout_page.adress_listing.open_action_menu()
             checkout_page.delete_conformation_modal.delete_adress()
 
-#TODO: долделать два теста ниже
+
 @pytest.mark.auth
 @allure.title("Добавление адреса курьера")
 def test_courier_adress_adding(page_fixture, base_url):
@@ -879,6 +879,7 @@ def test_back_button(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.obtaining_block.pickup_point_adress_listing_activation()
+    checkout_page.adress_listing.click_add_adress_button()
 
     with allure.step("Перехожу на страницу ПВЗ"):
         # Выбор ПВЗ с кастомным событием

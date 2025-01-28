@@ -273,6 +273,7 @@ def test_cart_info_change_block_close(page_fixture, base_url):
 # @pytest.mark.skip("Требуется переделать способ активации блока изменения цены")
 def test_delete_product_by_cross_on_changed_list(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
+    cart_page.clear_cart()
     cart_page.info_change_modal_activation(page_fixture, base_url)
     with allure.step("Запоминаю название товара в корзине"):
         product_name_cart_list = cart_page.save_name_product_in_cart_list()
