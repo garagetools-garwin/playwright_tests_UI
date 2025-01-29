@@ -389,6 +389,7 @@ def test_activate_delete_confirmation_modal_recipient(page_fixture, base_url):
 def test_deletion_recipient(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
+    checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
     cart_page.open(base_url)
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
@@ -417,6 +418,8 @@ def test_cancel_recipient_deletion(page_fixture, base_url):
 def test_close_recipient_deletion_modal(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
+    checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
+    #TODO: Здесь должен быть фикстура удаления получателя
     cart_page.open(base_url)
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
@@ -633,11 +636,6 @@ def test_pickup_point_adding(page_fixture, base_url, delete_address_fixture):
 
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
-    with allure.step("Удаляю запись"):
-        checkout_page.adress_listing.open_action_menu()
-        checkout_page.delete_conformation_modal.delete_adress()
-
-
 @pytest.mark.auth
 @allure.title("Редактирование ПВЗ")
 def test_pickup_point_editing(page_fixture, base_url, delete_address_fixture):
@@ -692,9 +690,6 @@ def test_pickup_point_editing(page_fixture, base_url, delete_address_fixture):
 
         checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
-        with allure.step("Удаляю запись"):
-            checkout_page.adress_listing.open_action_menu()
-            checkout_page.delete_conformation_modal.delete_adress()
 
 
 @pytest.mark.auth
@@ -732,9 +727,6 @@ def test_courier_adress_adding(page_fixture, base_url, delete_address_fixture):
     checkout_page.obtaining_block.adress_listing_activation()
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
-    with allure.step("Удаляю запись"):
-        checkout_page.adress_listing.open_action_menu()
-        checkout_page.delete_conformation_modal.delete_adress()
 
 @pytest.mark.auth
 @allure.title("Редактирование адреса курьера")
@@ -950,7 +942,7 @@ def test_courier_button_preselected(page_fixture, base_url):
         expect(checkout_page.map.courier_button_status()).to_have_class('CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
 
 @pytest.mark.auth
-@allure.title("Откработка кнопки Назад")
+@allure.title("Отработка кнопки Назад")
 def test_back_button(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
@@ -959,7 +951,11 @@ def test_back_button(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.obtaining_block.adress_listing_activation()
-    checkout_page.adress_listing.check_all_pickup_points()
+    checkout_page.adress_listing.click_add_adress_button()
+
+    with allure.step("Проверяю, что модальное окна Карты - открыто"):
+        expect(checkout_page.map.map_modal()).to_be_visible()
+
 
     with allure.step("Перехожу на страницу ПВЗ"):
         # Выбор ПВЗ с кастомным событием

@@ -239,6 +239,26 @@ class AddRecipientModal:
             assert actual_title.lower() == expected_title.lower(), f"Ожидалось: {expected_title}, Получено: {actual_title}"
             assert actual_description == expected_description, f"Ожидалось: {expected_description}, Получено: {actual_description}"
 
+    @allure.step("Создаю нового получателя")
+    def create_recipient(self,base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        checkout_page.recipient_listing.open_recipient_listing()
+        checkout_page.add_recipient_modal.add_recipient()
+        with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
+            name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
+        checkout_page.add_recipient_modal.save_new_recipient()
+        with allure.step("Формирую ожидаемый текст"):
+            expected_info = f"{name}, {email}, {phone}"
+        checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
+        checkout_page.recipient_listing.open_recipient_listing()
+
+        with allure.step("Формирую ожидаемый текст"):
+            expected_info_title = name
+            expected_info_description = f"{email}, {phone}"
+        with allure.step("Проверяю информацию о выбранном получателе"):
+            checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title,
+                                                                             expected_info_description)
 
 """Модалка Изменить получателя"""
 
@@ -617,12 +637,16 @@ class AdressListing:
     @allure.step("Открываю экшн меню")
     def open_action_menu(self):
         with allure.step("Нахожу блок с активной радиокнопкой"):
-            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
             parent_block = self.page.locator(self.CHECKED_ADRESS_BLOCK)
-            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
 
-        with allure.step("Нажимаю на экшн меню"):
-            parent_block.locator(self.ACTION_MENU).click()
+            if parent_block.count() > 0:  # Проверяем, есть ли активный блок
+                with allure.step("Нажимаю на экшн меню в активном блоке"):
+                    parent_block.locator(self.ACTION_MENU).click()
+            else:
+                with allure.step("Блок с активной радиокнопкой не найден, выбираю первый невыбранный"):
+                    parent_block = self.page.locator(self.UNSELECTED_RADIO_BUTTON).first.locator("xpath=ancestor::li")
+                    with allure.step("Нажимаю на экшн меню в новом выбранном блоке"):
+                        parent_block.locator(self.ACTION_MENU).click()
 
         # self.page.locator(self.ACTION_MENU).nth(0).click()
         with allure.step("Проверяю, что экшн меню открыто"):

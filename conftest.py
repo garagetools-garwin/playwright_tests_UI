@@ -150,12 +150,15 @@ def authorized_context(browser):
         "storage_state": "auth_state.json"
     }
 
+
 @pytest.fixture(scope="session")
 def base_url(request):
     url = request.config.getoption('--url')
     return url
 
+
 """Фикстуры для тестов"""
+
 
 @pytest.fixture
 def delete_address_fixture(request, page_fixture, base_url):
@@ -177,6 +180,69 @@ def delete_address_fixture(request, page_fixture, base_url):
 
     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
     return mark_as_created
+
+# Версия фикстуры на удаление с возвратом артефактов
+# @pytest.fixture
+# def delete_address_fixture(request, page_fixture, base_url):
+#     """Фикстура для удаления записи после завершения теста."""
+#     checkout_page = CheckoutPage(page_fixture)
+#     address_created = False  # Флаг успешного создания адреса
+#
+#     # Получение текущей даты и времени для артефактов
+#     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+#
+#     # Формирование пути для трассировки
+#     trace_path = os.path.join(
+#         os.getcwd(),
+#         f'traces/{request.node.name}_{current_time}.zip'
+#     )
+#     os.makedirs(os.path.dirname(trace_path), exist_ok=True)
+#
+#     # Запускаем трассировку заранее, чтобы зафиксировать возможное падение
+#     page_fixture.context.tracing.start(screenshots=True, snapshots=True)
+#
+#     def mark_as_created():
+#         nonlocal address_created
+#         address_created = True
+#
+#     def teardown():
+#         """Удаление записи и сохранение артефактов при сбое."""
+#         try:
+#             if address_created:
+#                 with allure.step("Удаляю запись"):
+#                     checkout_page.open(base_url)
+#                     checkout_page.obtaining_block.adress_listing_activation()
+#                     checkout_page.adress_listing.open_action_menu()
+#                     checkout_page.delete_conformation_modal.delete_adress()
+#         finally:
+#             # Останавливаем трассировку и сохраняем её в любом случае
+#             page_fixture.context.tracing.stop(path=trace_path)
+#
+#             # Сохраняем скриншот, даже если тест упал
+#             allure.attach(
+#                 name="failure_screenshot",
+#                 body=page_fixture.screenshot(full_page=True),
+#                 attachment_type=allure.attachment_type.PNG
+#             )
+#
+#             # Сохраняем HTML-код страницы
+#             allure.attach(
+#                 name="page_source",
+#                 body=page_fixture.content(),
+#                 attachment_type=allure.attachment_type.HTML
+#             )
+#
+#             # Добавляем трассировку в отчёт
+#             allure.attach.file(
+#                 trace_path,
+#                 name="trace",
+#                 attachment_type="application/zip",
+#                 extension=".zip"
+#             )
+#
+#     request.addfinalizer(teardown)  # Гарантированное выполнение teardown
+#     return mark_as_created
+# Конец фикстуры по удалению
 
 #
 #
