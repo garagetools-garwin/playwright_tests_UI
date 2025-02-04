@@ -41,12 +41,18 @@ class CheckoutPage:
 
 class BuyerAndRecipientBlock:
 
+    ADD_FIRST_RECIPIENT_BUTTON = "#contacts .SectionInfo__ButtonAdd"
     RECIPIENT_CHANGE_BUTTON = "#contacts .SectionInfo__Button"
     CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
     RECIPIENT_INFO = "#contacts .CheckoutSection__Body span.SectionInfo__Title"
 
     def __init__(self, page):
         self.page = page
+
+    @allure.step("Открываю окно Нового получателя")
+    def click_add_first_recipient_button(self):
+        self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).click()
+
 
 
 """Листинг получателей"""
@@ -149,6 +155,10 @@ class AddRecipientModal:
         self.recipient_listing = RecipientListing
         self.add_recipient_modal = AddRecipientModal
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
+
+    @allure.step("Закрываю модальное окно нового получателя")
+    def add_recipient_modal_(self):
+        return self.page.locator(self.RECIPIENT_MODAL)
 
     @allure.step("Закрываю модальное окно нового получателя")
     def close_new_recipient_modal(self):
@@ -370,7 +380,7 @@ class DeleteConformationModal:
             expect(self.page.locator(self.DELETE_CONFIRMATION_MODAL)).not_to_be_visible()
 
     @allure.step("Удаляю получателя")
-    def delete_recipient(self):
+    def delete_recipient_true(self):
         self.recipient_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -396,6 +406,36 @@ class DeleteConformationModal:
 
         for description in recipient_descriptions:
             assert description != actual_description, f"Найдено совпадение с эталонным значением: {description}"
+
+    @allure.step("Удаляю получателя")
+    def delete_recipient(self):
+        self.recipient_listing.click_delete_button()
+        with allure.step("Нахожу блок с активной радиокнопкой"):
+            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
+            parent_block = self.page.locator(self.recipient_listing.CHECKED_RECIPIENT_BLOCK)
+            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
+
+        with allure.step("Считаю количество записей в листинге(до удаления)"):
+            recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
+
+            number_of_records_before_deleting = 0
+            for title in recipient_titles:
+                number_of_records_before_deleting += 1
+            print(number_of_records_before_deleting)
+
+            self.delete_confirm()
+            self.recipient_listing.open_recipient_listing()
+
+        with allure.step("Считаю количество записей в листинге(после удаления)"):
+            recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
+
+            number_of_records_after_deleting = 0
+            for title in recipient_titles:
+                number_of_records_after_deleting += 1
+            print(number_of_records_after_deleting)
+
+        with allure.step("Проверяю, что запись была удалена"):
+            assert number_of_records_before_deleting == number_of_records_after_deleting + 1
 
     @allure.step("Удаляю адрес")
     def delete_adress(self):
@@ -492,6 +532,7 @@ class DeleteConformationModal:
 
 class ObtainingBlock:
 
+    ADD_FIRST_ADRESS_BUTTON = "#shipping .SectionInfo__ButtonAdd"
     CHANGE_BUTTON = "#shipping .SectionInfo__Button"
     ADRESS_INFO = "#shipping .CheckoutSection__Body span.SectionInfo__Title"
     TYPE_PICKUP_POINT = "#shipping .CheckoutSection__Body span.SectionInfo__Info"
@@ -522,6 +563,12 @@ class ObtainingBlock:
     @allure.step("Запоминаю адрес в блоке Получение")
     def check_out_adress(self):
         return self.page.locator(self.ADRESS_INFO).inner_text()
+
+    @allure.step("Запоминаю адрес в блоке Получение")
+    def click_first_adress_button(self):
+        return self.page.locator(self.ADD_FIRST_ADRESS_BUTTON).click()
+
+
 
     # @allure.step("Удвляб адрес")
     # def address_deletion(self):

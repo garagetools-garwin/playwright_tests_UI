@@ -53,6 +53,12 @@ class AutorizationModalElement:
         self.page.locator(".kit-input.Field__Input").nth(1).fill(f"{testmail_adress}")
         self.page.locator(".Button.size--big.color--primary").click()
 
+    @allure.step("Отправляю код авторизации")
+    def cart_autorization_send_code_testmail_app_empty(self):
+        testmail_adress = os.getenv("TESTMAIL_ADRESS_EMPTY")
+        self.page.locator(".kit-input.Field__Input").nth(1).fill(f"{testmail_adress}")
+        self.page.locator(".Button.size--big.color--primary").click()
+
     @allure.step("Завершаю авторизацию")
     def complete_autorization(self, code):
         self.page.locator(".kit-input.Field__Input").nth(1).fill(code)
@@ -69,9 +75,25 @@ class AutorizationModalElement:
         print(code)
         return code
 
+    @allure.step("Авторизуюсь через testmail.app")
+    def get_autorization_code_testmail_app_empty(self):
+        time.sleep(15)
+        testmail_json = os.getenv("TESTMAIL_JSON_EMPTY")
+        response = requests.get(url=f"{testmail_json}")
+        response_json = response.json()
+        email_text = response_json["emails"][0]["text"]
+        code = email_text.split(" ")[1]
+        print(code)
+        return code
+
     def autorization_testmail_app(self):
         self.cart_autorization_send_code_testmail_app()
         code = self.get_autorization_code_testmail_app()
+        self.complete_autorization(code)
+
+    def autorization_testmail_app_empty(self):
+        self.cart_autorization_send_code_testmail_app_empty()
+        code = self.get_autorization_code_testmail_app_empty()
         self.complete_autorization(code)
 
 

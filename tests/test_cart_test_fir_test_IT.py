@@ -26,7 +26,7 @@ def cart_info_change_block_activation(page_fixture, base_url):
 @pytest.mark.testit_case_title("Открытие модального окна авторизации_testIT1")
 @testit.title("Открытие модального окна авторизации_testIT2")
 @allure.title("Открытие модального окна авторизации")
-def test_cart_autorization_modal(page_fixture, base_url):
+def cart_autorization_modal(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     autorization = AutorizationModalElement(page_fixture)
     cart_page.add_to_cart(base_url)

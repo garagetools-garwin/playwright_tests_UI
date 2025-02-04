@@ -25,11 +25,18 @@ def pytest_runtest_makereport(item, call):
 @pytest.fixture(scope="function")
 def page_fixture(browser, request, base_url):
     # Получаем метку, чтобы определить, нужен ли storage_state
+    # "auth" используется для авторизации через основной тестовый аккаунт, подходит для большенства задач
     use_auth = request.node.get_closest_marker("auth")
+    # "auth_empty" используется для специального пустого аккаунта, в котором нет ниодного адреса или получателя
+    # / не создавать адреса или получателей в этом аккаунте!
+    use_auth_empty = request.node.get_closest_marker("auth_empty")
 
     if use_auth:
         # Создаём новый контекст с сохранённым состоянием авторизации, если метка присутствует
         context = browser.new_context(storage_state="auth_state.json")
+    elif use_auth_empty:
+        # Создаём новый контекст с сохранённым состоянием авторизации, если метка присутствует
+        context = browser.new_context(storage_state="auth_state_empty.json")
     else:
         # Стандартный контекст без авторизации
         context = browser.new_context()
@@ -172,11 +179,33 @@ def delete_address_fixture(request, page_fixture, base_url):
 
     def teardown():
         if address_created:
-            with allure.step("Удаляю запись"):
+            with allure.step("Удаляю созданный адрес"):
                 checkout_page.open(base_url)
                 checkout_page.obtaining_block.adress_listing_activation()
                 checkout_page.adress_listing.open_action_menu()
                 checkout_page.delete_conformation_modal.delete_adress()
+
+    request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
+    return mark_as_created
+
+
+@pytest.fixture
+def delete_recipient_fixture(request, page_fixture, base_url):
+    """Фикстура для удаления записи после завершения теста."""
+    checkout_page = CheckoutPage (page_fixture)
+    address_created = False  # Локальный флаг в рамках фикстуры
+
+    def mark_as_created():
+        nonlocal address_created
+        address_created = True
+
+    def teardown():
+        if address_created:
+            with allure.step("Удаляю созданного получателя"):
+                checkout_page.open(base_url)
+                checkout_page.recipient_listing.open_recipient_listing()
+                checkout_page.recipient_listing.open_action_menu()
+                checkout_page.delete_conformation_modal.delete_recipient()
 
     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
     return mark_as_created
