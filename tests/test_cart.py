@@ -37,6 +37,21 @@ def test_cart_checkout(page_fixture, base_url):
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
         expect(page_fixture).to_have_url(re.compile('checkout'))
 
+@pytest.mark.smoke
+@allure.title("Переход в чек-аут с пустым аккаунтом")
+def test_cart_checkout_empty(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    autorization = AutorizationModalElement(page_fixture)
+    cart_page.add_to_cart(base_url)
+    cart_page.open(base_url)
+    cart_page.click_order_button()
+    autorization.autorization_testmail_app_empty()
+    # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
+    cart_page.click_order_button()
+    page_fixture.context.storage_state(path="auth_state_empty.json")
+    with allure.step("Проверяю, что пользователь перешел в чек-аут"):
+        expect(page_fixture).to_have_url(re.compile('checkout'))
 
 
 @allure.title("Выделение всего товара")
@@ -405,7 +420,7 @@ def test_back_to_cart_from_modal_2(page_fixture, base_url):
 
 @pytest.mark.skip("Нужно переделать тест, жду пока наличие в КТ будет отображатся по другому")
 @allure.title("Активация блока 'Недоступно для заказа'")
-def test_not_available_for_order_block_activation(page_fixture, base_url):
+def not_available_for_order_block_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     header = HeaderElement(page_fixture)
     cart_page.add_to_cart_multiple_stop_order_products(base_url)
@@ -417,7 +432,7 @@ def test_not_available_for_order_block_activation(page_fixture, base_url):
 
 @pytest.mark.skip("Нужно переделать тест, жду пока наличие в КТ будет отображатся по другому")
 @allure.title("Удаление товара нажатием на крестик (Блок 'Недоступно для заказа')")
-def test_delete_product_by_cross_in_not_available_for_order_block(page_fixture, base_url):
+def delete_product_by_cross_in_not_available_for_order_block(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.not_available_for_order_block_activation(page_fixture, base_url)
     with allure.step("Запоминаю название товара до удаления"):
@@ -429,7 +444,7 @@ def test_delete_product_by_cross_in_not_available_for_order_block(page_fixture, 
 
 @pytest.mark.skip("Нужно переделать тест, жду пока наличие в КТ будет отображатся по другому")
 @allure.title("Удаление всего товара в блоке (Блок 'Недоступно для заказа')")
-def test_delete_all_products_in_not_available_for_order_block(page_fixture, base_url):
+def delete_all_products_in_not_available_for_order_block(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     cart_page.not_available_for_order_block_activation(page_fixture, base_url)
     cart_page.click_head_not_availavle_delete_button()

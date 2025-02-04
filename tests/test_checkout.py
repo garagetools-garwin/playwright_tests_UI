@@ -5,8 +5,11 @@ import pytest
 import allure
 
 from playwright.sync_api import expect
+
+from conftest import delete_recipient_fixture
 from page_objects.checkout_page import CheckoutPage
 from page_objects.cart_page import CartPage
+from page_objects.autorization_modal_element import AutorizationModalElement
 
 
 """Промокод"""
@@ -234,7 +237,7 @@ def cart_calculation_block_calculate_price_of_some_products(page_fixture, base_u
 
 @pytest.mark.auth
 @allure.title("Добавление нового получателя со всеми полями")
-def test_add_new_recipient_with_all_fields(page_fixture, base_url):
+def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -245,6 +248,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url):
     checkout_page.add_recipient_modal.add_recipient()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
+    delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -259,7 +263,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Добавление нового получателя только с обязательными полями")
-def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url):
+def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -270,6 +274,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url):
     checkout_page.add_recipient_modal.add_recipient()
     name, phone = checkout_page.add_recipient_modal.fill_in_part_of_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
+    delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -284,7 +289,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Создание нового получателя со всеми валидными символами в ФИО")
-def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_url):
+def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_url,delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -296,6 +301,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
     checkout_page.add_recipient_modal.save_new_recipient()
+    delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -383,20 +389,22 @@ def test_activate_delete_confirmation_modal_recipient(page_fixture, base_url):
 
 """Модальное окно подтверждения удаления"""
 
-
+#TODO: удалить paramitrize и удалить run из функции
 @pytest.mark.auth
 @allure.title("Удаление получателя")
-def test_deletion_recipient(page_fixture, base_url):
+# @pytest.mark.parametrize("run", range(220))
+def test_deletion_recipient(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
-    cart_page = CartPage(page_fixture)
+    # cart_page = CartPage(page_fixture)
     checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart(base_url)
-    checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
-    checkout_page.recipient_listing.open_action_menu()
-    checkout_page.delete_conformation_modal.delete_recipient()
+    delete_recipient_fixture()
+    # cart_page.open(base_url)
+    # cart_page.clear_cart()
+    # cart_page.add_to_cart(base_url)
+    # checkout_page.open(base_url)
+    # checkout_page.recipient_listing.open_recipient_listing()
+    # checkout_page.recipient_listing.open_action_menu()
+    # checkout_page.delete_conformation_modal.delete_recipient()
 
 
 @pytest.mark.auth
@@ -415,11 +423,11 @@ def test_cancel_recipient_deletion(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Закрытие окна удаления получателя")
-def test_close_recipient_deletion_modal(page_fixture, base_url):
+def test_close_recipient_deletion_modal(page_fixture, base_url,delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
-    #TODO: Здесь должен быть фикстура удаления получателя
+    delete_recipient_fixture()
     cart_page.open(base_url)
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
@@ -434,7 +442,7 @@ def test_close_recipient_deletion_modal(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Открытие окна Изменить получателя")
-def test_close_recipient_deletion_modal(page_fixture, base_url):
+def test_open_recipient_edit_modal(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -609,7 +617,8 @@ def test_pickup_point_adding(page_fixture, base_url, delete_address_fixture):
     checkout_page.adress_listing.click_add_adress_button()
 
     with allure.step("Проверяю, что кнопка Пункт выдачи предвыбрана"):
-        expect(checkout_page.map.pickup_point_button_status()).to_have_class('CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+        expect(checkout_page.map.pickup_point_button_status()).to_have_class(
+            'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
 
     # Выбор ПВЗ с кастомным событием
     pickup_point_id = "75048c93-dfb2-422d-b17b-ff95ad2193c8"
@@ -777,14 +786,10 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
     checkout_page.obtaining_block.adress_listing_activation()
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
-    with allure.step("Удаляю запись"):
-        checkout_page.adress_listing.open_action_menu()
-        checkout_page.delete_conformation_modal.delete_adress()
-
 
 @pytest.mark.auth
 @allure.title("Редактирование адреса курьера с дополнительной информацией")
-def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
+def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, delete_address_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -806,6 +811,7 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
             aprtment, entryway, floor, intercom, commentary = checkout_page.map.filling_in_additional_fields()
 
         checkout_page.map.click_pick_up_here_button()
+
         delete_address_fixture()
 
         with allure.step("Формирую данные для сравнения"):
@@ -887,7 +893,7 @@ def test_deletion_adress(page_fixture, base_url, delete_address_fixture):
 
 @pytest.mark.auth
 @allure.title("Выбор нового адреса")
-def test_select_a_new_recipient(page_fixture, base_url):
+def test_select_a_new_adress(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     cart_page.open(base_url)
@@ -939,7 +945,8 @@ def test_courier_button_preselected(page_fixture, base_url):
     checkout_page.adress_listing.click_add_adress_button()
 
     with allure.step("Проверяю, что кнопка Курьером предвыбрана"):
-        expect(checkout_page.map.courier_button_status()).to_have_class('CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+        expect(checkout_page.map.courier_button_status()).to_have_class(
+            'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
 
 @pytest.mark.auth
 @allure.title("Отработка кнопки Назад")
@@ -992,8 +999,108 @@ def test_back_button(page_fixture, base_url):
 
 
 
-#TODO: сделать удаление получателя после создания
-#TODO: Перед изменение получателя и адреса всегда создавать нового получателя и удалять его
-#TODO: После изменения создания и удаление получателя адреса проверять их title и description
-#TODO: рассмотреть вариант при изменении адреса менять его на GDP и наоборот
+"""Тесты для аккаунта без адресов"""
+
+# Останется в блоке Получение
+@pytest.mark.auth_empty
+@allure.title("Открытие карты через кнопку Выберите способ и адрес получения")
+def test_open_map_from_obtaining_block(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.click_first_adress_button()
+
+    with allure.step("Проверяю, что модальное окна Карты - открыто"):
+        expect(checkout_page.map.map_modal()).to_be_visible()
+
+    with allure.step("Проверяю, что кнопка Пункт выдачи предвыбрана"):
+        expect(checkout_page.map.pickup_point_button_status()).to_have_class(
+            'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+
+# Останется в блоке Получение
+@pytest.mark.auth_empty
+@allure.title("Открытие модального окна Карты через кнопку Пункт выдачи")
+def test_open_map_from_pickup_point_button(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.pickup_point_adress_listing_activation()
+
+    with allure.step("Проверяю, что модальное окна Карты - открыто"):
+        expect(checkout_page.map.map_modal()).to_be_visible()
+
+    with allure.step("Проверяю, что кнопка Пункт выдачи предвыбрана"):
+        expect(checkout_page.map.pickup_point_button_status()).to_have_class(
+            'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+
+# Останется в блоке Получение
+@pytest.mark.auth_empty
+@allure.title("Открытие модального окна Карты через кнопку Курьером")
+def test_open_map_from_courier_adress_button(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.courier_adress_listing_activation()
+
+    with allure.step("Проверяю, что модальное окна Карты - открыто"):
+        expect(checkout_page.map.map_modal()).to_be_visible()
+
+    with allure.step("Проверяю, что кнопка Курьером предвыбрана"):
+        expect(checkout_page.map.courier_button_status()).to_have_class(
+            'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
+
+# Перейдет в блок получатель
+
+@pytest.mark.auth_empty
+@allure.title("Открытие модального окна Новый получатель через блок Покупатель и получатель")
+def test_open_add_recipient_from_checkout(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
+
+    with allure.step("Проверяю, что модальное окно Новый получатель - открыто"):
+        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+#TODO: рассмотреть вариант при изменении адреса менять его на ПВЗ и наоборот
+#TODO: Вывести все проверки и переменные в тесты
+#TODO: Написать текст для вывода в отчет в случае падения для каждой проверки
+#TODO: Написать обработки исключений/ошибок (кинуть запрос в GPT)
 

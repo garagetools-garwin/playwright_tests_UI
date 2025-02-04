@@ -15,7 +15,7 @@ url = "https://garwin.ru"
 
 @pytest.mark.skip("Пропущен для экономии отправленых сообщения, авторизация проходит в тесте'Переход в чек-аут'")
 @allure.title("Авторизуюсь через testmail.app")
-def test_autorization_code_testmail_app(page_fixture, base_url):
+def autorization_code_testmail_app(page_fixture, base_url):
     autorization = AutorizationModalElement(page_fixture)
     page_fixture.goto(f'{url}')
     page_fixture.locator(".NavigationButton__Overlay.NavigationButtonOverlay").nth(0).click()

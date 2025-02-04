@@ -14,7 +14,7 @@ db_password = os.getenv('DB_PASSWORD')
 
 @pytest.mark.skip("Временно, пока не научимся удалять заказы из аналитики и закрывать в 1С")
 @pytest.mark.smoke
-def test_create_order(page_fixture, base_url):
+def create_order(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     autorization = AutorizationModalElement(page_fixture)
     cart_page.add_to_cart(base_url)
