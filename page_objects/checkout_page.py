@@ -30,6 +30,8 @@ class CheckoutPage:
 
         self.calculation_block = CalculationBlock(page)
         self.promo_code = PromoCode(page)
+        self.payment_block = PaymentBlock(page)
+        self.commentary_block = CommentaryBlock(page)
 
     def open(self, url):
         with allure.step(f"Открываю {url + self.PATH}"):
@@ -53,7 +55,35 @@ class BuyerAndRecipientBlock:
     def click_add_first_recipient_button(self):
         self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).click()
 
+    @allure.step("Создаю нового получателя")
+    def create_recipient(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        try:
+            checkout_page.recipient_listing.open_recipient_listing()
+            checkout_page.add_recipient_modal.add_recipient()
+        except Exception as e:
+            print(f"Не удалось найти кнопку 'Изменить': {e}")
+            try:
+                checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
+            except Exception as e:
+                print(f"Не удалось найти кнопку 'Выберите получателя': {e}")
+        finally:
+            with allure.step(
+                    "Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
+                name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
+            checkout_page.add_recipient_modal.save_new_recipient()
+            with allure.step("Формирую ожидаемый текст"):
+                expected_info = f"{name}, {email}, {phone}"
+            checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
+            checkout_page.recipient_listing.open_recipient_listing()
 
+            with allure.step("Формирую ожидаемый текст"):
+                expected_info_title = name
+                expected_info_description = f"{email}, {phone}"
+            with allure.step("Проверяю информацию о выбранном получателе"):
+                checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title,
+                                                                                 expected_info_description)
 
 """Листинг получателей"""
 
@@ -75,6 +105,7 @@ class RecipientListing:
     DELETE_BUTTON = ".RecipientSelection__Item__Tooltip.--open-tooltip span:has-text('Удалить')"
     CHANGE_RECIPIENT_MODAL = "p:has-text('Изменить получателя')"
     DELETE_CONFIRMATION_MODAL = "p:has-text('Вы уверены, что хотите удалить получателя?')"
+    CLOSE_BUTTON = ".RecipientSelection .KitModal__Closer"
 
     def __init__(self, page):
         self.page = page
@@ -136,6 +167,10 @@ class RecipientListing:
         self.page.locator(self.DELETE_BUTTON).click()
         with allure.step("Проверяю, что окно подтверждения удаления отображается на странице"):
             expect(self.page.locator(self.DELETE_CONFIRMATION_MODAL)).to_be_visible()
+
+    @allure.step("Закрываю листинг получателей")
+    def close_recipient_listing(self):
+        self.page.locator(self.CLOSE_BUTTON).click()
 
 
 """Модалка Новый получатель"""
@@ -249,26 +284,8 @@ class AddRecipientModal:
             assert actual_title.lower() == expected_title.lower(), f"Ожидалось: {expected_title}, Получено: {actual_title}"
             assert actual_description == expected_description, f"Ожидалось: {expected_description}, Получено: {actual_description}"
 
-    @allure.step("Создаю нового получателя")
-    def create_recipient(self,base_url, page_fixture):
-        checkout_page = CheckoutPage(page_fixture)
-        checkout_page.open(base_url)
-        checkout_page.recipient_listing.open_recipient_listing()
-        checkout_page.add_recipient_modal.add_recipient()
-        with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
-            name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
-        checkout_page.add_recipient_modal.save_new_recipient()
-        with allure.step("Формирую ожидаемый текст"):
-            expected_info = f"{name}, {email}, {phone}"
-        checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-        checkout_page.recipient_listing.open_recipient_listing()
 
-        with allure.step("Формирую ожидаемый текст"):
-            expected_info_title = name
-            expected_info_description = f"{email}, {phone}"
-        with allure.step("Проверяю информацию о выбранном получателе"):
-            checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title,
-                                                                             expected_info_description)
+
 
 """Модалка Изменить получателя"""
 
@@ -556,7 +573,7 @@ class ObtainingBlock:
     def pickup_point_adress_listing_activation(self):
         self.page.locator(self.PICKUP_POINT_BUTTON).click()
 
-    @allure.step("Открываю листинг адресов оставки курьером")
+    @allure.step("Открываю листинг адресов доставки курьером")
     def courier_adress_listing_activation(self):
         self.page.locator(self.COURIER_BUTTON).click()
 
@@ -564,11 +581,30 @@ class ObtainingBlock:
     def check_out_adress(self):
         return self.page.locator(self.ADRESS_INFO).inner_text()
 
-    @allure.step("Запоминаю адрес в блоке Получение")
+    @allure.step("Нажимаю на Выберите способ и адрес получения")
     def click_first_adress_button(self):
         return self.page.locator(self.ADD_FIRST_ADRESS_BUTTON).click()
 
-
+    @allure.step("Создаю новый адрес")
+    def create_address(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        try:
+            checkout_page.obtaining_block.adress_listing_activation()
+            checkout_page.adress_listing.click_add_adress_button()
+        except Exception as e:
+            print(f"Не удалось найти кнопку 'Изменить': {e}")
+            try:
+                checkout_page.obtaining_block.click_first_adress_button()
+            except Exception as e:
+                print(f"Не удалось найти кнопку 'Выберите получателя': {e}")
+        finally:
+            # Выбор ПВЗ с кастомным событием
+            pickup_point_id = "62e10ad2-164c-4e9e-9e73-f4f096cdddb1"
+            target_lat = 59.880017
+            target_lon = 30.395683
+            checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
+            checkout_page.map.click_pick_up_here_button()
 
     # @allure.step("Удвляб адрес")
     # def address_deletion(self):
@@ -1019,6 +1055,46 @@ class PromoCode:
         return self.page.locator(self.PROMO_CODE_HINT_POPUP).inner_text()
 
 
+"""Блок Оплата"""
+
+
+class PaymentBlock:
+
+    CHECK_WITH_MANAGER_BUTTON = "#payment button:has-text('Уточнить у менеджера')"
+
+    def __init__(self, page):
+        self.page = page
+
+    @allure.step("Нажимаю на кнопку Уточнить у менеджера")
+    def click_check_with_manager_button(self):
+        self.page.locator(self.CHECK_WITH_MANAGER_BUTTON).click()
+
+
+"""Блок Комментарий"""
+
+
+class CommentaryBlock:
+
+    COMMENTARY_TOGGLE_BUTTON = "button.CheckoutSection__Toggle"
+    COMMENTARY_TEXTAREA = "textarea.kit-textarea"
+
+    def __init__(self, page):
+        self.page = page
+
+    @allure.step("Нажимаю на кнопку Комментарий к заказу")
+    def click_check_with_manager_button(self):
+        self.page.locator(self.COMMENTARY_TOGGLE_BUTTON).click()
+
+    @allure.step("Ввожу значение в поле Комментарий")
+    def fill_commentary_textarea(self, text):
+        self.page.locator(self.COMMENTARY_TEXTAREA).fill(text)
+
+
+
+
+
+
+
 
 
 
@@ -1030,3 +1106,5 @@ class PromoCode:
 # browser-info: u:1734619901805257952:v:1551:vf:14pwap7gbnncs44tf8xglmzmdcdb:rqnl:1:st:1736765012
 # t: gdpr(14)ti(1)
 
+# TODO включить в методы создания пользователя фикстуру удаления пользователя, удалить фикстуру из тестов
+# TODO включить в методы создания адреса фикстуру удаления пользователя, удалить фикстуру из тестов

@@ -396,7 +396,7 @@ def test_activate_delete_confirmation_modal_recipient(page_fixture, base_url):
 def test_deletion_recipient(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     # cart_page = CartPage(page_fixture)
-    checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_recipient_fixture()
     # cart_page.open(base_url)
     # cart_page.clear_cart()
@@ -426,7 +426,7 @@ def test_cancel_recipient_deletion(page_fixture, base_url):
 def test_close_recipient_deletion_modal(page_fixture, base_url,delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
-    checkout_page.add_recipient_modal.create_recipient(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_recipient_fixture()
     cart_page.open(base_url)
     cart_page.clear_cart()
@@ -1101,6 +1101,6 @@ def test_open_add_recipient_from_checkout(page_fixture, base_url):
 
 #TODO: рассмотреть вариант при изменении адреса менять его на ПВЗ и наоборот
 #TODO: Вывести все проверки и переменные в тесты
-#TODO: Написать текст для вывода в отчет в случае падения для каждой проверки
-#TODO: Написать обработки исключений/ошибок (кинуть запрос в GPT)
-
+#TODO: написать текст для вывода в отчет в случае падения для каждой проверки
+#TODO: написать обработки исключений/ошибок (кинуть запрос в GPT)
+#TODO: включить метод открытия корзины в метод очистки корзины
