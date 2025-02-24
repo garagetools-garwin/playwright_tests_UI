@@ -244,7 +244,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
@@ -252,7 +252,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -270,7 +270,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     name, phone = checkout_page.add_recipient_modal.fill_in_part_of_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
@@ -278,7 +278,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -296,7 +296,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
@@ -305,7 +305,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -323,7 +323,7 @@ def test_add_new_recipient_close_madal1(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     checkout_page.add_recipient_modal.close_new_recipient_modal()
 
@@ -337,12 +337,25 @@ def test_add_new_recipient_close_madal2(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     checkout_page.add_recipient_modal.close_new_recipient_modal2()
 
 
 """Листинг получателей"""
+
+@pytest.mark.auth
+@allure.title("Открытие листинга получателей")
+def test_recipient_listing_activation(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.recipient_listing.open_recipient_listing()
+    with allure.step("Провряю, что листинг получателей отображается на странице"):
+        expect(checkout_page.recipient_listing.recipient_listing_modal()).to_be_visible()
 
 
 @pytest.mark.auth
@@ -354,7 +367,7 @@ def test_select_a_new_recipient(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.switch_on_inactive_recipient()
     checkout_page.recipient_listing.select_inactive_recipient()
 
@@ -368,7 +381,7 @@ def test_activate_the_change_recipient_modal(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
 
@@ -382,7 +395,7 @@ def test_activate_delete_confirmation_modal_recipient(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_delete_button()
 
@@ -402,7 +415,7 @@ def test_deletion_recipient(page_fixture, base_url, delete_recipient_fixture):
     # cart_page.clear_cart()
     # cart_page.add_to_cart(base_url)
     # checkout_page.open(base_url)
-    # checkout_page.recipient_listing.open_recipient_listing()
+    # checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     # checkout_page.recipient_listing.open_action_menu()
     # checkout_page.delete_conformation_modal.delete_recipient()
 
@@ -416,7 +429,7 @@ def test_cancel_recipient_deletion(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.delete_conformation_modal.cancel_recipient_deletion()
 
@@ -432,7 +445,7 @@ def test_close_recipient_deletion_modal(page_fixture, base_url,delete_recipient_
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.delete_conformation_modal.close_recipient_deletion_modal()
 
@@ -449,7 +462,7 @@ def test_open_recipient_edit_modal(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
 
@@ -462,7 +475,7 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     name, phone, email = checkout_page.edit_recipient_modal.fill_in_data_randomize()
@@ -470,7 +483,7 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -488,7 +501,7 @@ def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     name, phone = checkout_page.edit_recipient_modal.fill_in_part_of_data_randomize()
@@ -501,7 +514,7 @@ def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
         else:
             expected_info = f"{name}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -522,7 +535,7 @@ def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url)
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
@@ -531,7 +544,7 @@ def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url)
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Формирую ожидаемый текст"):
         expected_info_title = name
@@ -549,7 +562,7 @@ def test_edit_recipient_close_madal1(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     checkout_page.edit_recipient_modal.close_edit_recipient_modal()
@@ -564,7 +577,7 @@ def test_edit_recipient_close_madal2(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.recipient_listing.open_recipient_listing()
+    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     checkout_page.edit_recipient_modal.close_edit_recipient_modal2()
@@ -598,7 +611,7 @@ def test_map_opening(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
     with allure.step("Провряю, что карты отображается на странице"):
         expect(checkout_page.map.map_modal()).to_be_visible()
@@ -613,7 +626,7 @@ def test_pickup_point_adding(page_fixture, base_url, delete_address_fixture):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
 
     with allure.step("Проверяю, что кнопка Пункт выдачи предвыбрана"):
@@ -641,7 +654,7 @@ def test_pickup_point_adding(page_fixture, base_url, delete_address_fixture):
     with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
         assert map_modal_adress == obtaining_block_adress
 
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
 
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
@@ -656,7 +669,7 @@ def test_pickup_point_editing(page_fixture, base_url, delete_address_fixture):
     checkout_page.open(base_url)
 
     with allure.step("Создаю новый адрес"):
-        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
         checkout_page.adress_listing.click_add_adress_button()
 
         # Выбор ПВЗ с кастомным событием
@@ -695,7 +708,7 @@ def test_pickup_point_editing(page_fixture, base_url, delete_address_fixture):
         with allure.step("Проверяю, что в блоке Получения установлися адресс выбранного ПВЗ"):
             assert map_modal_adress == obtaining_block_adress
 
-        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
 
         checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
@@ -710,7 +723,7 @@ def test_courier_adress_adding(page_fixture, base_url, delete_address_fixture):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
     checkout_page.map.click_courier_button()
 
@@ -733,7 +746,7 @@ def test_courier_adress_adding(page_fixture, base_url, delete_address_fixture):
     with allure.step("Проверяю, что в блоке Получения установлися выбранный адрес"):
         assert map_modal_adress == obtaining_block_adress
 
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
 
@@ -748,7 +761,7 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
     checkout_page.open(base_url)
 
     with allure.step("Создаю новый адрес"):
-        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
         checkout_page.adress_listing.click_add_adress_button()
         checkout_page.map.click_courier_button()
 
@@ -783,7 +796,7 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
     with allure.step("Проверяю, что новый адрес отличается от предыдушего"):
         assert obtaining_block_adress_first != obtaining_block_adress_second
 
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.verify_selected_adress_info(map_modal_adress)
 
 
@@ -798,7 +811,7 @@ def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, d
     checkout_page.open(base_url)
 
     with allure.step("Создаю новый адрес"):
-        checkout_page.obtaining_block.adress_listing_activation()
+        checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
         checkout_page.adress_listing.click_add_adress_button()
         checkout_page.map.click_courier_button()
 
@@ -850,7 +863,7 @@ def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, d
         adress = checkout_page.obtaining_block.check_out_adress()
         expected_data_listing = f"{adress}, Домофон {intercom}, Кв. {aprtment}, Этаж {floor}, Подъезд {entryway}"
 
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
 
     with allure.step("Проверю, что вся дополнительная информация отображается в листинге адресов"):
         actual_listing_adress = checkout_page.adress_listing.get_selected_adress_info()
@@ -865,7 +878,7 @@ def test_activate_delete_confirmation_modal_obtaining(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.open_action_menu()
     checkout_page.adress_listing.click_delete_button()
 
@@ -878,7 +891,7 @@ def test_deletion_adress(page_fixture, base_url, delete_address_fixture):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
 
     # Выбор ПВЗ с кастомным событием
@@ -900,7 +913,7 @@ def test_select_a_new_adress(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.switch_on_inactive_adress()
     checkout_page.adress_listing.select_inactive_adress()
 
@@ -957,7 +970,7 @@ def test_back_button(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
+    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
 
     with allure.step("Проверяю, что модальное окна Карты - открыто"):

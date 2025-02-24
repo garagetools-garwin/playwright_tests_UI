@@ -53,22 +53,33 @@ class BuyerAndRecipientBlock:
 
     @allure.step("Открываю окно Нового получателя")
     def click_add_first_recipient_button(self):
+        self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).wait_for(timeout=3000)
         self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).click()
 
     @allure.step("Создаю нового получателя")
     def create_recipient(self, base_url, page_fixture):
         checkout_page = CheckoutPage(page_fixture)
         checkout_page.open(base_url)
+        recipient_listing_opened = False
+
+        # Попытка открыть список получателей
         try:
             checkout_page.recipient_listing.open_recipient_listing()
-            checkout_page.add_recipient_modal.add_recipient()
-        except Exception as e:
-            print(f"Не удалось найти кнопку 'Изменить': {e}")
+            recipient_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not recipient_listing_opened:  # Только если предыдущее действие не сработало
             try:
                 checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
-            except Exception as e:
-                print(f"Не удалось найти кнопку 'Выберите получателя': {e}")
-        finally:
+                recipient_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if recipient_listing_opened:
+            checkout_page.add_recipient_modal.add_recipient()
             with allure.step(
                     "Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
                 name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
@@ -113,9 +124,44 @@ class RecipientListing:
 
     @allure.step("Открываю листинг получателей")
     def open_recipient_listing(self):
+        # Ожидаем появления кнопки в течение 3 секунд
+        self.page.locator(self.buyer_and_recipient_block.RECIPIENT_CHANGE_BUTTON).wait_for(timeout=3000)
         self.page.locator(self.buyer_and_recipient_block.RECIPIENT_CHANGE_BUTTON).click()
+
+        # Проверяем, действительно ли открылся листинг
         with allure.step("Проверяю, что листинг пользователей открыт"):
-            expect(self.page.locator(self.RECIPIENT_LISTING_MODAL)).to_be_visible()
+            expect(self.page.locator(self.RECIPIENT_LISTING_MODAL)).to_be_visible(timeout=3000)
+
+    def recipient_listing_modal(self):
+        return self.page.locator(self.buyer_and_recipient_block.RECIPIENT_CHANGE_BUTTON)
+
+
+    @allure.step("Открываю листинг получателей")
+    def open_recipient_listing_try(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        recipient_listing_opened = False
+
+        # Попытка открыть список получателей
+        try:
+            checkout_page.recipient_listing.open_recipient_listing()
+            recipient_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not recipient_listing_opened:  # Только если предыдущее действие не сработало
+            try:
+                checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
+                recipient_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if recipient_listing_opened:
+            pass
+
+
 
     @allure.step("Выбираю неактивного пользователя")
     def switch_on_inactive_recipient(self):
@@ -563,7 +609,35 @@ class ObtainingBlock:
 
     @allure.step("Открываю листинг адресов")
     def adress_listing_activation(self):
+        self.page.locator(self.CHANGE_BUTTON).wait_for(timeout=3000)
         self.page.locator(self.CHANGE_BUTTON).click()
+
+
+
+    @allure.step("Открываю листинг получателей")
+    def adress_listing_activation_try(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        adress_listing_opened = False
+
+        # Попытка открыть список получателей
+        try:
+            checkout_page.obtaining_block.adress_listing_activation()
+            adress_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not adress_listing_opened:  # Только если предыдущее действие не сработало
+            try:
+                checkout_page.obtaining_block.click_first_adress_button()
+                recipient_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if adress_listing_opened:
+            pass
 
     # Локатор адреса ПВЗ в блоке Получение
     def pickup_point_adress(self):
@@ -583,28 +657,41 @@ class ObtainingBlock:
 
     @allure.step("Нажимаю на Выберите способ и адрес получения")
     def click_first_adress_button(self):
+        self.page.locator(self.ADD_FIRST_ADRESS_BUTTON).wait_for(timeout=3000)
         return self.page.locator(self.ADD_FIRST_ADRESS_BUTTON).click()
 
     @allure.step("Создаю новый адрес")
     def create_address(self, base_url, page_fixture):
         checkout_page = CheckoutPage(page_fixture)
         checkout_page.open(base_url)
+        adress_listing_opened = False
+
+        # Попытка открыть список получателей
         try:
             checkout_page.obtaining_block.adress_listing_activation()
-            checkout_page.adress_listing.click_add_adress_button()
-        except Exception as e:
-            print(f"Не удалось найти кнопку 'Изменить': {e}")
+            adress_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not adress_listing_opened:  # Только если предыдущее действие не сработало
             try:
                 checkout_page.obtaining_block.click_first_adress_button()
-            except Exception as e:
-                print(f"Не удалось найти кнопку 'Выберите получателя': {e}")
-        finally:
+                adress_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if adress_listing_opened:
+            checkout_page.adress_listing.click_add_adress_button()
             # Выбор ПВЗ с кастомным событием
             pickup_point_id = "62e10ad2-164c-4e9e-9e73-f4f096cdddb1"
             target_lat = 59.880017
             target_lon = 30.395683
             checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
             checkout_page.map.click_pick_up_here_button()
+
+
 
     # @allure.step("Удвляб адрес")
     # def address_deletion(self):
@@ -939,8 +1026,21 @@ class DeliveryBlock:
 
 class CalculationBlock:
 
+    ORDER_BUTTON = ".OrderTotal__Button"
+    TOTAL_PRICE_VALUE = ".OrderTotal__Summary .Price__Value"
+
     def __init__(self, page):
         self.page = page
+
+    @allure.step("Читаю сумму в блоке Калькуляция")
+    def total_price_value(self):
+        with allure.step("Извлекаю текст итоговой суммы в блоке Калькуляция"):
+            return self.page.locator(self.TOTAL_PRICE_VALUE).inner_text()
+
+    @allure.step("Нажимаю на кнопку 'Оформить заказ'")
+    def click_order_button(self):
+        self.page.locator(self.ORDER_BUTTON).click()
+
 
 
     # @allure.step("Запоминаю стоимость скидки")
@@ -1082,7 +1182,7 @@ class CommentaryBlock:
         self.page = page
 
     @allure.step("Нажимаю на кнопку Комментарий к заказу")
-    def click_check_with_manager_button(self):
+    def click_commentary_togle_button(self):
         self.page.locator(self.COMMENTARY_TOGGLE_BUTTON).click()
 
     @allure.step("Ввожу значение в поле Комментарий")

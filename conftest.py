@@ -7,6 +7,7 @@ from dotenv import load_dotenv
 import configparser
 import pytest
 from page_objects.checkout_page import CheckoutPage
+from page_objects.cart_page import CartPage
 
 
 # Фильтрация секций отчета
@@ -166,33 +167,33 @@ def base_url(request):
 
 """Фикстуры для тестов"""
 
+# Старая, простая, но рабочая версия фикстуры
+# @pytest.fixture
+# def delete_address_fixture(request, page_fixture, base_url):
+#     """Фикстура для удаления записи после завершения теста."""
+#     checkout_page = CheckoutPage (page_fixture)
+#     address_created = False  # Локальный флаг в рамках фикстуры
+#
+#     def mark_as_created():
+#         nonlocal address_created
+#         address_created = True
+#
+#     def teardown():
+#         if address_created:
+#             with allure.step("Удаляю созданный адрес"):
+#                 checkout_page.open(base_url)
+#                 checkout_page.obtaining_block.adress_listing_activation()
+#                 checkout_page.adress_listing.open_action_menu()
+#                 checkout_page.delete_conformation_modal.delete_adress()
+#
+#     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
+#     return mark_as_created
 
 @pytest.fixture
 def delete_address_fixture(request, page_fixture, base_url):
     """Фикстура для удаления записи после завершения теста."""
-    checkout_page = CheckoutPage (page_fixture)
-    address_created = False  # Локальный флаг в рамках фикстуры
-
-    def mark_as_created():
-        nonlocal address_created
-        address_created = True
-
-    def teardown():
-        if address_created:
-            with allure.step("Удаляю созданный адрес"):
-                checkout_page.open(base_url)
-                checkout_page.obtaining_block.adress_listing_activation()
-                checkout_page.adress_listing.open_action_menu()
-                checkout_page.delete_conformation_modal.delete_adress()
-
-    request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
-    return mark_as_created
-
-
-@pytest.fixture
-def delete_recipient_fixture(request, page_fixture, base_url):
-    """Фикстура для удаления записи после завершения теста."""
-    checkout_page = CheckoutPage (page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
     address_created = False  # Локальный флаг в рамках фикстуры
 
     def mark_as_created():
@@ -202,13 +203,126 @@ def delete_recipient_fixture(request, page_fixture, base_url):
     def teardown():
         if address_created:
             with allure.step("Удаляю созданного получателя"):
+                checkout_opened = False
                 checkout_page.open(base_url)
-                checkout_page.recipient_listing.open_recipient_listing()
-                checkout_page.recipient_listing.open_action_menu()
-                checkout_page.delete_conformation_modal.delete_recipient()
+                try:
+                    total_price = checkout_page.calculation_block.page.locator(
+                        checkout_page.calculation_block.TOTAL_PRICE_VALUE
+                    ).text_content(timeout=3000)
+                    checkout_opened = False
+                except Exception:
+                    total_price = None  # Локатор не найден
+                    cart_page.add_to_cart_cheap_product(base_url)
+                    checkout_page.open(base_url)
+                    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
+                    checkout_page.adress_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_adress()
+
+                price = checkout_page.calculation_block.total_price_value()
+                if price == "" or price == "0":
+                    cart_page.add_to_cart_cheap_product(base_url)
+                    checkout_page.open(base_url)
+                    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
+                    checkout_page.adress_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_adress()
+
+                else:
+                    checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
+                    checkout_page.adress_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_adress()
 
     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
     return mark_as_created
+
+
+@pytest.fixture
+def delete_recipient_fixture(request, page_fixture, base_url):
+    """Фикстура для удаления записи после завершения теста."""
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    recipient_created = False  # Локальный флаг в рамках фикстуры
+
+    def mark_as_created():
+        nonlocal recipient_created
+        recipient_created = True
+
+    def teardown():
+        if recipient_created:
+            with allure.step("Удаляю созданного получателя"):
+                checkout_opened = False
+                checkout_page.open(base_url)
+                try:
+                    total_price = checkout_page.calculation_block.page.locator(
+                        checkout_page.calculation_block.TOTAL_PRICE_VALUE
+                    ).text_content(timeout=3000)
+                    checkout_opened = False
+                except Exception:
+                    total_price = None  # Локатор не найден
+                    cart_page.add_to_cart_cheap_product(base_url)
+                    checkout_page.open(base_url)
+                    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
+                    checkout_page.recipient_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_recipient()
+
+                price = checkout_page.calculation_block.total_price_value()
+                if price == "" or price == "0":
+                    cart_page.add_to_cart_cheap_product(base_url)
+                    checkout_page.open(base_url)
+                    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
+                    checkout_page.recipient_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_recipient()
+
+                else:
+                    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
+                    checkout_page.recipient_listing.open_action_menu()
+                    checkout_page.delete_conformation_modal.delete_recipient()
+
+    request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
+    return mark_as_created
+
+
+# @pytest.fixture
+# def delete_recipient_fixture(request, page_fixture, base_url):
+#     """Фикстура для удаления записи после завершения теста."""
+#     checkout_page = CheckoutPage(page_fixture)
+#     cart_page = CartPage
+#     address_created = False  # Локальный флаг в рамках фикстуры
+#
+#     def mark_as_created():
+#         nonlocal address_created
+#         address_created = True
+#
+#     def teardown():
+#         if address_created:
+#             with allure.step("Удаляю созданного получателя"):
+#                 checkout_opened = False
+#                 checkout_page.open(base_url)
+#                 try:
+#                     total_price = checkout_page.calculation_block.page.locator(
+#                         checkout_page.calculation_block.TOTAL_PRICE_VALUE
+#                     ).text_content(timeout=3000)
+#                 except Exception:
+#                     total_price = None  # Локатор не найден
+#                     cart_page.add_to_cart_cheap_product()
+#                     checkout_page.open(base_url)
+#                     checkout_page.recipient_listing.open_recipient_listing()
+#                     checkout_page.recipient_listing.open_action_menu()
+#                     checkout_page.delete_conformation_modal.delete_recipient()
+#
+#                     price = checkout_page.calculation_block.total_price_value()
+#                     if price == "" or price == "0":
+#                         cart_page.add_to_cart_cheap_product()
+#                         checkout_page.open(base_url)
+#                         checkout_page.recipient_listing.open_recipient_listing()
+#                         checkout_page.recipient_listing.open_action_menu()
+#                         checkout_page.delete_conformation_modal.delete_recipient()
+#                     else:
+#                         checkout_page.recipient_listing.open_recipient_listing()
+#                         checkout_page.recipient_listing.open_action_menu()
+#                         checkout_page.delete_conformation_modal.delete_recipient()
+#
+#     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
+#     return mark_as_created
 
 # Версия фикстуры на удаление с возвратом артефактов
 # @pytest.fixture

@@ -1,5 +1,7 @@
 """Данные тесты проверяют добавление товара в корзину"""
 import time
+
+import allure
 import pytest
 import pyodbc
 import os
@@ -8,6 +10,7 @@ import re
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.checkout_page import CheckoutPage
+from page_objects.purchase_page import PurchasePage
 
 db_server = os.getenv('DB_SERVER')
 db_name = os.getenv('DB_NAME')
@@ -17,9 +20,11 @@ db_password = os.getenv('DB_PASSWORD')
 
 @pytest.mark.auth
 @pytest.mark.smoke
-def create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+@pytest.mark.custom_schedule
+def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
+    purchase_page = PurchasePage(page_fixture)
     cart_page.open(base_url)
     cart_page.clear_cart()
     cart_page.add_to_cart_cheap_product(base_url)
@@ -27,22 +32,21 @@ def create_order(page_fixture, base_url, delete_recipient_fixture, delete_addres
     checkout_page.recipient_listing.close_recipient_listing()
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
     delete_recipient_fixture()
-    delete_address_fixture()
+    # delete_address_fixture()
     checkout_page.payment_block.click_check_with_manager_button()
+    checkout_page.commentary_block.click_commentary_togle_button()
     checkout_page.commentary_block.fill_commentary_textarea("!!! TEST !!!")
-    # TODO: переписать метод нажатия на "Оформить заказ"
-    page_fixture.locator(".OrderTotal__Button").click()
-    # Извлекаем номер заказа .PurchaseWithoutPayment__Number извлечь нужно часть текста, после "Номер заказа: "
-    order_number = page_fixture.locator("p.OrderSummary__Number").inner_text().split("Номер заказа: ")[1]
+    checkout_page.calculation_block.click_order_button()
+    order_number = purchase_page.memorize_the_order_number()
     print(order_number)
-    assert order_number != "", "Номер заказа пустой!"
-    # Проверяем, что номер заказа соответствует шаблону Х-000000000
-    pattern = r'^[А-Яа-я]-[0-9]{9}$'
-    assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону Х-000000000!"
+    with allure.step("Проверяю, что номер заказа не пустой"):
+        assert order_number != "", "Номер заказа пустой!"
+    with allure.step("Проверяю, что номер заказа соответствует одному из шаблонов Х-000000000, ХX000000000, 000000000."):
+        pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
+        assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону Х-000000000!"
 
-    # TODO: навзвать проверки по человечески через allure
-    # TODO: проверить, что order_number имеет шаблон Х-000000000
-    # TODO: Учесть работу фикстур удаления, они должны пытатся перейти в чек-аут, ели он не доступен то добавить товар и перейти еще раз
+    # TODO: настроить отдельное расписание для этого теста
+
 
 # Архивный тест с проверкой заказа через SQL
 # @pytest.mark.skip("Временно, пока не научимся удалять заказы из аналитики и закрывать в 1С")
