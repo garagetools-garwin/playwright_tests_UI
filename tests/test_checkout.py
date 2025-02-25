@@ -345,7 +345,7 @@ def test_add_new_recipient_close_madal2(page_fixture, base_url):
 """Листинг получателей"""
 
 @pytest.mark.auth
-@allure.title("Открытие листинга получателей")
+@allure.title("Открытие листинга получателей (через кнопку Изменить)")
 def test_recipient_listing_activation(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
@@ -585,21 +585,9 @@ def test_edit_recipient_close_madal2(page_fixture, base_url):
 
 """Блок Получение"""
 
-@pytest.mark.auth
-@allure.title("Открытие листинга адресов пользователем с адресами")
-def test_adress_listing_activation(page_fixture, base_url):
-    checkout_page = CheckoutPage(page_fixture)
-    cart_page = CartPage(page_fixture)
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart(base_url)
-    checkout_page.open(base_url)
-    checkout_page.obtaining_block.adress_listing_activation()
-    with allure.step("Провряю, что листинг адресов отображается на странице"):
-        expect(checkout_page.adress_listing.adress_listing_modal()).to_be_visible()
-
-
 """Листинг адресов"""
+
+
 
 
 @pytest.mark.auth
@@ -1009,6 +997,20 @@ def test_back_button(page_fixture, base_url):
 
     with allure.step("Проверяю, что модальное окна Карты - закрыто"):
         expect(checkout_page.map.map_modal()).not_to_be_visible()
+
+
+@pytest.mark.auth
+@allure.title("Открытие листинга адресов пользователем с адресами (через кнопку Изменить)")
+def test_adress_listing_activation(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.adress_listing_activation()
+    with allure.step("Провряю, что листинг адресов отображается на странице"):
+        expect(checkout_page.adress_listing.adress_listing_modal()).to_be_visible()
 
 
 
