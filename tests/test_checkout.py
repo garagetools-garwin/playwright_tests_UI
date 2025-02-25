@@ -431,12 +431,12 @@ def test_cancel_recipient_deletion(page_fixture, base_url):
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
-    checkout_page.delete_conformation_modal.cancel_recipient_deletion()
+    checkout_page.delete_conformation_modal.cancel_recipient_deletion(base_url, page_fixture)
 
 
 @pytest.mark.auth
 @allure.title("Закрытие окна удаления получателя")
-def test_close_recipient_deletion_modal(page_fixture, base_url,delete_recipient_fixture):
+def test_close_recipient_deletion_modal(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
@@ -447,7 +447,7 @@ def test_close_recipient_deletion_modal(page_fixture, base_url,delete_recipient_
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
-    checkout_page.delete_conformation_modal.close_recipient_deletion_modal()
+    checkout_page.delete_conformation_modal.close_recipient_deletion_modal(base_url, page_fixture)
 
 
 """Модальное окно Изменить получателя"""
@@ -586,8 +586,6 @@ def test_edit_recipient_close_madal2(page_fixture, base_url):
 """Блок Получение"""
 
 """Листинг адресов"""
-
-
 
 
 @pytest.mark.auth
@@ -765,7 +763,6 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
 
     with allure.step("Редактирую адрес"):
         checkout_page.obtaining_block.courier_adress_listing_activation()
-        time.sleep(1)
         checkout_page.adress_listing.open_action_menu()
         checkout_page.adress_listing.click_edit_button()
         checkout_page.map.type_in_textaria("г Санкт-Петербург, ул Ленина, д 31")
@@ -828,7 +825,6 @@ def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, d
             actual_listing_adress = checkout_page.adress_listing.get_selected_adress_info()
             assert expected_data_listing == actual_listing_adress
 
-        time.sleep(1)
         checkout_page.adress_listing.open_action_menu()
         checkout_page.adress_listing.click_edit_button()
 
