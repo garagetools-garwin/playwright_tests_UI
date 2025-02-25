@@ -87,7 +87,7 @@ class BuyerAndRecipientBlock:
             with allure.step("Формирую ожидаемый текст"):
                 expected_info = f"{name}, {email}, {phone}"
             checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
-            checkout_page.recipient_listing.open_recipient_listing()
+            checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
             with allure.step("Формирую ожидаемый текст"):
                 expected_info_title = name
@@ -443,7 +443,7 @@ class DeleteConformationModal:
             expect(self.page.locator(self.DELETE_CONFIRMATION_MODAL)).not_to_be_visible()
 
     @allure.step("Удаляю получателя")
-    def delete_recipient_true(self):
+    def delete_recipient_true(self, base_url, page_fixture):
         self.recipient_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -456,7 +456,7 @@ class DeleteConformationModal:
             actual_description = parent_block.locator(self.recipient_listing.INFO_DESCRIPTION).inner_text()
 
         self.delete_confirm()
-        self.recipient_listing.open_recipient_listing()
+        self.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
         # по циклу проверяю каждый заголовок(фио) в листинге, сравниваю с удаленным получателем
         recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
@@ -471,7 +471,7 @@ class DeleteConformationModal:
             assert description != actual_description, f"Найдено совпадение с эталонным значением: {description}"
 
     @allure.step("Удаляю получателя")
-    def delete_recipient(self):
+    def delete_recipient(self, base_url, page_fixture):
         self.recipient_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -487,7 +487,7 @@ class DeleteConformationModal:
             print(number_of_records_before_deleting)
 
             self.delete_confirm()
-            self.recipient_listing.open_recipient_listing()
+            self.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
         with allure.step("Считаю количество записей в листинге(после удаления)"):
             recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
@@ -501,7 +501,7 @@ class DeleteConformationModal:
             assert number_of_records_before_deleting == number_of_records_after_deleting + 1
 
     @allure.step("Удаляю адрес")
-    def delete_adress(self):
+    def delete_adress(self, base_url, page_fixture):
         self.adress_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -517,7 +517,7 @@ class DeleteConformationModal:
             print(number_of_records_before_deleting)
 
             self.delete_confirm()
-            self.obtaining_block.adress_listing_activation()
+            self.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
 
         with allure.step("Считаю количество записей в листинге(после удаления)"):
             adress_titles = self.page.locator(self.adress_listing.INFO_TITLE).all_text_contents()
@@ -531,7 +531,7 @@ class DeleteConformationModal:
             assert number_of_records_before_deleting == number_of_records_after_deleting + 1
 
     @allure.step("Отменяю удаление")
-    def cancel_recipient_deletion(self):
+    def cancel_recipient_deletion(self, base_url, page_fixture):
         self.recipient_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -544,7 +544,7 @@ class DeleteConformationModal:
             actual_description = parent_block.locator(self.recipient_listing.INFO_DESCRIPTION).inner_text()
 
         self.cancel_deletion()
-        self.recipient_listing.open_recipient_listing()
+        self.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
         # по циклу проверяю каждый заголовок(фио) в листинге, сравниваю с удаленным получателем
         recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
@@ -559,7 +559,7 @@ class DeleteConformationModal:
             f"Телефон и мэил {actual_description} не найдены в списке: {recipient_descriptions}"
 
     @allure.step("Закрываю окно удаления")
-    def close_recipient_deletion_modal(self):
+    def close_recipient_deletion_modal(self, base_url, page_fixture):
         self.recipient_listing.click_delete_button()
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -575,7 +575,7 @@ class DeleteConformationModal:
         with allure.step("Проверяю, что окно закрыто"):
             expect(self.page.locator(self.CONFIRM_DELETE_BUTTON)).not_to_be_visible()
 
-        self.recipient_listing.open_recipient_listing()
+        self.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
         # по циклу проверяю каждый заголовок(фио) в листинге, сравниваю с удаленным получателем
         recipient_titles = self.page.locator(self.recipient_listing.INFO_TITLE).all_text_contents()
