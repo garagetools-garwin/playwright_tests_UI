@@ -21,8 +21,8 @@ jobs:
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON}}
-      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS}}
+      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON_ALT}}
+      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
       TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
 
