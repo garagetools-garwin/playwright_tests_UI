@@ -1,0 +1,172 @@
+name: Playwright Tests
+
+# Определение события, запускающего workflow
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 */12 * * *' # Основные тесты
+    - cron: '0 8 * * *'    # Тест создания заказа (в 08:00)
+
+# Определение Задачи(job)
+jobs:
+  # Основная часть тестов
+  test:
+    timeout-minutes: 60
+
+    # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
+    concurrency: playwright-tests
+
+    # запуск на виртуальной машине
+    runs-on: ubuntu-22.04
+    env:
+      USER_PASS: ${{ secrets.USER_PASS }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON}}
+      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS}}
+      TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
+      TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
+
+    steps:
+
+      # Клонирование репозитория
+      - uses: actions/checkout@v4
+
+      # Установка Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.1'
+
+      # Установка зависимостей
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Установка браузеров
+      - name: Ensure browsers are installed
+        run: python -m playwright install --with-deps
+
+      # Установка переменной окружения для connection_config.ini
+      - name: Set up environment
+        run: |
+          sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+
+      # Запуск тестов
+      - name: Run tests
+        run: pytest --reruns 2 --reruns-delay 3 --alluredir=allure-results
+
+      # Загрузка артефактов
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: allure-results/
+
+  # Тест на создание заказа
+  order-test:
+
+    # запуск на виртуальной машине
+    runs-on: ubuntu-22.04
+    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
+
+    # # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
+    # concurrency: playwright-tests
+
+    steps:
+
+      # Клонирование репозитория
+      - uses: actions/checkout@v4
+
+      # Установка Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.1'
+
+      # Установка зависимостей
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Установка браузеров
+      - name: Ensure browsers are installed
+        run: python -m playwright install --with-deps
+
+      # Установка переменной окружения для connection_config.ini
+      - name: Set up environment
+        run: |
+          sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+
+      # Запуск тестов
+      - name: Run only test_create_order
+        run: pytest --reruns 2 --reruns-delay 3 -m "custom_schedule" --alluredir=allure-results
+
+      # Загрузка артефактов
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results
+          path: allure-results/
+
+  # Обьединение отчетов по всем тестам
+  merge-reports:
+    needs: [test, order-test]
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download Allure Results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      # Получение истории прогонов Allure
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # Генерация отчета с учетом истории прогонов
+      - name: Generate Allure report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
+
+      - name: Publish Allure report
+        uses: peaceiris/actions-gh-pages@v2
+        if: always()
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
+
+      # Публикация результата прогона в testIT
+      # - name: Submit results testIT
+      #   if: always()
+      #   run: |
+      #     pip install testit-cli
+      #     #export TMS_TOKEN=${{ secrets.TMS_TOKEN }}
+      #     testit results import \
+      #       --url https://team-wuas.testit.software/ \
+      #       --token ${{ secrets.TMS_TOKEN }} \
+      #       --project-id 87c7eb78-be36-4e13-9e36-651ca3d5f060 \
+      #       --configuration-id 36238c9d-da5e-4cca-a8c4-f0d8316d3f6b \
+      #       --testrun-name "GitHubtestrun" \
+      #       --results results/test-results.xml
