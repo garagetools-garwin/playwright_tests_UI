@@ -820,10 +820,26 @@ class AdressListing:
 
         # self.page.locator(self.ACTION_MENU).nth(0).click()
         with allure.step("Проверяю, что экшн меню открыто"):
+            try:
+                expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
+            except AssertionError:
+                with allure.step("Экшн меню не открылось, пробую еще раз"):
+                    parent_block.locator(self.ACTION_MENU).click()
+                    expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
+        with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
+            expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
+            expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
+
+    @allure.step("Открываю экшн меню")
+    def open_action_menu_true(self):
+        self.page.locator(self.ACTION_MENU).nth(0).click()
+        with allure.step("Проверяю, что экшн меню открыто"):
             expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
         with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
             expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
             expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
+
+
 
     @allure.step("Нажимаю на Редактировать")
     def click_edit_button(self):
