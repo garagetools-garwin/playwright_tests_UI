@@ -75,7 +75,9 @@ class CartPage:
     def add_to_cart(self, url):
         urls_to_check = [
             f"{url}/tovar/sverlo-spiralnoe-po-metallu-50-mm-hss-g-din338-5xd",
-            f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm"
+            f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm",
+            f"{url}/tovar/nakonechnik-kabelnyy-koltsevoy-izolirovannyy-s-pvh-manzhetoy-nki-1-5-3-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-2-5-6-kvt"
         ]
 
         for url in urls_to_check:
