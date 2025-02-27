@@ -2,9 +2,10 @@ name: Playwright_order Tests
 
 # Определение события, запускающего workflow
 on:
-  # workflow_dispatch:
+  workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *' # Основные тесты
+    - cron: '0 */24 * * *' # Тест создания заказа
     # - cron: '0 8 * * *'    # Тест создания заказа (в 08:00)
 
 # Определение Задачи(job)
@@ -17,6 +18,7 @@ jobs:
     concurrency: playwright-tests
 
     # запуск на виртуальной машине
+    if: github.event.schedule == '0 */12 * * *'
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
