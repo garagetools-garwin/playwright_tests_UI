@@ -2,7 +2,7 @@ name: Playwright_order Tests
 
 # Определение события, запускающего workflow
 on:
-  # workflow_dispatch:
+  workflow_dispatch:
   schedule:
     - cron: '0 */12 * * *' # Основные тесты
     # - cron: '0 8 * * *'    # Тест создания заказа (в 08:00)
