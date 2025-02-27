@@ -56,6 +56,13 @@ jobs:
       - name: Run tests
         run: pytest --reruns 2 --reruns-delay 3 --alluredir=allure-results
 
+      # Сохранение файла авторизации
+      - name: Save auth state
+        uses: actions/upload-artifact@v4
+        with:
+          name: auth-state
+          path: auth_state.json
+
       # Загрузка артефактов
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -66,7 +73,7 @@ jobs:
 
   # Тест на создание заказа
   order-test:
-
+    needs: test  # Теперь вторая джоба ждет окончания первой
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
     if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
@@ -104,6 +111,13 @@ jobs:
       - name: Run only test_create_order
         run: pytest --reruns 2 --reruns-delay 3 -m "custom_schedule" --alluredir=allure-results
 
+      # Загрузка файла авторизации
+      - name: Download auth state
+        uses: actions/download-artifact@v4
+        with:
+          name: auth-state
+          path: .
+
       # Загрузка артефактов
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
@@ -115,6 +129,7 @@ jobs:
   # Обьединение отчетов по всем тестам
   merge-reports:
     needs: [test, order-test]
+    if: always()  # Запуск даже если одна из джоб была пропущена
     runs-on: ubuntu-22.04
     steps:
       - name: Download Allure Results
