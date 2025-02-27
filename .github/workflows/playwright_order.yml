@@ -18,7 +18,7 @@ jobs:
     concurrency: playwright-tests
 
     # запуск на виртуальной машине
-    if: github.event_name == 'schedule' && github.event.schedule == '0 */12 * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'schedule' && github.event.schedule == '0 */12 * * *'
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
