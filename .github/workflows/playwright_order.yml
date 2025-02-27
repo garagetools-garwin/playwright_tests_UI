@@ -3,6 +3,8 @@ name: Playwright_order Tests
 # Определение события, запускающего workflow
 on:
   workflow_dispatch:
+  pull_request:
+    branches: [ main, master ]
   schedule:
     - cron: '0 */12 * * *' # Основные тесты
     - cron: '0 */24 * * *' # Тест создания заказа
@@ -56,7 +58,7 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_order" --alluredir=allure-results 
+        run: pytest --reruns 2 --reruns-delay 3 --alluredir=allure-results 
 
      # Сохранение auth_state.json в кеш
       - name: Cache auth state
@@ -78,7 +80,7 @@ jobs:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: (github.event_name == 'schedule' && github.event.schedule == '0 */24 * * *')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 */24 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
@@ -185,12 +187,14 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
+      # Загрузка артефактов
       - name: Upload Allure Report
         uses: actions/upload-artifact@v4
         with:
           name: allure-report
           path: allure-report
 
+      # Публикация отчета Allure  
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v2
         if: always()
