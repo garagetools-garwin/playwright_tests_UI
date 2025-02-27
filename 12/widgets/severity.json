@@ -1,0 +1,1 @@
+[{"uid":"c88b94fa25b4034","name":"Переход в чек-аут","time":{"start":1740651202362,"stop":1740651275251,"duration":72889},"status":"passed","severity":"normal"},{"uid":"e1e7584979c03d89","name":"test_create_order[chromium]","time":{"start":1740651370425,"stop":1740651412133,"duration":41708},"status":"passed","severity":"normal"}]
