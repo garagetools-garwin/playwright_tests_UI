@@ -21,7 +21,7 @@ def test_cart_autorization_modal(page_fixture, base_url):
     with allure.step("Проверяю, что окно аторизаци отображается на странице"):
         expect(autorization.autorization_modal).to_be_visible()
 
-
+@pytest.mark.for_order
 @pytest.mark.smoke
 @allure.title("Переход в чек-аут")
 def test_cart_checkout(page_fixture, base_url):
