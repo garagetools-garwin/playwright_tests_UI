@@ -76,7 +76,7 @@ jobs:
     needs: test  # Теперь вторая джоба ждет окончания первой
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event.schedule == '0 8 * * *'
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
