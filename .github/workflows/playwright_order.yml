@@ -18,7 +18,7 @@ jobs:
     concurrency: playwright-tests
 
     # запуск на виртуальной машине
-    if: github.event_name == 'schedule' && github.event.schedule == '0 */12 * * *'
+    if: github.event_name == 'schedule' && github.event.schedule == '0 */12 * * *' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
@@ -78,7 +78,7 @@ jobs:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 */24 * * *')
+    if: (github.event_name == 'schedule' && github.event.schedule == '0 */24 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
