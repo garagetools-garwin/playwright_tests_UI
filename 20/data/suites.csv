@@ -1,0 +1,3 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","72972","Переход в чек-аут","tests","Thu Feb 27 13:42:11 GMT 2025","passed","Thu Feb 27 13:43:24 GMT 2025","","test_cart","",""
+"","38025","test_create_order[chromium]","tests","Thu Feb 27 13:45:26 GMT 2025","passed","Thu Feb 27 13:46:04 GMT 2025","","test_create_order","",""
