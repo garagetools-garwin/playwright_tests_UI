@@ -1,1 +1,0 @@
-{"557936025a2322f00a50d62fc40dc4d9":{"statistic":{"failed":0,"broken":0,"skipped":0,"passed":1,"unknown":0,"total":1},"items":[{"uid":"c9e89a4d4e27c6c5","reportUrl":"https://garagetools-garwin.github.io/playwright_tests_UI/22//#testresult/c9e89a4d4e27c6c5","status":"passed","time":{"start":1740664855791,"stop":1740664930902,"duration":75111}}]}}
