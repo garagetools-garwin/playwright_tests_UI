@@ -6,9 +6,10 @@ on:
   pull_request:
     branches: [ main, master ]
   schedule:
-    - cron: '0 */12 * * *' # Основные тесты
-    - cron: '0 */24 * * *' # Тест создания заказа
-    # - cron: '0 8 * * *'    # Тест создания заказа (в 08:00)
+    # - cron: '0 */12 * * *'
+    # - cron: '0 */24 * * *'
+    - cron: '0 5 * * *'    
+    - cron: '0 14 * * *'  
 
 # Определение Задачи(job)
 jobs:
@@ -20,7 +21,7 @@ jobs:
     concurrency: playwright-tests
 
     # запуск на виртуальной машине
-    if: github.event_name == 'schedule' && github.event.schedule == '0 */12 * * *' || github.event_name == 'workflow_dispatch'
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
@@ -80,7 +81,7 @@ jobs:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 */24 * * *')
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
