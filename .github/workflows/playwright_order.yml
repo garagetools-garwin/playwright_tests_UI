@@ -126,16 +126,16 @@ jobs:
           echo "Checking status of test job..."
           while true; do
             # Получаем статус задачи test через GitHub API
-            STATUS=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            STATUS=$(curl -s -H "Authorization: ***" \
               -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/${{ github.repository }}/actions/runs/${{ github.run_id }}/jobs" \
+              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/13612331399/jobs" \
               | jq -r '.jobs[] | select(.name == "test") | .status')
-
+          
             if [[ "$STATUS" == "completed" ]]; then
               echo "Test job is completed."
               break
-            elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" ]]; then
-              echo "Test job is still running or queued. Waiting..."
+            elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" || "$STATUS" == "pending" ]]; then
+              echo "Test job is still running, queued, or pending. Waiting..."
               sleep 60
             else
               echo "Test job status is unknown: $STATUS"
