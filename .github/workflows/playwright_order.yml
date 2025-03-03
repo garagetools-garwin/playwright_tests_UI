@@ -120,6 +120,10 @@ jobs:
           key: auth-state-${{ github.run_id }}
           restore-keys: auth-state-
           
+      # Задержка перед опросом статуса выполнения test
+      - name: Wait before checking test job
+        run: sleep 30
+          
       # Опрашиваем статус выполнения test
       - name: Wait for test job to complete
         run: |
