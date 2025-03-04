@@ -3,8 +3,8 @@ name: Playwright_order Tests
 # Определение события, запускающего workflow
 on:
   workflow_dispatch:
-  pull_request:
-    branches: [ main, master ]
+  # pull_request:
+  #   branches: [ main, master ]
   schedule:
     # - cron: '0 */12 * * *'
     # - cron: '0 */24 * * *'
