@@ -1,4 +1,4 @@
-name: Playwright_order Tests
+name: Playwright_order Tests for history
 
 # Определение события, запускающего workflow
 on:
