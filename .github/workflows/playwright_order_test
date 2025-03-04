@@ -1,0 +1,215 @@
+name: Playwright_order Tests
+
+# Определение события, запускающего workflow
+on:
+  workflow_dispatch:
+  # pull_request:
+  #   branches: [ main, master ]
+  schedule:
+    # - cron: '0 */12 * * *'
+    # - cron: '0 */24 * * *'
+    # - cron: '0 5 * * *'    
+    # - cron: '0 14 * * *'  
+
+# Определение Задачи(job)
+jobs:
+  # Основная часть тестов
+  test:
+    timeout-minutes: 60
+
+    # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
+    concurrency: playwright-tests
+
+    # запуск на виртуальной машине
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
+    runs-on: ubuntu-22.04
+    env:
+      USER_PASS: ${{ secrets.USER_PASS }}
+      DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON_ALT}}
+      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
+      TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
+      TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
+
+    steps:
+
+      # Клонирование репозитория
+      - uses: actions/checkout@v4
+
+      # Установка Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.1'
+
+      # Установка зависимостей
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Установка браузеров
+      - name: Ensure browsers are installed
+        run: python -m playwright install --with-deps
+
+      # Установка переменной окружения для connection_config.ini
+      - name: Set up environment
+        run: |
+          sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+
+      # Запуск тестов
+      - name: Run tests
+        run: pytest --reruns 2 --reruns-delay 3 -m "for_test" --alluredir=allure-results
+
+     # Сохранение auth_state.json в кеш
+      - name: Cache auth state
+        uses: actions/cache@v3
+        with:
+          path: auth_state.json
+          key: auth-state-${{ github.run_id }}
+
+      # Загрузка артефактов
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results-main-${{ github.run_id }}
+          path: allure-results/
+
+  # Тест на создание заказа
+  order-test:
+    # needs: test  # order-test ждет окончания test если он запущен
+    # запуск на виртуальной машине
+    runs-on: ubuntu-22.04
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+
+    # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
+    concurrency: playwright-tests
+
+    steps:
+
+      # Клонирование репозитория
+      - uses: actions/checkout@v4
+
+      # Установка Python
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12.1'
+
+      # Установка зависимостей
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      # Установка браузеров
+      - name: Ensure browsers are installed
+        run: python -m playwright install --with-deps
+
+      # Установка переменной окружения для connection_config.ini
+      - name: Set up environment
+        run: |
+          sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
+
+      # Восстанавливаем кеш auth_state.json
+      - name: Restore cached auth state
+        uses: actions/cache@v3
+        with:
+          path: auth_state.json
+          key: auth-state-${{ github.run_id }}
+          restore-keys: auth-state-
+          
+      # Задержка перед опросом статуса выполнения test
+      - name: Wait before checking test job
+        run: sleep 30
+          
+      # Опрашиваем статус выполнения test
+      - name: Wait for test job to complete
+        run: |
+          echo "Checking status of test job..."
+          while true; do
+            # Получаем статус задачи test через GitHub API
+            STATUS=$(curl -s -H "Authorization: ***" \
+              -H "Accept: application/vnd.github.v3+json" \
+              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/13612331399/jobs" \
+              | jq -r '.jobs[] | select(.name == "test") | .status')
+          
+            if [[ "$STATUS" == "completed" ]]; then
+              echo "Test job is completed."
+              break
+            elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" || "$STATUS" == "pending" ]]; then
+              echo "Test job is still running, queued, or pending. Waiting..."
+              sleep 60
+            else
+              echo "Test job status is unknown: $STATUS"
+              exit 1
+            fi
+          done
+
+      # Запуск тестов
+      - name: Run only test_create_order
+        run: pytest --reruns 2 --reruns-delay 3 -m "for_test_2" --alluredir=allure-results
+
+      # Загрузка артефактов
+      - name: Upload Allure Results
+        uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: allure-results-order-${{ github.run_id }}
+          path: allure-results/
+
+  # Обьединение отчетов по всем тестам
+  merge-reports:
+    needs: [test, order-test]
+    if: always()  # Запуск даже если одна из джоб была пропущена
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Download Allure Results
+        uses: actions/download-artifact@v4
+        with:
+          pattern: allure-results-*
+          path: allure-results
+          merge-multiple: true
+
+      # Получение истории прогонов Allure
+      - name: Get Allure history
+        uses: actions/checkout@v2
+        if: always()
+        continue-on-error: true
+        with:
+          ref: gh-pages
+          path: gh-pages
+
+      # Копирование истории в allure-results перед генерацией отчета
+      - name: Copy previous Allure history
+        run: |
+          mkdir -p allure-results
+          cp -r gh-pages/allure-history allure-results/ || echo "No previous history found"
+
+      # Генерация отчета с учетом истории прогонов
+      - name: Generate Allure report
+        uses: simple-elf/allure-report-action@master
+        if: always()
+        id: allure-report
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          allure_history: allure-history
+
+      # Загрузка артефактов (требуется для построения отчетов в ручную или для отправки в другие системы)
+      # - name: Upload Allure Report
+      #   uses: actions/upload-artifact@v4
+      #   with:
+      #     name: allure-report
+      #     path: allure-report
+
+      # Публикация отчета Allure  
+      - name: Publish Allure report
+        uses: peaceiris/actions-gh-pages@v3
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./allure-report
+          keep_files: true  # Сохраняем историю отчетов
