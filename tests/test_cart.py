@@ -106,7 +106,7 @@ def test_delete_multiple_products(page_fixture, base_url):
     cart_page.confirm_deletion()
     cart_page.product_removed_from_cart()
 
-
+@pytest.mark.for_test
 @allure.title("Удаление товара нажатием на крестик (Корзина)")
 def test_delete_product_by_cross(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
