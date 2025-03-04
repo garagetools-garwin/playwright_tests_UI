@@ -18,7 +18,8 @@ class HeaderElement:
     ACCOUNT_BUTTON = ".NavigationButton.Header__Navigation__Button.Header__LoginButton.Header__UserButton"
     ACCOUNT_MENU = "div.Header__AuthMenu"
     CUSTOMER_SWITCH_BUTTON = "button.AuthMenuHeader__SwitcherButton"
-    CUSTOMER_IN_LIST = "button.AuthMenuCustomers__Button"
+    CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton"
+    INACTIVE_CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton:not([class*='--is-selected'])"
 
     def __init__(self, page):
         self.page = page
@@ -48,7 +49,7 @@ class HeaderElement:
 
     @allure.step("Выбираю контрагента")
     def select_customer(self):
-        self.page.locator(self.CUSTOMER_IN_LIST).nth(0).click()
+        self.page.locator(self.INACTIVE_CUSTOMER_IN_LIST).nth(0).click()
 
     @allure.step("Переключаю контрагента")
     def switch_customer(self):

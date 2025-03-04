@@ -43,10 +43,10 @@ class CheckoutPage:
 
 class BuyerAndRecipientBlock:
 
-    ADD_FIRST_RECIPIENT_BUTTON = "#contacts .SectionInfo__ButtonAdd"
-    RECIPIENT_CHANGE_BUTTON = "#contacts .SectionInfo__Button"
-    CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
-    RECIPIENT_INFO = "#contacts .CheckoutSection__Body span.SectionInfo__Title"
+    ADD_FIRST_RECIPIENT_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd"
+    RECIPIENT_CHANGE_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__Button"
+    CUSTOMER_NAME = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Custom span.SectionInfo__Title"
+    RECIPIENT_INFO = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Body span.SectionInfo__Title"
 
     def __init__(self, page):
         self.page = page
