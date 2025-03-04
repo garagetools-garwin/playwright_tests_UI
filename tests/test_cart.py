@@ -140,7 +140,7 @@ def test_calculation_block_calculate_price_of_some_products(page_fixture, base_u
     cart_page.click_second_checkbox_product()
     cart_page.calculate_total_price_for_checked_products()
 
-
+@pytest.mark.for_test_2
 @allure.title("Отправка на печать")
 def test_cart_print_form_activation(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
