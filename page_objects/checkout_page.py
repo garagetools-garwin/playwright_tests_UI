@@ -95,7 +95,7 @@ class BuyerAndRecipientBlock:
             with allure.step("Проверяю информацию о выбранном получателе"):
                 checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title,
                                                                                  expected_info_description)
-
+                checkout_page.recipient_listing.close_recipient_listing()
 """Листинг получателей"""
 
 
@@ -684,10 +684,41 @@ class ObtainingBlock:
         # Если хотя бы одно из действий сработало, продолжаем
         if adress_listing_opened:
             checkout_page.adress_listing.click_add_adress_button()
-            # Выбор ПВЗ с кастомным событием
-            pickup_point_id = "62e10ad2-164c-4e9e-9e73-f4f096cdddb1"
-            target_lat = 59.880017
-            target_lon = 30.395683
+            # Выбор ПВЗ с кастомным событием (ПВЗ СДЕК)
+            pickup_point_id = "84ac7315-76f0-4506-8f69-6f28f6d249c6"
+            target_lat = 59.941833
+            target_lon = 30.189611
+            checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
+            checkout_page.map.click_pick_up_here_button()
+
+    @allure.step("Создаю новый адрес гарвин ПВЗ")
+    def create_address_pvz_garwin(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        adress_listing_opened = False
+
+        # Попытка открыть список получателей
+        try:
+            checkout_page.obtaining_block.adress_listing_activation()
+            adress_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not adress_listing_opened:  # Только если предыдущее действие не сработало
+            try:
+                checkout_page.obtaining_block.click_first_adress_button()
+                adress_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if adress_listing_opened:
+            checkout_page.adress_listing.click_add_adress_button()
+            # Выбор ПВЗ с кастомным событием (ПВЗ ГАРВИН)
+            pickup_point_id = "7fff251a-3dee-4fdf-818b-87d6c180aa73"
+            target_lat = 55.7040707
+            target_lon = 37.6902614
             checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
             checkout_page.map.click_pick_up_here_button()
 
@@ -1025,6 +1056,7 @@ class Map:
 
 class DeliveryBlock:
 
+    DELIVERY_PRICE = "span .SelectButton__Button__Description"
     PRODUCT_PRICE = "p.CheckoutDeliveryProduct__Price"
 
     def __init__(self, page):
@@ -1036,14 +1068,24 @@ class DeliveryBlock:
         base_price_number = float(text_base_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽/шт.', ''))
         return base_price_number
 
+    @allure.step("Запоминаю первоначальную стоимость товара")
+    def delivery_price(self):
+        text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
+        delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        return delivery_price_number
+
 
 """Блок Калькуляции"""
 
 
 class CalculationBlock:
-
+    PRODUCTS_PRICE = ".flexRow-JCSB.OrderTotal__Row:has-text('Товары') .Price__Value"
+    DISCOUNT_PRICE = ".flexRow-JCSB.OrderTotal__Row:has-text('Ваша скидка:') .Price__Value"
     ORDER_BUTTON = ".OrderTotal__Button"
     TOTAL_PRICE_VALUE = ".OrderTotal__Summary .Price__Value"
+    DELIVERY_PRICE = ".flexRow-JCSB-AIC.OrderTotal__Row .Price__Value"
+    PRIVACY_POLICY_BUTTON = "a[href='/web-customer-terms']"
+    OFFER_CONTRACT_BUTTON = "a[href='/oferta']"
 
     def __init__(self, page):
         self.page = page
@@ -1051,12 +1093,42 @@ class CalculationBlock:
     @allure.step("Читаю сумму в блоке Калькуляция")
     def total_price_value(self):
         with allure.step("Извлекаю текст итоговой суммы в блоке Калькуляция"):
-            return self.page.locator(self.TOTAL_PRICE_VALUE).inner_text()
+            text_total_price = self.page.locator(self.TOTAL_PRICE_VALUE).inner_text()
+            total_price_number = float(text_total_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', '').replace('\xa0', ''))
+            return total_price_number
 
     @allure.step("Нажимаю на кнопку 'Оформить заказ'")
     def click_order_button(self):
         self.page.locator(self.ORDER_BUTTON).click()
 
+    @allure.step("Проверяю статус кнопки Оформить заказ")
+    def order_button_status(self):
+        return self.page.locator(self.ORDER_BUTTON)
+    @allure.step("Запоминаю стоимость доставки")
+    def delivery_price(self):
+        text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
+        delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        return delivery_price_number
+
+    @allure.step("Запоминаю сумму скидок")
+    def discount_price(self):
+        text_discount_price = self.page.locator(self.DISCOUNT_PRICE).inner_text()
+        discount_price_number = float(text_discount_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        return discount_price_number
+
+    @allure.step("Запоминаю тоимость оформляемых заказов")
+    def products_price(self):
+        text_products_price = self.page.locator(self.PRODUCTS_PRICE).inner_text()
+        products_price_number = float(text_products_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        return products_price_number
+
+    @allure.step("Нажимаю на сссылку 'Политика конфиденциальности'")
+    def click_privacy_policy(self):
+        self.page.locator(self.PRIVACY_POLICY_BUTTON).click()
+
+    @allure.step("Нажимаю на сссылку 'Договор-оферта'")
+    def click_offer_contract(self):
+        self.page.locator(self.OFFER_CONTRACT_BUTTON).click()
 
 
     # @allure.step("Запоминаю стоимость скидки")

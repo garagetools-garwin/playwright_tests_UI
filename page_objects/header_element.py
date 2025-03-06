@@ -8,6 +8,8 @@ from playwright.sync_api import TimeoutError
 import pytest
 from playwright.sync_api import expect
 
+from page_objects.companies_page import CompaniesPage
+
 
 class HeaderElement:
 
@@ -56,4 +58,5 @@ class HeaderElement:
         self.account_header_menu_activation()
         # self.get_customers_list()
         self.select_customer()
+
 

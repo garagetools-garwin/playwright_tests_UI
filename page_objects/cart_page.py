@@ -9,8 +9,10 @@ import pytest
 import allure
 from playwright.sync_api import expect
 
+from page_objects.companies_page import CompaniesPage
 from page_objects.header_element import HeaderElement
 from page_objects.checkout_page import CheckoutPage
+from page_objects.listing_element import ListingElement
 
 
 class CartPage:
@@ -246,6 +248,8 @@ class CartPage:
         else:
             raise ValueError("Product not available, please select another product")
 
+
+
     @allure.step("Добавляю дешевый товар в корзину")
     def add_to_cart_cheap_product(self, url):
         urls_to_check = [
@@ -260,6 +264,34 @@ class CartPage:
 
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                break  # Прерываем цикл, если кнопка найдена и товар добавлен
+            except Exception:
+                print(f"Add to cart button not found on {url}")
+                continue  # Переходим к следующей ссылке, если кнопка не найдена
+        else:
+            raise ValueError("Product not available, please select another product")
+
+    @allure.step("Добавляю товар по акции в корзину")
+    def add_to_cart_promo_product(self, url, page_fixture):
+        listing_element = ListingElement(page_fixture)
+        self.page.goto(f"{url}/promos/tsena-kak-podarok/")
+        listing_element.add_to_cart()
+
+    @allure.step("Добавляю товар без скидки в корзину")
+    def add_to_cart_product_for_free_delivery(self, url):
+        urls_to_check = [
+            f"{url}/tovar/nabor-udarnyh-golovok-38-mm-1-2-12pr-10-24-mm-v-metallicheskom-keyse",
+            f"{url}/klyuch-rozhkovyy-udarnyy-korotkiy-32-mm",
+            f"{url}/nabor-klyuchey-kombinirovannyh-udlinennyh-12-predmetov-10-24-mm"
+        ]
+
+        for url in urls_to_check:
+            self.page.goto(url)
+
+            try:
+                # Попытка найти и нажать кнопку "Добавить в корзину"
+                # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
                 self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
@@ -602,8 +634,10 @@ class CartPage:
     def info_change_block_activation(self, page, base_url):
         cart_page = CartPage(page)
         header = HeaderElement(page)
+        companies = CompaniesPage(page)
         cart_page.check_or_add_to_cart_multiple_stm_products(base_url)
-        header.switch_customer()
+        companies.select_a_company_with_a_different_type_of_pricing(base_url)
+        # header.switch_customer()
         cart_page.open(base_url)
 
     """Блок изменения информации"""
