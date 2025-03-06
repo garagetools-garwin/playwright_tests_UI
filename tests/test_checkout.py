@@ -241,16 +241,44 @@ def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_a
         response = page_fixture.request.get(f'{base_url}/oferta')                             # Отправляем гет запрос, заводим переменную
         expect(response).to_be_ok()
 
-# @pytest.mark.auth
-# @allure.title("При достижении определенной суммы стоимость доставки равна 0")
-# def test_(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
-#     cart_page = CartPage(page_fixture)
-#     checkout_page = CheckoutPage(page_fixture)
-#     companies_page = CompaniesPage(page_fixture)
-#     companies_page.select_company_with_retail_price(base_url)
-#     cart_page.open(base_url)
-#     cart_page.clear_cart()
-#     cart_page.add_to_cart_product_for_free_delivery()
+@pytest.mark.auth
+@allure.title("При достижении определенной суммы стоимость доставки равна 0")
+def test_(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_product_for_free_delivery(base_url)
+    cart_page.open(base_url)
+    cart_page.increase_quantity_of_product()
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    # Проверяю, что в блоке достака стоит бесплатно
+    with allure.step("Проверяю, что что в блоке достака стоит бесплатно"):
+        delivery_price = checkout_page.delivery_block.delivery_price()
+        assert str(delivery_price) == "бесплатно"
+    # Проверяю, что в блоке Итого стоит бесплатно
+    with allure.step("Проверяю, что что в блоке Итого стоит бесплатно"):
+        delivery_price = checkout_page.calculation_block.delivery_price()
+        assert str(delivery_price) == "бесплатно"
+    cart_page.open(base_url)
+    cart_page.reduse_quantity_of_product()
+    # цикл, for price in prices кликаем на плюсик пока не станет меньше 15000
+    checkout_page.open(base_url)
+    # Проверяю, что в блоке достака стоит != бесплатно
+    # Проверяю, что в блоке Итого стоит != бесплатно
+    with allure.step("Проверяю, что что в блоке достака стоит бесплатно"):
+        delivery_price = checkout_page.delivery_block.delivery_price()
+        assert str(delivery_price) != "бесплатно"
+    # Проверяю, что в блоке Итого стоит бесплатно
+    with allure.step("Проверяю, что что в блоке Итого стоит бесплатно"):
+        delivery_price = checkout_page.calculation_block.delivery_price()
+        assert str(delivery_price) != "бесплатно"
 
 
 

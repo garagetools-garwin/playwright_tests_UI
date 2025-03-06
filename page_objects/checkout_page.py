@@ -216,7 +216,10 @@ class RecipientListing:
 
     @allure.step("Закрываю листинг получателей")
     def close_recipient_listing(self):
-        self.page.locator(self.CLOSE_BUTTON).click()
+        if self.page.locator(self.RECIPIENT_LISTING_MODAL).is_visible():
+            self.page.locator(self.CLOSE_BUTTON).click()
+        else:
+            pass
 
 
 """Модалка Новый получатель"""
@@ -1057,6 +1060,7 @@ class Map:
 class DeliveryBlock:
 
     DELIVERY_PRICE = "span .SelectButton__Button__Description"
+    DELIVERY_DATE  = "#delivery span .SelectButton__Button__Title"
     PRODUCT_PRICE = "p.CheckoutDeliveryProduct__Price"
 
     def __init__(self, page):
@@ -1071,7 +1075,13 @@ class DeliveryBlock:
     @allure.step("Запоминаю первоначальную стоимость товара")
     def delivery_price(self):
         text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
-        delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        text_delivery_date = self.page.locator(self.DELIVERY_DATE).inner_text()
+        if text_delivery_price == "бесплатно":
+            delivery_price_number = text_delivery_price
+        elif text_delivery_date == "Уточнить у менеджера":
+            delivery_price_number = text_delivery_date
+        else:
+            delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
         return delivery_price_number
 
 
@@ -1084,6 +1094,7 @@ class CalculationBlock:
     ORDER_BUTTON = ".OrderTotal__Button"
     TOTAL_PRICE_VALUE = ".OrderTotal__Summary .Price__Value"
     DELIVERY_PRICE = ".flexRow-JCSB-AIC.OrderTotal__Row .Price__Value"
+    DELIVERY_PRICE_STR = ".flexRow-JCSB-AIC.OrderTotal__Row .OrderTotal__Row__Value.--has-highlight"
     PRIVACY_POLICY_BUTTON = "a[href='/web-customer-terms']"
     OFFER_CONTRACT_BUTTON = "a[href='/oferta']"
 
@@ -1104,10 +1115,21 @@ class CalculationBlock:
     @allure.step("Проверяю статус кнопки Оформить заказ")
     def order_button_status(self):
         return self.page.locator(self.ORDER_BUTTON)
+
     @allure.step("Запоминаю стоимость доставки")
     def delivery_price(self):
-        text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
-        delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
+        # Проверяем, есть ли в строке доставки элемент с числовым значением
+        if self.page.locator(self.DELIVERY_PRICE).is_visible():
+            # Если элемент есть, то стоимость доставки в цифрах
+            text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
+            delivery_price_number = float(
+                text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', '').replace('\xa0',
+                                                                                                             ''))
+        else:
+            # Если элемента нет, то стоимость доставки "бесплатно" или "не определено"
+            text_delivery_price = self.page.locator(self.DELIVERY_PRICE_STR).inner_text().strip()
+            delivery_price_number = text_delivery_price
+
         return delivery_price_number
 
     @allure.step("Запоминаю сумму скидок")
@@ -1129,6 +1151,8 @@ class CalculationBlock:
     @allure.step("Нажимаю на сссылку 'Договор-оферта'")
     def click_offer_contract(self):
         self.page.locator(self.OFFER_CONTRACT_BUTTON).click()
+
+
 
 
     # @allure.step("Запоминаю стоимость скидки")
