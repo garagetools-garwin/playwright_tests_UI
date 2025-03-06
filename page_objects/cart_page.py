@@ -52,6 +52,7 @@ class CartPage:
     CANCEL_PROMO_CODE_BUTTON = ".flexRow-AIC.CartPromo__CancelButton"
     BACK_TO_CART_BUTTON = ".Button.size--big.color--secondary"
     NOT_AVAILABLE_FOR_ORDER_BLOCK = "div.CartUnavailableList"
+    COUNTER_BUTTON = "button.Counter__Element"
 
     def __init__(self, page):
         self.page = page
@@ -679,6 +680,34 @@ class CartPage:
         element_cart = self.page.locator("div.CartUnavailableList .ProductCartInfo__Title").nth(0)
         text_ct_cart = element_cart.inner_text()
         return text_ct_cart
+
+    @allure.step("Увеличиваю количество товара, пока его сумма не превысит 15000р")
+    def increase_quantity_of_product(self):
+        increase_quantity = self.page.locator(self.COUNTER_BUTTON).nth(1)
+
+        while True:
+            total_price_calculation_block_text = self.page.locator(self.ORDER_TOTAL_PRICE).inner_text()
+            total_price_calculation_block = int(total_price_calculation_block_text.replace('\xa0', '').replace(' ', ''))
+            print(total_price_calculation_block)
+
+            if total_price_calculation_block >= 15000:
+                break
+
+            increase_quantity.click()
+
+    @allure.step("Уменьшаю количество товара, пока его сумма не станет меньше 15000р")
+    def reduse_quantity_of_product(self):
+        reduse_quntity = self.page.locator(self.COUNTER_BUTTON).nth(0)
+
+        while True:
+            total_price_calculation_block_text = self.page.locator(self.ORDER_TOTAL_PRICE).inner_text()
+            total_price_calculation_block = int(total_price_calculation_block_text.replace('\xa0', '').replace(' ', ''))
+
+            if total_price_calculation_block < 15000:
+                break
+
+            reduse_quntity.click()
+
 
 
 
