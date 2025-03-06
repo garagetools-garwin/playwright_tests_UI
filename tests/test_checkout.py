@@ -7,10 +7,10 @@ import allure
 from playwright.sync_api import expect
 
 from conftest import delete_recipient_fixture
-from page_objects.checkout_page import CheckoutPage
+from page_objects.checkout_page import CheckoutPage, CalculationBlock, DeliveryBlock
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
-
+from page_objects.companies_page import CompaniesPage
 
 """Промокод"""
 
@@ -151,12 +151,118 @@ def test_checkout_activating_a_hint(page_fixture, base_url):
 
 """Тесты для блока калькуляции"""
 
+@pytest.mark.auth
+@allure.title("Итоговая стоимость заказа с промокодом и доставкой")
+def test_total_cost_with_promo_code_and_shipping(page_fixture, base_url, delete_address_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_not_discounted_product(base_url)
+    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    delete_address_fixture()
+    with allure.step("Проверяю, что стоимость доставки отображается в блоке калькуляции"):
+        assert checkout_page.calculation_block.delivery_price() == checkout_page.delivery_block.delivery_price()
 
+    checkout_page.promo_code.check_promo_code()
+    checkout_page.promo_code.activate_valid_promo_code()
+
+    with allure.step("Проверяю, что итоговая сумма считается с учетом скидки и стоимости доставки"):
+        total_price = checkout_page.calculation_block.total_price_value()
+        delivery_price = checkout_page.calculation_block.delivery_price()
+        discount_price = checkout_page.calculation_block.discount_price()
+        products_price = checkout_page.calculation_block.products_price()
+        assert total_price == products_price + delivery_price - discount_price
+
+
+@pytest.mark.auth
+@allure.title("Итоговая стоимость заказа со скидкой по акции")
+def test_total_cost_with_promo_product(page_fixture, base_url, delete_address_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
+    checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
+    delete_address_fixture()
+    checkout_page.open(base_url)
+    # with allure.step("Проверяю, что стоимость скидки по акции отображается в блоке калькуляции"):
+    #     assert checkout_page.calculation_block.discount_price == checkout_page.delivery_block.delivery_price()
+
+    with allure.step("Проверяю, что итоговая сумма считается с учетом скидки и стоимости доставки"):
+        total_price = checkout_page.calculation_block.total_price_value()
+        discount_price = checkout_page.calculation_block.discount_price()
+        products_price = checkout_page.calculation_block.products_price()
+        assert total_price == products_price - discount_price
+
+
+@pytest.mark.auth_empty
+@allure.title("Кнопка Оформить заказ не активна если у пользователя не выбран получатель и адрес")
+def test_place_an_order_button_disabled_without_recipient_and_adress(page_fixture, base_url):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
+    checkout_page.open(base_url)
+
+    with allure.step("Проверяю, что кнопка Оформить заказ не активна"):
+        order_button_status = checkout_page.calculation_block.order_button_status()
+        expect(order_button_status).to_be_disabled()
+
+
+@pytest.mark.auth
+@allure.title("Переход на страницы Политика конфиденциальности и Договор-оферта")
+def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
+    checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    checkout_page.calculation_block.click_privacy_policy()
+    with allure.step("Проверяю, что переход на ожидаемую страницу прошел успешно"):
+        expect(page_fixture).to_have_url(f'{base_url}/web-customer-terms')                                # Проверяем, что URL осответствует заданному
+        response = page_fixture.request.get(f'{base_url}/web-customer-terms')                             # Отправляем гет запрос, заводим переменную
+        expect(response).to_be_ok()
+    checkout_page.open(base_url)
+    checkout_page.calculation_block.click_offer_contract()
+    with allure.step("Проверяю, что переход на ожидаемую страницу прошел успешно"):
+        expect(page_fixture).to_have_url(f'{base_url}/oferta')                                # Проверяем, что URL осответствует заданному
+        response = page_fixture.request.get(f'{base_url}/oferta')                             # Отправляем гет запрос, заводим переменную
+        expect(response).to_be_ok()
+
+# @pytest.mark.auth
+# @allure.title("При достижении определенной суммы стоимость доставки равна 0")
+# def test_(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+#     cart_page = CartPage(page_fixture)
+#     checkout_page = CheckoutPage(page_fixture)
+#     companies_page = CompaniesPage(page_fixture)
+#     companies_page.select_company_with_retail_price(base_url)
+#     cart_page.open(base_url)
+#     cart_page.clear_cart()
+#     cart_page.add_to_cart_product_for_free_delivery()
+
+
+
+@pytest.mark.auth
 @allure.title("Изменение цены в блоке калькуляции по всем позициям")
 def calculation_block_calculate_price_for_all_products(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_multiple_products(base_url)
+    checkout_page = CheckoutPage(page_fixture)
     cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_not_discounted_product(base_url)
+    checkout_page.open(base_url)
     total_price = cart_page.calculate_total_price()
     cart_page.get_cart_prices()
     cart_page.compare_prices(total_price)
@@ -173,16 +279,6 @@ def calculation_block_calculate_price_of_some_products(page_fixture, base_url):
     cart_page.calculate_total_price_for_checked_products()
     cart_page.click_second_checkbox_product()
     cart_page.calculate_total_price_for_checked_products()
-
-
-@allure.title("Отправка на печать")
-def cart_print_form_activation(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart(base_url)
-    cart_page.open(base_url)
-    cart_page.click_print_button()
-    with allure.step("Проверяю, что окно печати на странице"):
-        page_fixture.wait_for_function("window.waitForPrintDialog")
 
 
 @allure.title("Изменение количества товара через счетчик")
@@ -1117,3 +1213,7 @@ def test_open_add_recipient_from_checkout(page_fixture, base_url):
 #TODO: написать текст для вывода в отчет в случае падения для каждой проверки
 #TODO: написать обработки исключений/ошибок (кинуть запрос в GPT)
 #TODO: включить метод открытия корзины в метод очистки корзины
+#TODO: написать фикстуру которая будет активироватся при запуске любого теста, считать сколько было создано пулучателей,
+# адресов и по завершению всех проиграных тестов удалять требуемое количество сущностей, если их было 0 то фикстура
+# просто закончит свою работу. Понадобится расставить флаги после создания сущностей
+#TODO: Скидка по промокоду и по акции сново считаются в одном поле, пересмотреть написание тестов связаных с этими полями

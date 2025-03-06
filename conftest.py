@@ -221,8 +221,9 @@ def delete_recipient_fixture(request, page_fixture, base_url):
 
                 # Проверяем актуальную сумму
                 price = checkout_page.calculation_block.total_price_value()
+                print(price)
 
-                if not price or price.strip() == "0":
+                if not price or price == 0:
                     cart_page.add_to_cart_cheap_product(base_url)
                     checkout_page.open(base_url)
 
@@ -269,8 +270,9 @@ def delete_address_fixture(request, page_fixture, base_url):
 
                 # Проверяем актуальную сумму
                 price = checkout_page.calculation_block.total_price_value()
+                print(price)
 
-                if not price or price.strip() == "0":
+                if not price or price == 0:
                     cart_page.add_to_cart_cheap_product(base_url)
                     checkout_page.open(base_url)
 
