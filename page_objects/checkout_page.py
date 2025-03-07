@@ -1060,7 +1060,7 @@ class Map:
 class DeliveryBlock:
 
     DELIVERY_PRICE = "span .SelectButton__Button__Description"
-    DELIVERY_DATE  = "#delivery span .SelectButton__Button__Title"
+    DELIVERY_DATE = "#delivery span .SelectButton__Button__Title"
     PRODUCT_PRICE = "p.CheckoutDeliveryProduct__Price"
 
     def __init__(self, page):
@@ -1092,39 +1092,6 @@ class DeliveryBlock:
                 return delivery_price_number
             else:
                 raise ValueError("Элемент не найден")
-
-    # @allure.step("Запоминаю первоначальную стоимость товара")
-    # def delivery_price(self):
-    #     if self.page.locator(self.DELIVERY_PRICE).to_visible(3000):
-    #         text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
-    #         if text_delivery_price == "бесплатно":
-    #             delivery_price_number = text_delivery_price
-    #             return delivery_price_number
-    #     else:
-    #         pass
-    #
-    #     if self.page.locator(self.DELIVERY_DATE).to_visible(3000):
-    #         text_delivery_date = self.page.locator(self.DELIVERY_DATE).inner_text()
-    #         if text_delivery_date == "Уточнить у менеджера":
-    #             delivery_price_number = text_delivery_date
-    #             return delivery_price_number
-    #         else:
-    #
-    #             delivery_price_number = float(
-    #                 text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
-    #             return delivery_price_number
-
-    # @allure.step("Запоминаю первоначальную стоимость товара")
-    # def delivery_price(self):
-    #     text_delivery_price = self.page.locator(self.DELIVERY_PRICE).inner_text()
-    #     text_delivery_date = self.page.locator(self.DELIVERY_DATE).inner_text()
-    #     if text_delivery_price == "бесплатно":
-    #         delivery_price_number = text_delivery_price
-    #     elif text_delivery_date == "Уточнить у менеджера":
-    #         delivery_price_number = text_delivery_date
-    #     else:
-    #         delivery_price_number = float(text_delivery_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽', ''))
-    #     return delivery_price_number
 
 
 """Блок Калькуляции"""
@@ -1175,8 +1142,6 @@ class CalculationBlock:
 
         return delivery_price_number
 
-
-
     @allure.step("Запоминаю сумму скидок")
     def discount_price(self):
         text_discount_price = self.page.locator(self.DISCOUNT_PRICE).inner_text()
@@ -1198,8 +1163,6 @@ class CalculationBlock:
     @allure.step("Нажимаю на сссылку 'Договор-оферта'")
     def click_offer_contract(self):
         self.page.locator(self.OFFER_CONTRACT_BUTTON).click()
-
-
 
 
     # @allure.step("Запоминаю стоимость скидки")
