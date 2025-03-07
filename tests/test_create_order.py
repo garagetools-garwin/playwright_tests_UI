@@ -32,7 +32,7 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
     delete_recipient_fixture()
     delete_address_fixture()
-    checkout_page.payment_block.click_check_with_manager_button()
+    checkout_page.payment_block.click_contact_a_manager_button()
     checkout_page.commentary_block.click_commentary_togle_button()
     checkout_page.commentary_block.fill_commentary_textarea("!!! TEST !!!")
     checkout_page.calculation_block.click_order_button()

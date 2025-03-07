@@ -279,7 +279,7 @@ class CartPage:
         self.page.goto(f"{url}/promos/tsena-kak-podarok/")
         listing_element.add_to_cart()
 
-    @allure.step("Добавляю товар без скидки в корзину")
+    @allure.step("Добавляю товар для бесплатной доставки")
     def add_to_cart_product_for_free_delivery(self, url):
         urls_to_check = [
             f"{url}/tovar/nabor-udarnyh-golovok-38-mm-1-2-12pr-10-24-mm-v-metallicheskom-keyse",
@@ -294,6 +294,30 @@ class CartPage:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
                 # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
                 self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                break  # Прерываем цикл, если кнопка найдена и товар добавлен
+            except Exception:
+                print(f"Add to cart button not found on {url}")
+                continue  # Переходим к следующей ссылке, если кнопка не найдена
+        else:
+            raise ValueError("Product not available, please select another product")
+
+#TODO: доделать метод, добавить проверку бесплатно ли в корзине, но при этом товар должен быть не более 15к
+    # проверить, что за мгазин я добавляю, нужен на софийской
+    @allure.step("Добавляю товар в наличии")
+    def add_to_cart_product_in_stock(self, url):
+        urls_to_check = [
+            f"{url}/tovar/bita-udarnaya-1-4-torx-t10h-25mm",
+            f"{url}/tovar/razem-papa-naruzhnaya-rezba-1-4"
+        ]
+
+        for url in urls_to_check:
+            self.page.goto(url)
+
+            try:
+                # Попытка найти и нажать кнопку "Добавить в корзину"
+                # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
+                self.page.locator(
+                    ".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
