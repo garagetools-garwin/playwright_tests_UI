@@ -1229,10 +1229,106 @@ def test_open_add_recipient_from_checkout(page_fixture, base_url):
         expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
 
 
+"""Тесты для блока Оплата"""
 
 
+@pytest.mark.auth
+@allure.title("Способ 'Оплата при получении' доступен")
+def test_payment_on_receipt_enebled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
+    checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    with allure.step("Проверяю, что кнопка Оплата при получении активна"):
+        payment_on_receip_button_status = checkout_page.payment_block.payment_on_receip_button_status()
+        expect(payment_on_receip_button_status).to_be_enabled()
+    with allure.step("Проверяю, что кнопка Уточнить у менеджера активна"):
+        contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
+        expect(contact_a_manager_button_status).to_be_enabled()
+
+@pytest.mark.auth
+@allure.title("Способ 'Оплата при получении' не доступен")
+def test_payment_on_receipt_disabled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
+    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    with allure.step("Проверяю, что кнопка Оплата при получении не активна"):
+        payment_on_receip_button_status = checkout_page.payment_block.payment_on_receip_button_status()
+        expect(payment_on_receip_button_status).to_be_disabled()
+    with allure.step("Проверяю, что кнопка Уточнить у менеджера активна"):
+        contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
+        expect(contact_a_manager_button_status).to_be_enabled()
 
 
+@pytest.mark.auth
+@allure.title("Способы оплаты Онлайн-оплата и Оплата по счету не доступны")
+def test_online_payment_on_receipt_and_payment_by_invoice_disabled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_cheap_product(base_url)
+    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    with allure.step("Проверяю, что кнопка Онлайн-оплата не активна"):
+        online_payment_button_status = checkout_page.payment_block.online_payment_button_status()
+        expect(online_payment_button_status).to_be_disabled()
+    with allure.step("Проверяю, что кнопка Оплата по счету не активна"):
+        payment_by_invoice_button_status = checkout_page.payment_block.payment_by_invoice_button_status()
+        expect(payment_by_invoice_button_status).to_be_disabled()
+    with allure.step("Проверяю, что кнопка Уточнить у менеджера активна"):
+        contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
+        expect(contact_a_manager_button_status).to_be_enabled()
+
+
+@pytest.mark.auth
+@allure.title("Способы оплаты Онлайн-оплата и Оплата по счету доступны")
+def test_online_payment_on_receipt_and_payment_by_invoice_enabled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart_product_in_stock(base_url)
+    checkout_page.obtaining_block.create_address_infor(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    with allure.step("Проверяю, что что в блоке достака стоит бесплатно"):
+        delivery_price = checkout_page.delivery_block.delivery_price()
+        assert str(delivery_price) == "бесплатно"
+    with allure.step("Проверяю, что что в блоке Итого стоит бесплатно"):
+        delivery_price = checkout_page.calculation_block.delivery_price()
+        assert str(delivery_price) == "бесплатно"
+    with allure.step("Проверяю, что кнопка Онлайн-оплата активна"):
+        online_payment_button_status = checkout_page.payment_block.online_payment_button_status()
+        expect(online_payment_button_status).to_be_enabled()
+    with allure.step("Проверяю, что кнопка Оплата по счету активна"):
+        payment_by_invoice_button_status = checkout_page.payment_block.payment_by_invoice_button_status()
+        expect(payment_by_invoice_button_status).to_be_enabled()
+    with allure.step("Проверяю, что кнопка Уточнить у менеджера активна"):
+        contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
+        expect(contact_a_manager_button_status).to_be_enabled()
 
 
 

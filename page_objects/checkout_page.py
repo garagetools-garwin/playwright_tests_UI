@@ -694,6 +694,37 @@ class ObtainingBlock:
             checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
             checkout_page.map.click_pick_up_here_button()
 
+    @allure.step("Создаю новый инфор")
+    def create_address_infor(self, base_url, page_fixture):
+        checkout_page = CheckoutPage(page_fixture)
+        checkout_page.open(base_url)
+        adress_listing_opened = False
+
+        # Попытка открыть список получателей
+        try:
+            checkout_page.obtaining_block.adress_listing_activation()
+            adress_listing_opened = True
+        except Exception:
+            pass  # Игнорируем ошибку, продолжаем
+
+        # Попытка нажать кнопку "Добавить первого получателя"
+        if not adress_listing_opened:  # Только если предыдущее действие не сработало
+            try:
+                checkout_page.obtaining_block.click_first_adress_button()
+                adress_listing_opened = True
+            except Exception:
+                pass  # Игнорируем ошибку, продолжаем
+
+        # Если хотя бы одно из действий сработало, продолжаем
+        if adress_listing_opened:
+            checkout_page.adress_listing.click_add_adress_button()
+            # Выбор ПВЗ с кастомным событием (ПВЗ СДЕК)
+            pickup_point_id = "91205755-f642-4e51-8639-bf7e0a007ccf"
+            target_lat = 59.807947
+            target_lon = 30.468859
+            checkout_page.adress_listing.select_pickup_point(pickup_point_id, target_lat, target_lon)
+            checkout_page.map.click_pick_up_here_button()
+
     @allure.step("Создаю новый адрес гарвин ПВЗ")
     def create_address_pvz_garwin(self, base_url, page_fixture):
         checkout_page = CheckoutPage(page_fixture)
@@ -1282,14 +1313,45 @@ class PromoCode:
 
 class PaymentBlock:
 
-    CHECK_WITH_MANAGER_BUTTON = "#payment button:has-text('Уточнить у менеджера')"
+    PAYMENT_ON_RECEIPT_BUTTON = "#payment button:has-text('Оплата при получении')"
+    PAYMENT_BY_INVOICE = "#payment button:has-text('Оплата по счету')"
+    ONLINE_PAYMENT_BUTTON = "#payment button:has-text('Онлайн-оплата')"
+    CONTACT_A_MANAGER_BUTTON = "#payment button:has-text('Уточнить у менеджера')"
 
     def __init__(self, page):
         self.page = page
 
+    @allure.step("Получаю статус кнопки Оплата при получении")
+    def payment_on_receip_button_status(self):
+        return self.page.locator(self.PAYMENT_ON_RECEIPT_BUTTON)
+
+    @allure.step("Нажимаю на кнопку Оплата при получении")
+    def click_payment_on_receip_button(self):
+        self.page.locator(self.PAYMENT_ON_RECEIPT_BUTTON).click()
+
+    @allure.step("Получаю статус кнопки Оплата по счету")
+    def payment_by_invoice_button_status(self):
+        return self.page.locator(self.PAYMENT_BY_INVOICE)
+
+    @allure.step("Нажимаю на кнопку Оплата по счету")
+    def click_payment_by_invoice_button(self):
+        self.page.locator(self.PAYMENT_BY_INVOICE).click()
+
+    @allure.step("Получаю статус кнопки Онлайн-оплата")
+    def online_payment_button_status(self):
+        return self.page.locator(self.ONLINE_PAYMENT_BUTTON)
+
+    @allure.step("Нажимаю на кнопку Онлайн-оплата")
+    def click_online_payment_button(self):
+        self.page.locator(self.ONLINE_PAYMENT_BUTTON).click()
+
+    @allure.step("Получаю статус кнопки Уточнить у менеджера")
+    def contact_a_manager_button_status(self):
+        return self.page.locator(self.CONTACT_A_MANAGER_BUTTON)
+
     @allure.step("Нажимаю на кнопку Уточнить у менеджера")
-    def click_check_with_manager_button(self):
-        self.page.locator(self.CHECK_WITH_MANAGER_BUTTON).click()
+    def click_contact_a_manager_button(self):
+        self.page.locator(self.CONTACT_A_MANAGER_BUTTON).click()
 
 
 """Блок Комментарий"""
