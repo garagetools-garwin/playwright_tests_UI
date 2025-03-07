@@ -243,7 +243,7 @@ def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_a
 
 @pytest.mark.auth
 @allure.title("При достижении определенной суммы стоимость доставки равна 0")
-def test_(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+def test_free_delivery_for_retail(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     companies_page = CompaniesPage(page_fixture)
@@ -258,27 +258,44 @@ def test_(page_fixture, base_url, delete_address_fixture, delete_recipient_fixtu
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
     delete_recipient_fixture()
-    # Проверяю, что в блоке достака стоит бесплатно
     with allure.step("Проверяю, что что в блоке достака стоит бесплатно"):
         delivery_price = checkout_page.delivery_block.delivery_price()
         assert str(delivery_price) == "бесплатно"
-    # Проверяю, что в блоке Итого стоит бесплатно
     with allure.step("Проверяю, что что в блоке Итого стоит бесплатно"):
         delivery_price = checkout_page.calculation_block.delivery_price()
         assert str(delivery_price) == "бесплатно"
     cart_page.open(base_url)
     cart_page.reduse_quantity_of_product()
-    # цикл, for price in prices кликаем на плюсик пока не станет меньше 15000
     checkout_page.open(base_url)
-    # Проверяю, что в блоке достака стоит != бесплатно
-    # Проверяю, что в блоке Итого стоит != бесплатно
     with allure.step("Проверяю, что что в блоке достака стоит бесплатно"):
         delivery_price = checkout_page.delivery_block.delivery_price()
         assert str(delivery_price) != "бесплатно"
-    # Проверяю, что в блоке Итого стоит бесплатно
     with allure.step("Проверяю, что что в блоке Итого стоит бесплатно"):
         delivery_price = checkout_page.calculation_block.delivery_price()
         assert str(delivery_price) != "бесплатно"
+
+@pytest.mark.auth
+@allure.title("Стоимость доставки не определена")
+def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
+    cart_page = CartPage(page_fixture)
+    checkout_page = CheckoutPage(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    # Добавить товар который всегда будет на остатках поставщика, но никогда не будет в наличии
+    cart_page.add_to_cart_cheap_product(base_url)
+    checkout_page.open(base_url)
+    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+    delete_address_fixture()
+    delete_recipient_fixture()
+    with allure.step("Проверяю, что в блоке доставки стоимость доставки определена как Уточнить у менеджера"):
+        delivery_price = checkout_page.delivery_block.delivery_price()
+        assert str(delivery_price) == "Уточнить у менеджера"
+    with allure.step("Проверяю, что в блоке Итого стоимость доставки не определена"):
+        delivery_price = checkout_page.calculation_block.delivery_price()
+        assert str(delivery_price) == "не определена"
 
 
 
@@ -1245,3 +1262,5 @@ def test_open_add_recipient_from_checkout(page_fixture, base_url):
 # адресов и по завершению всех проиграных тестов удалять требуемое количество сущностей, если их было 0 то фикстура
 # просто закончит свою работу. Понадобится расставить флаги после создания сущностей
 #TODO: Скидка по промокоду и по акции сново считаются в одном поле, пересмотреть написание тестов связаных с этими полями
+#TODO: Убедится, что все сценарии где Уточнить у менеджера и бесплатно в блоке доставка учтены
+#TODO: Убедится, что все сценарии где Не определено в поле доставка блока Итого учтены
