@@ -184,7 +184,7 @@ jobs:
           path: gh-pages
 
       - name: Debug allure history before report generation
-        run: ls -lt allure-history
+        run: ls -lt gh-pages
 
       # Генерация отчета
       - name: Generate Allure report
@@ -199,7 +199,7 @@ jobs:
           keep_reports: 20
 
       - name: Debug allure history after report generation
-        run: ls -lt allure-history
+        run: ls -lt gh-pages
 
       # Публикация отчета Allure   
       - name: Publish Allure report
