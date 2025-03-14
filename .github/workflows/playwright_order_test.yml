@@ -30,6 +30,8 @@ jobs:
       TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
       TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
+      AUTH_USERNAME: ${{ secrets.AUTH_USERNAME}}
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD}}
 
     steps:
 
