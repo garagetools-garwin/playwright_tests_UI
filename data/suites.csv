@@ -1,3 +1,3 @@
 "DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","20629","Удаление товара нажатием на крестик (Корзина)","tests","Fri Mar 14 08:13:43 GMT 2025","passed","Fri Mar 14 08:14:03 GMT 2025","","test_cart","",""
-"","11525","Отправка на печать","tests","Fri Mar 14 08:11:53 GMT 2025","passed","Fri Mar 14 08:12:05 GMT 2025","","test_cart","",""
+"","10330","Отправка на печать","tests","Fri Mar 14 08:24:20 GMT 2025","passed","Fri Mar 14 08:24:31 GMT 2025","","test_cart","",""
+"","18701","Удаление товара нажатием на крестик (Корзина)","tests","Fri Mar 14 08:26:01 GMT 2025","passed","Fri Mar 14 08:26:20 GMT 2025","","test_cart","",""
