@@ -1,15 +1,11 @@
-name: Playwright_order Tests for history
+name: Playwright_oreder Tests
 
 # Определение события, запускающего workflow
 on:
   workflow_dispatch:
-  # pull_request:
-  #   branches: [ main, master ]
-  # schedule:
-    # - cron: '0 */12 * * *'
-    # - cron: '0 */24 * * *'
-    # - cron: '0 5 * * *'    
-    # - cron: '0 14 * * *'  
+  schedule:
+    - cron: '0 */12 * * *' # Основные тесты
+    - cron: '0 8 * * *'    # Тест создания заказа (в 08:00)
 
 # Определение Задачи(job)
 jobs:
@@ -21,7 +17,6 @@ jobs:
     concurrency: playwright-tests
 
     # запуск на виртуальной машине
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
@@ -30,8 +25,6 @@ jobs:
       TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
       TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
-      AUTH_USERNAME: ${{ secrets.AUTH_USERNAME}}
-      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD}}
 
     steps:
 
@@ -61,32 +54,25 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_test" --alluredir=allure-results
-
-     # Сохранение auth_state.json в кеш
-      - name: Cache auth state
-        uses: actions/cache@v3
-        with:
-          path: auth_state.json
-          key: auth-state-${{ github.run_id }}
+        run: pytest --reruns 2 --reruns-delay 3 --alluredir=allure-results
 
       # Загрузка артефактов
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: allure-results-main-${{ github.run_id }}
+          name: allure-results-${{ github.run_id }}
           path: allure-results/
 
   # Тест на создание заказа
   order-test:
-    # needs: test  # order-test ждет окончания test если он запущен
+
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    if: github.event.schedule == '0 8 * * *' || github.event_name == 'workflow_dispatch'
 
-    # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
-    concurrency: playwright-tests
+    # # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
+    # concurrency: playwright-tests
 
     steps:
 
@@ -114,57 +100,22 @@ jobs:
         run: |
           sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
 
-      # Восстанавливаем кеш auth_state.json
-      - name: Restore cached auth state
-        uses: actions/cache@v3
-        with:
-          path: auth_state.json
-          key: auth-state-${{ github.run_id }}
-          restore-keys: auth-state-
-          
-      # Задержка перед опросом статуса выполнения test
-      - name: Wait before checking test job
-        run: sleep 30
-          
-      # Опрашиваем статус выполнения test
-      - name: Wait for test job to complete
-        run: |
-          echo "Checking status of test job..."
-          while true; do
-            # Получаем статус задачи test через GitHub API
-            STATUS=$(curl -s -H "Authorization: ***" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/13612331399/jobs" \
-              | jq -r '.jobs[] | select(.name == "test") | .status')
-          
-            if [[ "$STATUS" == "completed" ]]; then
-              echo "Test job is completed."
-              break
-            elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" || "$STATUS" == "pending" ]]; then
-              echo "Test job is still running, queued, or pending. Waiting..."
-              sleep 60
-            else
-              echo "Test job status is unknown: $STATUS"
-              exit 1
-            fi
-          done
-
       # Запуск тестов
       - name: Run only test_create_order
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_test_2" --alluredir=allure-results
+        run: pytest --reruns 2 --reruns-delay 3 -m "custom_schedule" --alluredir=allure-results
 
       # Загрузка артефактов
       - name: Upload Allure Results
         uses: actions/upload-artifact@v4
         if: always()
         with:
-          name: allure-results-order-${{ github.run_id }}
+          name: allure-results-${{ github.run_id }}
           path: allure-results/
 
   # Обьединение отчетов по всем тестам
   merge-reports:
     needs: [test, order-test]
-    if: always()  # Запуск даже если одна из джоб была пропущена
+    if: always()
     runs-on: ubuntu-22.04
     steps:
       - name: Download Allure Results
@@ -176,46 +127,67 @@ jobs:
 
       # Получение истории прогонов Allure
       - name: Get Allure history
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4  # Обновляем до v4
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
-          fetch-depth: 0
 
-      # Копирование истории в allure-results перед генерацией отчета
-      - name: Copy previous Allure history
+      # Создаем директорию для текущего отчета с timestamp
+      - name: Create report directory
         run: |
-          mkdir -p allure-results
-          if [ -d "gh-pages/allure-history" ]; then
-            cp -r gh-pages/allure-history allure-results/
-          else
-            echo "No previous history found"
-          fi
+          mkdir -p gh-pages/history/$(date +%Y%m%d_%H%M%S)
+          cp -r gh-pages/history/latest/* allure-results/history/ || true
 
-      # Генерация отчета с учетом истории прогонов
+      # Генерация отчета Allure
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          keep_files: true
-          allow_empty_commit: true
+          allure_results: allure-results
+          allure_report: allure-report
+          allure_history: gh-pages/history/latest
+          keep_reports: 20
 
-      # Загрузка артефактов (требуется для построения отчетов в ручную или для отправки в другие системы)
-      # - name: Upload Allure Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: allure-report
-      #     path: allure-report
+      # Копируем текущий отчет в директорию с timestamp
+      - name: Copy report to timestamped directory
+        run: |
+          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+          cp -r allure-report/* gh-pages/history/$TIMESTAMP/
+          cp -r allure-report/* gh-pages/history/latest/
 
-      # Публикация отчета Allure  
+      # Создаем index.html со списком всех отчетов
+      - name: Generate index page
+        run: |
+          cd gh-pages/history
+          echo "<html><body><h1>Allure Reports History</h1><ul>" > index.html
+          for d in */ ; do
+            if [ "$d" != "latest/" ]; then
+              echo "<li><a href='./$d'>Report $d</a></li>" >> index.html
+            fi
+          done
+          echo "</ul></body></html>" >> index.html
+
+      # Публикация отчета Allure
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v3
         if: always()
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          keep_files: true  # Сохраняем историю отчетов
+          publish_dir: gh-pages/history
+          keep_files: true
+
+      # Публикация результата прогона в testIT
+      # - name: Submit results testIT
+      #   if: always()
+      #   run: |
+      #     pip install testit-cli
+      #     #export TMS_TOKEN=${{ secrets.TMS_TOKEN }}
+      #     testit results import \
+      #       --url https://team-wuas.testit.software/ \
+      #       --token ${{ secrets.TMS_TOKEN }} \
+      #       --project-id 87c7eb78-be36-4e13-9e36-651ca3d5f060 \
+      #       --configuration-id 36238c9d-da5e-4cca-a8c4-f0d8316d3f6b \
+      #       --testrun-name "GitHubtestrun" \
+      #       --results results/test-results.xml
