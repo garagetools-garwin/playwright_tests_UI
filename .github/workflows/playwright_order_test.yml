@@ -186,6 +186,9 @@ jobs:
       - name: Debug allure history before report generation
         run: ls -lt gh-pages
 
+      - name: Debug allure history sorting
+        run: ls -l gh-pages | sort -k9,9n
+
       # Генерация отчета
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
@@ -201,6 +204,9 @@ jobs:
       - name: Debug allure history after report generation
         run: ls -lt gh-pages
 
+      - name: Debug allure history sorting
+        run: ls -l gh-pages | sort -k9,9n
+
       # Публикация отчета Allure   
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v2
@@ -212,6 +218,9 @@ jobs:
 
       - name: Debug allure history after report publication
         run: ls -lt allure-history
+
+      - name: Debug allure history sorting
+        run: ls -l gh-pages | sort -k9,9n
 
       # Публикация результата прогона в testIT
       # - name: Submit results testIT
