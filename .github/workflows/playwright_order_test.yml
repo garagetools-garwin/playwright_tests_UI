@@ -181,7 +181,7 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: allure-history
+          path: gh-pages
 
       - name: Debug allure history before report generation
         run: ls -lt allure-history
