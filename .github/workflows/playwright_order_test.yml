@@ -181,7 +181,10 @@ jobs:
         continue-on-error: true
         with:
           ref: gh-pages
-          path: gh-pages
+          path: allure-history
+
+      - name: Debug allure history before report generation
+        run: ls -lt allure-history
 
       # Генерация отчета
       - name: Generate Allure report
@@ -193,7 +196,10 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
-          keep_reports: 30
+          keep_reports: 20
+
+      - name: Debug allure history after report generation
+        run: ls -lt allure-history
 
       # Публикация отчета Allure   
       - name: Publish Allure report
@@ -203,6 +209,9 @@ jobs:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
+
+      - name: Debug allure history after report publication
+        run: ls -lt allure-history
 
       # Публикация результата прогона в testIT
       # - name: Submit results testIT
