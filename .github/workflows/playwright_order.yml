@@ -61,7 +61,7 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_test" --alluredir=allure-results
+        run: pytest --reruns 2 --reruns-delay 3 -m "not custom_schedule" --alluredir=allure-results
 
      # Сохранение auth_state.json в кеш
       - name: Cache auth state
@@ -151,7 +151,7 @@ jobs:
 
       # Запуск тестов
       - name: Run only test_create_order
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_test_2" --alluredir=allure-results
+        run: pytest --reruns 2 --reruns-delay 3 -m "custom_schedule" --alluredir=allure-results
 
       # Загрузка артефактов
       - name: Upload Allure Results
