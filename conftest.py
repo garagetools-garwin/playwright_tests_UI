@@ -2,12 +2,18 @@ import json
 from datetime import datetime
 from urllib.parse import urlparse, parse_qs
 import allure
-import os
 from dotenv import load_dotenv
 import configparser
 import pytest
 from page_objects.checkout_page import CheckoutPage
 from page_objects.cart_page import CartPage
+from dotenv import load_dotenv
+import os
+
+load_dotenv()  # Загружаем переменные из .env
+
+AUTH_USERNAME = os.getenv("AUTH_USERNAME")
+AUTH_PASSWORD = os.getenv("AUTH_PASSWORD")
 
 
 # Фильтрация секций отчета
@@ -21,10 +27,23 @@ def pytest_runtest_makereport(item, call):
     if report.outcome == "failed" and item.get_closest_marker("rerun"):
         allure.dynamic.label("rerun", "Test Rerun")
 
-
+# Хук для создания папки auth_states перед началом тестов
+# def pytest_configure(config):
+#     project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+#     auth_states_dir = os.path.join(project_root, 'auth_states')
+#     os.makedirs(auth_states_dir, exist_ok=True)
 
 @pytest.fixture(scope="function")
 def page_fixture(browser, request, base_url):
+
+    # Путь к корню проекта и папке auth_states
+    project_root = os.path.dirname(os.path.abspath(__file__))  # Путь к корню проекта
+    auth_states_dir = os.path.join(project_root, 'auth_states')
+    os.makedirs(auth_states_dir, exist_ok=True)
+
+    auth_state_path = os.path.join(auth_states_dir, "auth_state.json")
+    auth_state_empty_path = os.path.join(auth_states_dir, "auth_state_empty.json")
+
     # Получаем метку, чтобы определить, нужен ли storage_state
     # "auth" используется для авторизации через основной тестовый аккаунт, подходит для большенства задач
     use_auth = request.node.get_closest_marker("auth")
@@ -34,16 +53,22 @@ def page_fixture(browser, request, base_url):
 
     if use_auth:
         # Создаём новый контекст с сохранённым состоянием авторизации, если метка присутствует
-        context = browser.new_context(storage_state="auth_state.json")
+        context = browser.new_context(storage_state=auth_state_path)
     elif use_auth_empty:
         # Создаём новый контекст с сохранённым состоянием авторизации, если метка присутствует
-        context = browser.new_context(storage_state="auth_state_empty.json")
+        context = browser.new_context(storage_state=auth_state_empty_path)
     else:
         # Стандартный контекст без авторизации
         context = browser.new_context()
 
     # Создаём новую страницу в контексте
     page = context.new_page()
+
+    # Если платформа тестовая, автоматически авторизуемся через URL
+    if "https://stage.garwin.ru" in base_url or "https://review-site" in base_url:
+        auth_url = base_url.replace("https://", f"https://{AUTH_USERNAME}:{AUTH_PASSWORD}@")
+        page.goto(auth_url)
+        context.storage_state(path=auth_state_path)
 
     page.set_viewport_size({"width": 1920, "height": 1080})
     # Задаем куки онбордингов для того, чтобы они не всплывали в тестах
@@ -188,6 +213,10 @@ def base_url(request):
 #
 #     request.addfinalizer(teardown)  # Добавляем выполнение удаления при завершении теста
 #     return mark_as_created
+
+
+
+
 
 @pytest.fixture
 def delete_recipient_fixture(request, page_fixture, base_url):

@@ -149,7 +149,7 @@ def test_checkout_activating_a_hint(page_fixture, base_url):
 # Методы манипулиции с промкодом
 # checkout_page.price_changes_with_a_promo_code()
 
-"""Тесты для блока калькуляции"""
+"""Тесты для блоков Калькуляция и Доставка"""
 
 @pytest.mark.auth
 @allure.title("Итоговая стоимость заказа с промокодом и доставкой")
@@ -190,8 +190,6 @@ def test_total_cost_with_promo_product(page_fixture, base_url, delete_address_fi
     checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
     delete_address_fixture()
     checkout_page.open(base_url)
-    # with allure.step("Проверяю, что стоимость скидки по акции отображается в блоке калькуляции"):
-    #     assert checkout_page.calculation_block.discount_price == checkout_page.delivery_block.delivery_price()
 
     with allure.step("Проверяю, что итоговая сумма считается с учетом скидки и стоимости доставки"):
         total_price = checkout_page.calculation_block.total_price_value()
@@ -283,10 +281,9 @@ def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fix
     companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    # Добавить товар который всегда будет на остатках поставщика, но никогда не будет в наличии
     cart_page.add_to_cart_cheap_product(base_url)
     checkout_page.open(base_url)
-    checkout_page.obtaining_block.create_address(base_url, page_fixture)
+    checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
     delete_recipient_fixture()
@@ -297,81 +294,6 @@ def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fix
         delivery_price = checkout_page.calculation_block.delivery_price()
         assert str(delivery_price) == "не определена"
 
-
-
-@pytest.mark.auth
-@allure.title("Изменение цены в блоке калькуляции по всем позициям")
-def calculation_block_calculate_price_for_all_products(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart_not_discounted_product(base_url)
-    checkout_page.open(base_url)
-    total_price = cart_page.calculate_total_price()
-    cart_page.get_cart_prices()
-    cart_page.compare_prices(total_price)
-
-
-@allure.title("Изменение цены в блоке калькуляции по части позиций (Чек-бокс)")
-def calculation_block_calculate_price_of_some_products(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart_multiple_products(base_url)
-    cart_page.open(base_url)
-    cart_page.click_to_checkbox_for_all_products()
-    cart_page.order_price_is_zero()
-    cart_page.click_first_checkbox_product()
-    cart_page.calculate_total_price_for_checked_products()
-    cart_page.click_second_checkbox_product()
-    cart_page.calculate_total_price_for_checked_products()
-
-
-@allure.title("Изменение количества товара через счетчик")
-def cart_counter(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart(base_url)
-    cart_page.open(base_url)
-    with allure.step("Проверяю, что количество товара меняется"):
-        with allure.step("Проверяю, что количество выбранной позиции = 1"):
-            quantity = cart_page.get_quantity_of_product()
-            assert quantity[0] == 1
-        with allure.step("Увеличиваю количество товара на 1"):
-            page_fixture.locator(".Counter__Element").nth(1).click()
-        with allure.step("Проверяю, что количество выбранной позиции = 2"):
-            quantity = cart_page.get_quantity_of_product()
-            assert quantity[0] == 2
-        with allure.step("Уменьшаю количество товара на 1"):
-            page_fixture.locator(".Counter__Element").nth(0).click()
-        with allure.step("Проверяю, что количество выбранной позиции = 1"):
-            quantity = cart_page.get_quantity_of_product()
-            assert quantity[0] == 1
-
-
-@allure.title("Изменение цены в блоке калькуляции по части позиций (Счетчик)")
-def cart_calculation_block_calculate_price_of_some_products(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    cart_page.add_to_cart(base_url)
-    cart_page.open(base_url)
-    with allure.step("Запоминаю цену товара"):
-        price_text = page_fixture.locator('.AvailableList.CartPage__AvailableProductList .Price__Value').nth(0).inner_text()
-        price = int(price_text.replace('\xa0', '').replace(' ', ''))
-    with allure.step("Запоминаю общую сумму заказа"):
-        total_price = cart_page.order_total_price()
-    with allure.step("Проверяю, что цена товара соответствует сумме заказа"):
-        assert price == total_price
-    with allure.step("Увеличиваю количество товара на 1"):
-        page_fixture.locator(".Counter__Element").nth(1).click()  #первый плюс
-    with allure.step("Считаю стоимость товара в колличестве 2-х единиц"):
-        new_price = price+price
-    with allure.step("Запоминаю сумму заказа"):
-        total_price = cart_page.order_total_price()
-    with allure.step("Проверяю, что стоимость двух товаров равняется сумме заказа"):
-        assert new_price == total_price
-    with allure.step("Уменьшаю количество товара на 1"):
-        page_fixture.locator(".Counter__Element").nth(0).click()  # первый плюс
-    with allure.step("Проверяю, что сумма заказа равна сумме одной единице товара"):
-        total_price = cart_page.order_total_price()
-        assert price == total_price
 
         """Блок Покупатель и получатель"""
 
@@ -481,6 +403,20 @@ def test_add_new_recipient_close_madal2(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient()
     checkout_page.add_recipient_modal.close_new_recipient_modal2()
+
+@pytest.mark.auth_empty
+@allure.title("Открытие модального окна Новый получатель через блок Покупатель и получатель")
+def test_open_add_recipient_from_checkout(page_fixture, base_url):
+    checkout_page = CheckoutPage(page_fixture)
+    cart_page = CartPage(page_fixture)
+    cart_page.open(base_url)
+    cart_page.clear_cart()
+    cart_page.add_to_cart(base_url)
+    checkout_page.open(base_url)
+    checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
+
+    with allure.step("Проверяю, что модальное окно Новый получатель - открыто"):
+        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
 
 
 """Листинг получателей"""
@@ -1155,7 +1091,7 @@ def test_adress_listing_activation(page_fixture, base_url):
 
 """Тесты для аккаунта без адресов"""
 
-# Останется в блоке Получение
+
 @pytest.mark.auth_empty
 @allure.title("Открытие карты через кнопку Выберите способ и адрес получения")
 def test_open_map_from_obtaining_block(page_fixture, base_url):
@@ -1174,7 +1110,7 @@ def test_open_map_from_obtaining_block(page_fixture, base_url):
         expect(checkout_page.map.pickup_point_button_status()).to_have_class(
             'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
 
-# Останется в блоке Получение
+
 @pytest.mark.auth_empty
 @allure.title("Открытие модального окна Карты через кнопку Пункт выдачи")
 def test_open_map_from_pickup_point_button(page_fixture, base_url):
@@ -1193,7 +1129,7 @@ def test_open_map_from_pickup_point_button(page_fixture, base_url):
         expect(checkout_page.map.pickup_point_button_status()).to_have_class(
             'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
 
-# Останется в блоке Получение
+
 @pytest.mark.auth_empty
 @allure.title("Открытие модального окна Карты через кнопку Курьером")
 def test_open_map_from_courier_adress_button(page_fixture, base_url):
@@ -1211,22 +1147,6 @@ def test_open_map_from_courier_adress_button(page_fixture, base_url):
     with allure.step("Проверяю, что кнопка Курьером предвыбрана"):
         expect(checkout_page.map.courier_button_status()).to_have_class(
             'CheckoutChooseMethod__Button Button size--small color--secondary --is-selected')
-
-# Перейдет в блок получатель
-
-@pytest.mark.auth_empty
-@allure.title("Открытие модального окна Новый получатель через блок Покупатель и получатель")
-def test_open_add_recipient_from_checkout(page_fixture, base_url):
-    checkout_page = CheckoutPage(page_fixture)
-    cart_page = CartPage(page_fixture)
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart(base_url)
-    checkout_page.open(base_url)
-    checkout_page.buyer_and_recipient_block.click_add_first_recipient_button()
-
-    with allure.step("Проверяю, что модальное окно Новый получатель - открыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
 
 
 """Тесты для блока Оплата"""
@@ -1331,18 +1251,7 @@ def test_online_payment_on_receipt_and_payment_by_invoice_enabled(page_fixture, 
         expect(contact_a_manager_button_status).to_be_enabled()
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+"""Блок доставка"""
 
 
 

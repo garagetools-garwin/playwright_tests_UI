@@ -44,8 +44,6 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
         pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
         assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону Х-000000000!"
 
-    # TODO: настроить отдельное расписание для этого теста
-    # TODO: вставить фикстуру удаления в метод создания получателя и адреса
 
 
 # Архивный тест с проверкой заказа через SQL

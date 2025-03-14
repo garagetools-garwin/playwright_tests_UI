@@ -1,4 +1,6 @@
 """В этом файле хранятся тесты для корзины"""
+import os
+
 import pytest
 import allure
 import re
@@ -25,37 +27,48 @@ def test_cart_autorization_modal(page_fixture, base_url):
 @pytest.mark.smoke
 @allure.title("Переход в чек-аут")
 def test_cart_checkout(page_fixture, base_url):
+
+    # Путь к auth_states
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    auth_states_dir = os.path.join(project_root, 'auth_states')
+    auth_state_path = os.path.join(auth_states_dir, "auth_state.json")
+
     cart_page = CartPage(page_fixture)
     autorization = AutorizationModalElement(page_fixture)
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
     autorization.autorization_testmail_app()
-    page_fixture.context.storage_state(path="auth_state.json")
+    page_fixture.context.storage_state(path=auth_state_path)
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
-        expect(page_fixture).to_have_url(re.compile('checkout'))
+        expect(page_fixture).to_have_url(f'{base_url}/checkout')
 
 @pytest.mark.smoke
 @allure.title("Переход в чек-аут с пустым аккаунтом")
 def test_cart_checkout_empty(page_fixture, base_url):
-    checkout_page = CheckoutPage(page_fixture)
+
+    # Путь к auth_states
+    project_root = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    auth_states_dir = os.path.join(project_root, 'auth_states')
+    auth_state_empty_path = os.path.join(auth_states_dir, "auth_state_empty.json")
+
     cart_page = CartPage(page_fixture)
     autorization = AutorizationModalElement(page_fixture)
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
     autorization.autorization_testmail_app_empty()
-    page_fixture.context.storage_state(path="auth_state_empty.json")
+    page_fixture.context.storage_state(path=auth_state_empty_path)
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
     cart_page.click_order_button()
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
-        expect(page_fixture).to_have_url(re.compile('checkout'))
+        expect(page_fixture).to_have_url(f'{base_url}/checkout')
 
 
 @allure.title("Выделение всего товара")
