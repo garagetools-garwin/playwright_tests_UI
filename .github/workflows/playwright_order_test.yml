@@ -183,49 +183,25 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      # Создаем директорию для текущего отчета с timestamp
-      - name: Create report directory
-        run: |
-          mkdir -p gh-pages/history/$(date +%Y%m%d_%H%M%S)
-          cp -r gh-pages/history/latest/* allure-results/history/ || true
-
-      # Генерация отчета Allure
+      # Генерация отчета
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
+        id: allure-report
         with:
           allure_results: allure-results
+          gh_pages: gh-pages
           allure_report: allure-report
-          allure_history: gh-pages/history/latest
-          keep_reports: 20
+          allure_history: allure-history
 
-      # Копируем текущий отчет в директорию с timestamp
-      - name: Copy report to timestamped directory
-        run: |
-          TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-          cp -r allure-report/* gh-pages/history/$TIMESTAMP/
-          cp -r allure-report/* gh-pages/history/latest/
-
-      # Создаем index.html со списком всех отчетов
-      - name: Generate index page
-        run: |
-          cd gh-pages/history
-          echo "<html><body><h1>Allure Reports History</h1><ul>" > index.html
-          for d in */ ; do
-            if [ "$d" != "latest/" ]; then
-              echo "<li><a href='./$d'>Report $d</a></li>" >> index.html
-            fi
-          done
-          echo "</ul></body></html>" >> index.html
-
-      # Публикация отчета Allure
+      # Публикация отчета Allure   
       - name: Publish Allure report
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v2
         if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: gh-pages/history
-          keep_files: true
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
 
       # Публикация результата прогона в testIT
       # - name: Submit results testIT
