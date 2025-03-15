@@ -189,6 +189,9 @@ jobs:
       - name: Debug allure history sorting
         run: ls -l gh-pages | sort -k9,9n
 
+      - name: Очистка старых отчетов
+        run: find gh-pages -mindepth 1 -maxdepth 1 -type d -not -name 'last-history' -exec rm -rf {} +
+
       # Генерация отчета
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
