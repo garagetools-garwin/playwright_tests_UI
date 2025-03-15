@@ -67,7 +67,7 @@ jobs:
       - name: Cache auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
 
       # Загрузка артефактов
@@ -119,7 +119,7 @@ jobs:
       - name: Restore cached auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
           restore-keys: auth-state-
           
