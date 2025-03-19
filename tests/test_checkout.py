@@ -272,6 +272,7 @@ def test_free_delivery_for_retail(page_fixture, base_url, delete_address_fixture
         delivery_price = checkout_page.calculation_block.delivery_price()
         assert str(delivery_price) != "бесплатно"
 
+
 @pytest.mark.auth
 @allure.title("Стоимость доставки не определена")
 def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
@@ -293,7 +294,6 @@ def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fix
     with allure.step("Проверяю, что в блоке Итого стоимость доставки не определена"):
         delivery_price = checkout_page.calculation_block.delivery_price()
         assert str(delivery_price) == "не определена"
-
 
         """Блок Покупатель и получатель"""
 
@@ -1173,6 +1173,7 @@ def test_payment_on_receipt_enebled(page_fixture, base_url, delete_address_fixtu
         contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
         expect(contact_a_manager_button_status).to_be_enabled()
 
+
 @pytest.mark.auth
 @allure.title("Способ 'Оплата при получении' не доступен")
 def test_payment_on_receipt_disabled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
@@ -1252,9 +1253,6 @@ def test_online_payment_on_receipt_and_payment_by_invoice_enabled(page_fixture, 
 
 
 """Блок доставка"""
-
-
-
 
 
 
