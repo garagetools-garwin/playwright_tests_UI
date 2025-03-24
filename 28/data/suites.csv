@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","10658","Отправка на печать","tests","Sat Mar 15 15:58:32 GMT 2025","passed","Sat Mar 15 15:58:43 GMT 2025","","test_cart","",""
-"","21172","Удаление товара нажатием на крестик (Корзина)","tests","Sat Mar 15 16:00:31 GMT 2025","passed","Sat Mar 15 16:00:52 GMT 2025","","test_cart","",""
