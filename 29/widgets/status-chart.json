@@ -1,1 +1,0 @@
-[{"uid":"9018f4d74765adce","name":"Отправка на печать","time":{"start":1742193716511,"stop":1742193726501,"duration":9990},"status":"passed","severity":"normal"},{"uid":"6f25e0b04ed03f66","name":"Удаление товара нажатием на крестик (Корзина)","time":{"start":1742193826055,"stop":1742193847815,"duration":21760},"status":"passed","severity":"normal"}]
