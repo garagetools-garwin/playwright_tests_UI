@@ -81,14 +81,13 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     with allure.step("Запоминаю адрес в блоке Получение"):
         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
-
+    
     with allure.step("Загружаю JSON-схему"):
         load_dotenv()
-        
-
+    
         # Получаем закодированную строку из переменной окружения
         json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
-
+    
         if json_schema_base64:
             # Декодируем Base64
             json_schema_str = base64.b64decode(json_schema_base64).decode("utf-8")
@@ -96,12 +95,11 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
             response_schema = json.loads(json_schema_str)
         else:
             raise ValueError("JSON_SCHEMA_BASE64 is not set")
-                response_schema = json.loads(os.getenv("JSON_SCHEMA"))
-
-    with allure.step("Перехватываю запрос и ответ"):
-        with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
-              page_fixture.expect_request(os.getenv("METHOD")) as request_info):
-            checkout_page.calculation_block.click_order_button()
+    
+        with allure.step("Перехватываю запрос и ответ"):
+            with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
+                  page_fixture.expect_request(os.getenv("METHOD")) as request_info):
+                checkout_page.calculation_block.click_order_button()
 
     with allure.step("Ожидаю номер заказа"):
         time.sleep(3)
