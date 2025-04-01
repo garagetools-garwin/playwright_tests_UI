@@ -1,4 +1,3 @@
-"""Данные тесты проверяют добавление товара в корзину"""
 import time
 
 import allure
@@ -6,10 +5,16 @@ import pytest
 import pyodbc
 import os
 import re
+import json
+import logging
+
+from dotenv import load_dotenv
+from pytest import fail
 
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.checkout_page import CheckoutPage
+from page_objects.header_element import HeaderElement
 from page_objects.purchase_page import PurchasePage
 from jsonschema import validate, ValidationError
 
@@ -17,6 +22,7 @@ from jsonschema import validate, ValidationError
 @pytest.mark.auth
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
+@allure.title("Создание заказа")
 def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
@@ -37,7 +43,8 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
     print(order_number)
     with allure.step("Проверяю, что номер заказа не пустой"):
         assert order_number != "", "Номер заказа пустой!"
-    with allure.step("Проверяю, что номер заказа соответствует одному из шаблонов Х-000000000, ХX000000000, 000000000."):
+    with allure.step(
+            "Проверяю, что номер заказа соответствует одному из шаблонов Х-000000000, ХX000000000, 000000000."):
         pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
 
         assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону Х-000000000!"
@@ -46,81 +53,127 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
 @pytest.mark.auth
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
-def create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+@allure.title("Создание заказа с валидацией JSON-схемы")
+def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
-
+    header = HeaderElement(page_fixture)
     cart_page.open(base_url)
+
+    with allure.step("Запоминаю адрес в блоке Получение"):
+        company_name = header.company_name_text()
+
     cart_page.clear_cart()
     cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
+
+    name, email, phone = checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
+
     delete_recipient_fixture()
     delete_address_fixture()
-    checkout_page.payment_block.click_contact_a_manager_button()
-    checkout_page.commentary_block.click_commentary_togle_button()
-    checkout_page.commentary_block.fill_commentary_textarea("!!! TEST !!!")
 
-    def handle_request(route, request):
-        if "!" in request.url:
-            body = request.post_data_json()
-            assert body.get("comment") == "!!! TEST !!!", "Ошибка: comment не равен '!!! TEST !!!'"
-            route.continue_()
+    with allure.step("Добавляею комментарий к заказу"):
+        checkout_page.payment_block.click_contact_a_manager_button()
+        checkout_page.commentary_block.click_commentary_togle_button()
+        checkout_page.commentary_block.fill_commentary_textarea("!!! TEST !!!")
 
-    def handle_response(response):
-        if "!" in response.url:
-            body = response.json()
-            print("Перехваченный ответ:", body)  # 🔹 Проверяем, что тело ответа приходит
-            validate_response_schema_and_values(body)
+    with allure.step("Запоминаю адрес в блоке Получение"):
+        obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
 
-    page_fixture.on("response", handle_response)
+    with allure.step("Загружаю JSON-схему"):
+        load_dotenv()
+        response_schema = json.loads(os.getenv("JSON_SCHEMA"))
 
-    def validate_response_schema_and_values(body):
-        try:
-            print("Проверяю JSON:", body)  # 🔹 Логируем полученный JSON
-            print("Используемая схема:", response_schema)  # 🔹 Логируем схему
-            validate(instance=body, schema=response_schema)
-            assert body["seller"]["title"] == "TestTest", "Ошибка: seller.title не 'TestTest'"
-        except ValidationError as e:
-            raise AssertionError(f"Ошибка валидации схемы: {e.message}")
+    with allure.step("Перехватываю запрос и ответ"):
+        with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
+              page_fixture.expect_request(os.getenv("METHOD")) as request_info):
+            checkout_page.calculation_block.click_order_button()
 
-
-
-
-    with allure.step("Перехватываю запросы страницы"):
-        page_fixture.on("route", lambda route, request: handle_request(route, request))
-        page_fixture.on("response", lambda response: handle_response(response))
-
-    checkout_page.calculation_block.click_order_button()
-    time.sleep(3)
-    order_number = purchase_page.memorize_the_order_number()
-    print(order_number)
+    with allure.step("Ожидаю номер заказа"):
+        time.sleep(3)
+        order_number = purchase_page.memorize_the_order_number()
+        print(order_number)
 
     with allure.step("Проверяю, что номер заказа не пустой"):
         assert order_number != "", "Номер заказа пустой!"
 
-    with allure.step("Проверяю, что номер заказа соответствует одному из шаблонов Х-000000000, ХX000000000, 000000000."):
+    with allure.step("Проверяю, что номер заказа соответствует шаблону"):
         pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
         assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону!"
 
-    # TODO: Здесь должен быть запрос (то есть комментарий, сейчас тут ответ)
-    # TODO: В ответе как и в звпросе должны быть выделены обязательные поля (required)
-    # def validate_json_schema(body):
-    #     # Пример валидации JSON-схемы
-    #
-    #     schema = {
-    #         "type": "object",
-    #         "properties": {
-    #             "id": {"type": "string"},
-    #             "seller": {
-    #                 "title": {"type": "string"}
-    #             }
-    #         },
-    #     }
-    #     validate(instance=body, schema=schema)
-    #
-    # assert page_fixture.body.json().post("comment") == "!!!TEST!!!"
+    with allure.step("Извлекаю из ответа JSON"):
+        response = response_info.value
+        response_body = response.json()
+        print(json.dumps(response_body, indent=4))
+
+    with allure.step("Проверяю статус код ответа"):
+        assert response.status == 200, f"Ожидался статус 200, получен {response.status}"
+
+    with allure.step("Валидирую JSON-схему ответа"):
+        try:
+            validate(instance=response_body, schema=response_schema)
+        except ValidationError as e:
+            pytest.fail(f"SCHEMA VALIDATION FAILED:\n"
+                        f"Field: {list(e.path)}\n"
+                        f"Error: {e.message}\n"
+                        f"Value: {e.instance}")
+
+    # Функция для экранирования кавычек
+    def escape_json_string(value):
+        with allure.step("Экранирует кавычки в строках для корректного JSON"):
+            return json.dumps(value)[1:-1]  # убираем внешние кавычки, но экранируем внутри
+
+    with allure.step("Загружаю JSON-схему с проверочными значениями"):
+        schema_str = os.getenv("JSON_SCHEMA_TEST")
+
+    with allure.step("Заменяю переменные в схеме на реальные значения с экранированием"):
+        schema_str = schema_str.replace("{company_name}", escape_json_string(company_name))
+        schema_str = schema_str.replace("{name}", escape_json_string(name))
+        schema_str = schema_str.replace("{email}", escape_json_string(email))
+        schema_str = schema_str.replace("{phone}", re.sub(r'\D', '', phone))
+        with allure.step("Заменяю '{obtaining_block_adress}' на JSON-строку"):
+            obtaining_block_adress_json = json.dumps(obtaining_block_adress)  # превращаем объект в строку JSON
+            schema_str = schema_str.replace("\"{obtaining_block_adress}\"", obtaining_block_adress_json)
+
+        with allure.step("Преобразую строку обратно в JSON."):
+            schema = json.loads(schema_str)
+
+    def to_lower(obj):
+        """Рекурсивно приводит все строки в JSON-объекте к нижнему регистру."""
+        if isinstance(obj, dict):
+            return {k: to_lower(v) for k, v in obj.items()}
+        elif isinstance(obj, list):
+            return [to_lower(i) for i in obj]
+        elif isinstance(obj, str):
+            return obj.lower()
+        return obj
+
+    with allure.step("Валидирую JSON-схему ответа"):
+        try:
+            response_body_lower = to_lower(response_body)
+            schema_lower = to_lower(schema)
+            validate(instance=response_body_lower, schema=schema_lower)
+        except ValidationError as e:
+            pytest.fail(f"SCHEMA VALIDATION FAILED:\n"
+                        f"Field: {list(e.path)}\n"
+                        f"Error: {e.message}\n"
+                        f"Value: {e.instance}")
+
+    with allure.step("Проверяю, что комментарий отправился в запросе"):
+        request = request_info.value
+        try:
+            # Получаем тело запроса
+            request_body = request.post_data  # Получаем как строку
+            if request_body:
+                data = json.loads(request_body)
+                assert data.get("comment") == "!!! TEST !!!", f"Неверное значение comment: {data.get('comment')}"
+        except Exception as e:
+            pytest.fail(f"Ошибка при проверке запроса: {e}")
+
+
+
+
 
 # db_server = os.getenv('DB_SERVER')
 # db_name = os.getenv('DB_NAME')

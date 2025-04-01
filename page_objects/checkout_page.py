@@ -96,6 +96,9 @@ class BuyerAndRecipientBlock:
                 checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title,
                                                                                  expected_info_description)
                 checkout_page.recipient_listing.close_recipient_listing()
+
+            return name, email, phone
+
 """Листинг получателей"""
 
 
