@@ -25,6 +25,36 @@ from jsonschema import validate, ValidationError
 @pytest.mark.custom_schedule
 @allure.title("Создание заказа")
 def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+    // ... existing code ...
+
+@pytest.mark.auth
+@pytest.mark.smoke
+@pytest.mark.custom_schedule
+def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+    # Добавляем отладочную информацию
+    print("Доступные переменные окружения:")
+    for key, value in os.environ.items():
+        if 'JSON' in key:
+            print(f"{key}: {'[SECRET]' if 'BASE64' in key else value}")
+
+    try:
+        load_dotenv()
+        json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
+        
+        if not json_schema_base64:
+            # Попробуем альтернативное имя переменной
+            json_schema_base64 = os.getenv("JSON_SCHEMA")
+            
+        if not json_schema_base64:
+            raise ValueError("Не удалось получить JSON_SCHEMA_BASE64 или JSON_SCHEMA")
+            
+        # Декодируем Base64
+        json_schema_str = base64.b64decode(json_schema_base64).decode("utf-8")
+        response_schema = json.loads(json_schema_str)
+    except Exception as e:
+        print(f"Ошибка при загрузке схемы: {str(e)}")
+        raise
+
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
