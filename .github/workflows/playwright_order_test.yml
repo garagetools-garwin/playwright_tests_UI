@@ -70,7 +70,7 @@ jobs:
       - name: Cache auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
 
       # Загрузка артефактов
@@ -121,7 +121,7 @@ jobs:
       - name: Restore cached auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
           restore-keys: auth-state-
           
@@ -167,7 +167,7 @@ jobs:
   # Обьединение отчетов по всем тестам
   merge-reports:
     needs: [test, order-test]
-    if: always()
+    if: always()  # Запуск даже если одна из джоб была пропущена
     runs-on: ubuntu-22.04
     steps:
       - name: Download Allure Results
@@ -179,20 +179,14 @@ jobs:
 
       # Получение истории прогонов Allure
       - name: Get Allure history
-        uses: actions/checkout@v4  # Обновляем до v4
+        uses: actions/checkout@v2
         if: always()
         continue-on-error: true
         with:
           ref: gh-pages
           path: gh-pages
 
-      - name: Debug allure history before report generation
-        run: ls -lt gh-pages
-
-      - name: Debug allure history sorting
-        run: ls -l gh-pages | sort -k9,9n
-
-      # Генерация отчета
+      # Генерация отчета с учетом истории прогонов
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
         if: always()
@@ -202,15 +196,15 @@ jobs:
           gh_pages: gh-pages
           allure_report: allure-report
           allure_history: allure-history
-          keep_reports: 20
 
-      - name: Debug allure history after report generation
-        run: ls -lt gh-pages
+      # Загрузка артефактов
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
 
-      - name: Debug allure history sorting
-        run: ls -l gh-pages | sort -k9,9n
-
-      # Публикация отчета Allure   
+      # Публикация отчета Allure  
       - name: Publish Allure report
         uses: peaceiris/actions-gh-pages@v2
         if: always()
@@ -218,13 +212,7 @@ jobs:
           PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           PUBLISH_BRANCH: gh-pages
           PUBLISH_DIR: allure-history
-
-      - name: Debug allure history after report publication
-        run: ls -lt allure-history
-
-      - name: Debug allure history sorting
-        run: ls -l gh-pages | sort -k9,9n
-
+          
       # Публикация результата прогона в testIT
       # - name: Submit results testIT
       #   if: always()
