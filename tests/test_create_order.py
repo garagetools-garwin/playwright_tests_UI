@@ -52,7 +52,7 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
 
 @pytest.mark.auth
 @pytest.mark.smoke
-@pytest.mark.custom_schedule
+@pytest.mark.for_test_2
 @allure.title("Создание заказа с валидацией JSON-схемы")
 def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
