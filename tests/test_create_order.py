@@ -23,13 +23,6 @@ from jsonschema import validate, ValidationError
 @pytest.mark.auth
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
-@allure.title("Создание заказа")
-def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
-    // ... existing code ...
-
-@pytest.mark.auth
-@pytest.mark.smoke
-@pytest.mark.custom_schedule
 def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     # Добавляем отладочную информацию
     print("Доступные переменные окружения:")
