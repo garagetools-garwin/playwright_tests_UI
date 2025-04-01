@@ -32,7 +32,7 @@ jobs:
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
       AUTH_USERNAME: ${{ secrets.AUTH_USERNAME}}
       AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD}}
-      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA}}
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
       JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
       METHOD: ${{ secrets.METHOD}}
 
