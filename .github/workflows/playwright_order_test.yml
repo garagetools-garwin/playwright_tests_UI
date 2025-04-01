@@ -35,6 +35,8 @@ jobs:
       JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
       JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
       METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ JSON_SCHEMA_BASE64 }}
+      
 
     steps:
 
