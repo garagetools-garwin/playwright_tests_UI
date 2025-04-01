@@ -52,6 +52,18 @@ jobs:
         with:
           python-version: '3.12.1'
 
+              # Добавьте этот шаг для отладки
+      - name: Debug environment variables
+        run: |
+          echo "Checking for JSON_SCHEMA_BASE64..."
+          if [ -n "$JSON_SCHEMA_BASE64" ]; then
+            echo "JSON_SCHEMA_BASE64 is set"
+          else
+            echo "JSON_SCHEMA_BASE64 is NOT set"
+          fi
+        env:
+          JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+
       # Установка зависимостей
       - name: Install dependencies
         run: |
@@ -94,6 +106,12 @@ jobs:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
+    env:
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+      
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
