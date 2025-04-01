@@ -81,6 +81,9 @@ jobs:
           name: allure-results-main-${{ github.run_id }}
           path: allure-results/
 
+      - name: Debug environment variable
+        run: echo "JSON_SCHEMA=${{ secrets.JSON_SCHEMA }}"
+
   # Тест на создание заказа
   order-test:
     # needs: test  # order-test ждет окончания test если он запущен
