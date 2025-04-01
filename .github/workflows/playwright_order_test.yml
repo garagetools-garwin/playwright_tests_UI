@@ -39,6 +39,9 @@ jobs:
       
 
     steps:
+      - name: Debug environment variable
+      - run: echo "JSON_SCHEMA_BASE64=${JSON_SCHEMA_BASE64}"
+      - run: echo "JSON_SCHEMA=${JSON_SCHEMA}"
 
       # Клонирование репозитория
       - uses: actions/checkout@v4
