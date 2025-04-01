@@ -47,6 +47,7 @@ def test_cart_checkout(page_fixture, base_url):
     with allure.step("Проверяю, что пользователь перешел в чек-аут"):
         expect(page_fixture).to_have_url(f'{base_url}/checkout')
 
+
 @pytest.mark.smoke
 @allure.title("Переход в чек-аут с пустым аккаунтом")
 def test_cart_checkout_empty(page_fixture, base_url):

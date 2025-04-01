@@ -22,6 +22,7 @@ class HeaderElement:
     CUSTOMER_SWITCH_BUTTON = "button.AuthMenuHeader__SwitcherButton"
     CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton"
     INACTIVE_CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton:not([class*='--is-selected'])"
+    SELECTED_COMPANY_NAME = ".Header__UserButton .NavigationButton__Text"
 
     def __init__(self, page):
         self.page = page
@@ -59,4 +60,7 @@ class HeaderElement:
         # self.get_customers_list()
         self.select_customer()
 
+    # Локатор для названия выбранной компании
+    def company_name_text(self):
+        return self.page.locator(self.SELECTED_COMPANY_NAME).inner_text()
 
