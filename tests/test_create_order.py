@@ -7,6 +7,7 @@ import os
 import re
 import json
 import logging
+import base64
 
 from dotenv import load_dotenv
 from pytest import fail
@@ -83,7 +84,19 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     with allure.step("Загружаю JSON-схему"):
         load_dotenv()
-        response_schema = json.loads(os.getenv("JSON_SCHEMA"))
+        
+
+        # Получаем закодированную строку из переменной окружения
+        json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
+
+        if json_schema_base64:
+            # Декодируем Base64
+            json_schema_str = base64.b64decode(json_schema_base64).decode("utf-8")
+            # Загружаем в JSON
+            response_schema = json.loads(json_schema_str)
+        else:
+            raise ValueError("JSON_SCHEMA_BASE64 is not set")
+                response_schema = json.loads(os.getenv("JSON_SCHEMA"))
 
     with allure.step("Перехватываю запрос и ответ"):
         with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
