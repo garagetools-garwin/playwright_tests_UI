@@ -83,9 +83,17 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
     
     with allure.step("Загружаю JSON-схему"):
-        load_dotenv()
+        # load_dotenv()
     
         # Получаем закодированную строку из переменной окружения
+        json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
+        if not json_schema_base64:
+            raise ValueError("JSON_SCHEMA_BASE64 is missing from environment variables")
+
+        json_schema = os.getenv("JSON_SCHEMA")
+        if not json_schema:
+            raise ValueError("JSON_SCHEMA is missing from environment variables")
+            
         json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
     
         if json_schema_base64:
