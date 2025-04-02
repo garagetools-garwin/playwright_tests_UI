@@ -52,21 +52,9 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
 
 @pytest.mark.auth
 @pytest.mark.smoke
-@pytest.mark.for_test_2
+@pytest.mark.custom_schedule
 @allure.title("Создание заказа с валидацией JSON-схемы")
-def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
-    # try:
-    #     # Получаем значение из переменной окружения
-    #     json_schema_base64 = os.environ.get("JSON_SCHEMA_BASE64")
-    #     if not json_schema_base64:
-    #         raise ValueError("JSON_SCHEMA_BASE64 не установлена в переменных окружения")
-
-    #     # Декодируем схему
-    #     json_schema_str = base64.b64decode(json_schema_base64).decode('utf-8')
-    #     response_schema = json.loads(json_schema_str)
-    # except Exception as e:
-    #     raise ValueError(f"Ошибка при загрузке JSON схемы: {str(e)}")
-        
+def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):        
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
@@ -92,25 +80,9 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     with allure.step("Запоминаю адрес в блоке Получение"):
         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
-
-    # with allure.step("Загружаю JSON-схему"):
-    #     load_dotenv()
-    #     response_schema = json.loads(os.getenv("JSON_SCHEMA"))
     
     with allure.step("Загружаю JSON-схему"):
-        load_dotenv()
-        # response_schema = json.loads(os.getenv("JSON_SCHEMA"))
-        # [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes('{"id": "123", "name": "test"}'))
-    
-        # # Получаем закодированную строку из переменной окружения
-        # json_schema_base64 = os.getenv("JSON_SCHEMA_BASE64")
-        # if not json_schema_base64:
-        #     raise ValueError("JSON_SCHEMA_BASE64 is missing from environment variables")
-
-        # json_schema = os.getenv("JSON_SCHEMA")
-        # if not json_schema:
-        #     raise ValueError("JSON_SCHEMA is missing from environment variables")
-            
+        load_dotenv()       
         json_schema_base64 = os.getenv("JSON_SCHEMA")
     
         if json_schema_base64:
@@ -120,7 +92,8 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
             response_schema = json.loads(json_schema_str)
         else:
             raise ValueError("JSON_SCHEMA is not set")
-    
+            # print(json.dumps(response_schema, indent=4))
+        
         with allure.step("Перехватываю запрос и ответ"):
             with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
                   page_fixture.expect_request(os.getenv("METHOD")) as request_info):
@@ -153,7 +126,6 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
             return json.dumps(value)[1:-1]  # убираем внешние кавычки, но экранируем внутри
 
     with allure.step("Загружаю JSON-схему с проверочными значениями"):
-        # schema_str = os.getenv("JSON_SCHEMA_TEST")
         json_schema_base64_test = os.getenv("JSON_SCHEMA_TEST")
     
         if json_schema_base64_test:
@@ -210,7 +182,6 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
                 assert data.get("comment") == "!!! TEST !!!", f"Неверное значение comment: {data.get('comment')}"
         except Exception as e:
             pytest.fail(f"Ошибка при проверке запроса: {e}")
-
 
     with allure.step("Проверяю, что номер заказа не пустой"):
         assert order_number != "", "Номер заказа пустой!"
