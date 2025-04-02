@@ -1,0 +1,4 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","20525","Удаление товара нажатием на крестик (Корзина)","tests","Wed Apr 02 07:45:54 GMT 2025","passed","Wed Apr 02 07:46:15 GMT 2025","","test_cart","",""
+"","20334","Отправка на печать","tests","Wed Apr 02 07:49:02 GMT 2025","passed","Wed Apr 02 07:49:22 GMT 2025","","test_cart","",""
+"","40372","Создание заказа с валидацией JSON-схемы","tests","Wed Apr 02 07:49:23 GMT 2025","failed","Wed Apr 02 07:50:03 GMT 2025","","test_create_order","",""
