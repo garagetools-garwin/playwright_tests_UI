@@ -99,6 +99,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
     
     with allure.step("Загружаю JSON-схему"):
         load_dotenv()
+        # response_schema = json.loads(os.getenv("JSON_SCHEMA"))
         # [Convert]::ToBase64String([System.Text.Encoding]::UTF8.GetBytes('{"id": "123", "name": "test"}'))
     
         # # Получаем закодированную строку из переменной окружения
@@ -126,7 +127,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
                 checkout_page.calculation_block.click_order_button()
 
     with allure.step("Ожидаю номер заказа"):
-        time.sleep(3)
+        time.sleep(5)
         order_number = purchase_page.memorize_the_order_number()
         print(order_number)
 
@@ -167,9 +168,12 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
             # Декодируем Base64
             json_schema_str_test = base64.b64decode(json_schema_base64_test).decode("utf-8")
             # Загружаем в JSON
-            schema_str = json.loads(json_schema_str-test)
+            schema_str = json.loads(json_schema_str_test)
         else:
             raise ValueError("JSON_SCHEMA_TEST is not set")
+
+        # Преобразуем JSON-объект обратно в строку перед replace
+        schema_str = json.dumps(schema_str)
 
     with allure.step("Заменяю переменные в схеме на реальные значения с экранированием"):
         schema_str = schema_str.replace("{company_name}", escape_json_string(company_name))
