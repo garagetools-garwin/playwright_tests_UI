@@ -131,13 +131,6 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         order_number = purchase_page.memorize_the_order_number()
         print(order_number)
 
-    with allure.step("Проверяю, что номер заказа не пустой"):
-        assert order_number != "", "Номер заказа пустой!"
-
-    with allure.step("Проверяю, что номер заказа соответствует шаблону"):
-        pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
-        assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону!"
-
     with allure.step("Извлекаю из ответа JSON"):
         response = response_info.value
         response_body = response.json()
@@ -219,6 +212,13 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         except Exception as e:
             pytest.fail(f"Ошибка при проверке запроса: {e}")
 
+
+    with allure.step("Проверяю, что номер заказа не пустой"):
+        assert order_number != "", "Номер заказа пустой!"
+
+    with allure.step("Проверяю, что номер заказа соответствует шаблону"):
+        pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
+        assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону!"
 
 
 
