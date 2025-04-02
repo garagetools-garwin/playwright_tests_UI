@@ -120,6 +120,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
             response_schema = json.loads(json_schema_str)
         else:
             raise ValueError("JSON_SCHEMA is not set")
+        print(json.dumps(response_schema, indent=4))
     
         with allure.step("Перехватываю запрос и ответ"):
             with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
@@ -179,7 +180,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
         with allure.step("Преобразую строку обратно в JSON."):
             schema = json.loads(schema_str)
-            print(schema)
+            print(json.dumps(schema, indent=4))
 
     def to_lower(obj):
         """Рекурсивно приводит все строки в JSON-объекте к нижнему регистру."""
