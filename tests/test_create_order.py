@@ -179,6 +179,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
         with allure.step("Преобразую строку обратно в JSON."):
             schema = json.loads(schema_str)
+            print(schema)
 
     def to_lower(obj):
         """Рекурсивно приводит все строки в JSON-объекте к нижнему регистру."""
