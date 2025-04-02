@@ -1,0 +1,1 @@
+[{"uid":"cbb3717bce3e7e0","name":"Создание заказа с валидацией JSON-схемы","time":{"start":1743598568767,"stop":1743598613287,"duration":44520},"status":"failed","severity":"normal"},{"uid":"9ce38fcc4e3ed890","name":"Отправка на печать","time":{"start":1743598557366,"stop":1743598568655,"duration":11289},"status":"passed","severity":"normal"}]
