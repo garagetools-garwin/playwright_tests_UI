@@ -54,7 +54,7 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
 @pytest.mark.smoke
 @pytest.mark.for_test_2
 @allure.title("Создание заказа с валидацией JSON-схемы")
-def create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     # try:
     #     # Получаем значение из переменной окружения
     #     json_schema_base64 = os.environ.get("JSON_SCHEMA_BASE64")
