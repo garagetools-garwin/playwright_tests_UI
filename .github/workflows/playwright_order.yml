@@ -9,7 +9,8 @@ on:
     # - cron: '0 */12 * * *'
     # - cron: '0 */24 * * *'
     - cron: '0 5 * * *'    
-    - cron: '0 14 * * *'  
+    - cron: '0 14 * * *'
+    - cron: '*/30 * * * *'
 
 # Определение Задачи(job)
 jobs:
@@ -87,7 +88,14 @@ jobs:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    env:
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+
+    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
@@ -155,7 +163,7 @@ jobs:
 
       # Запуск тестов
       - name: Run only test_create_order
-        run: pytest --reruns 2 --reruns-delay 3 -m "custom_schedule" --alluredir=allure-results
+        run: pytest -m "custom_schedule" --alluredir=allure-results
 
       # Загрузка артефактов
       - name: Upload Allure Results
