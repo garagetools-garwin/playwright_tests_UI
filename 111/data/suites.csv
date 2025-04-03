@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","45438","Создание заказа с валидацией JSON-схемы","tests","Wed Apr 02 18:47:26 GMT 2025","passed","Wed Apr 02 18:48:11 GMT 2025","","test_create_order","",""
-"","45160","test_create_order[chromium]","tests","Wed Apr 02 18:45:54 GMT 2025","failed","Wed Apr 02 18:46:39 GMT 2025","","test_create_order","",""
