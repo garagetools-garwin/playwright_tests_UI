@@ -100,7 +100,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
                 checkout_page.calculation_block.click_order_button()
 
     with allure.step("Ожидаю номер заказа"):
-        time.sleep(5)
+        time.sleep(3)
         order_number = purchase_page.memorize_the_order_number()
         print(order_number)
 
