@@ -10,6 +10,7 @@ on:
     # - cron: '0 */24 * * *'
     # - cron: '0 5 * * *'    
     # - cron: '0 14 * * *'  
+    # - cron: '*/30 * * * *'
 
 # Определение Задачи(job)
 jobs:
@@ -26,10 +27,17 @@ jobs:
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
       DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
-      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON_ALT}}
-      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
+      TESTMAIL_JSON: ${{ secrets.TESTMAIL_JSON}}
+      TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS}}
       TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
+      AUTH_USERNAME: ${{ secrets.AUTH_USERNAME}}
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD}}
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+      
 
     steps:
 
@@ -65,7 +73,7 @@ jobs:
       - name: Cache auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
 
       # Загрузка артефактов
@@ -75,13 +83,20 @@ jobs:
         with:
           name: allure-results-main-${{ github.run_id }}
           path: allure-results/
-
+          
   # Тест на создание заказа
   order-test:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    env:
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+      
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
@@ -116,7 +131,7 @@ jobs:
       - name: Restore cached auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
           restore-keys: auth-state-
           
@@ -149,7 +164,7 @@ jobs:
 
       # Запуск тестов
       - name: Run only test_create_order
-        run: pytest --reruns 2 --reruns-delay 3 -m "for_test_2" --alluredir=allure-results
+        run: pytest -m "for_test_2" --alluredir=allure-results
 
       # Загрузка артефактов
       - name: Upload Allure Results
@@ -181,12 +196,6 @@ jobs:
           ref: gh-pages
           path: gh-pages
 
-      # Копирование истории в allure-results перед генерацией отчета
-      - name: Copy previous Allure history
-        run: |
-          mkdir -p allure-results
-          cp -r gh-pages/allure-history allure-results/ || echo "No previous history found"
-
       # Генерация отчета с учетом истории прогонов
       - name: Generate Allure report
         uses: simple-elf/allure-report-action@master
@@ -198,18 +207,32 @@ jobs:
           allure_report: allure-report
           allure_history: allure-history
 
-      # Загрузка артефактов (требуется для построения отчетов в ручную или для отправки в другие системы)
-      # - name: Upload Allure Report
-      #   uses: actions/upload-artifact@v4
-      #   with:
-      #     name: allure-report
-      #     path: allure-report
+      # Загрузка артефактов
+      - name: Upload Allure Report
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-report
+          path: allure-report
 
       # Публикация отчета Allure  
       - name: Publish Allure report
-        uses: peaceiris/actions-gh-pages@v3
+        uses: peaceiris/actions-gh-pages@v2
         if: always()
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./allure-report
-          keep_files: true  # Сохраняем историю отчетов
+        env:
+          PERSONAL_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          PUBLISH_BRANCH: gh-pages
+          PUBLISH_DIR: allure-history
+          
+      # Публикация результата прогона в testIT
+      # - name: Submit results testIT
+      #   if: always()
+      #   run: |
+      #     pip install testit-cli
+      #     #export TMS_TOKEN=${{ secrets.TMS_TOKEN }}
+      #     testit results import \
+      #       --url https://team-wuas.testit.software/ \
+      #       --token ${{ secrets.TMS_TOKEN }} \
+      #       --project-id 87c7eb78-be36-4e13-9e36-651ca3d5f060 \
+      #       --configuration-id 36238c9d-da5e-4cca-a8c4-f0d8316d3f6b \
+      #       --testrun-name "GitHubtestrun" \
+      #       --results results/test-results.xml

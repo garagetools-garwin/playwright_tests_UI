@@ -9,13 +9,14 @@ on:
     # - cron: '0 */12 * * *'
     # - cron: '0 */24 * * *'
     - cron: '0 5 * * *'    
-    - cron: '0 14 * * *'  
+    - cron: '0 14 * * *'
+    # - cron: '*/30 * * * *'
 
 # Определение Задачи(job)
 jobs:
   # Основная часть тестов
   test:
-    timeout-minutes: 60
+    timeout-minutes: 90
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests
@@ -30,6 +31,11 @@ jobs:
       TESTMAIL_ADRESS: ${{ secrets.TESTMAIL_ADRESS_ALT}}
       TESTMAIL_JSON_EMPTY: ${{ secrets.TESTMAIL_JSON_EMPTY}}
       TESTMAIL_ADRESS_EMPTY: ${{ secrets.TESTMAIL_ADRESS_EMPTY}}
+      AUTH_USERNAME: ${{ secrets.AUTH_USERNAME}}
+      AUTH_PASSWORD: ${{ secrets.AUTH_PASSWORD}}
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA}}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
 
     steps:
 
@@ -65,7 +71,7 @@ jobs:
       - name: Cache auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
 
       # Загрузка артефактов
@@ -75,12 +81,20 @@ jobs:
         with:
           name: allure-results-main-${{ github.run_id }}
           path: allure-results/
+          # retention_days: 10
 
   # Тест на создание заказа
   order-test:
     # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
+    env:
+      JSON_SCHEMA: ${{ secrets.JSON_SCHEMA }}
+      JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
+      METHOD: ${{ secrets.METHOD}}
+      JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
+
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
@@ -116,7 +130,7 @@ jobs:
       - name: Restore cached auth state
         uses: actions/cache@v3
         with:
-          path: auth_state.json
+          path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}
           restore-keys: auth-state-
           
@@ -158,6 +172,7 @@ jobs:
         with:
           name: allure-results-order-${{ github.run_id }}
           path: allure-results/
+          # retention_days: 10
 
   # Обьединение отчетов по всем тестам
   merge-reports:

@@ -24,7 +24,6 @@ from jsonschema import validate, ValidationError
 @pytest.mark.auth
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
-@allure.title("Создание заказа")
 def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
@@ -56,7 +55,7 @@ def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_a
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
 @allure.title("Создание заказа с валидацией JSON-схемы")
-def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):        
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
@@ -84,11 +83,12 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     with allure.step("Запоминаю адрес в блоке Получение"):
         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
-
+    
     with allure.step("Загружаю JSON-схему"):
-        load_dotenv()
+      
+        load_dotenv()       
         json_schema_base64 = os.getenv("JSON_SCHEMA")
-
+        
         if json_schema_base64:
             # Декодируем Base64
             json_schema_str = base64.b64decode(json_schema_base64).decode("utf-8")
@@ -189,14 +189,10 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     # with allure.step("Проверяю, что номер заказа не пустой"):
     #     assert order_number != "", "Номер заказа пустой!"
-    #
+
     # with allure.step("Проверяю, что номер заказа соответствует шаблону"):
     #     pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
     #     assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону!"
-
-
-
-
 
 # db_server = os.getenv('DB_SERVER')
 # db_name = os.getenv('DB_NAME')
