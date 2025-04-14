@@ -277,6 +277,9 @@ class CartPage:
     def add_to_cart_promo_product(self, url, page_fixture):
         listing_element = ListingElement(page_fixture)
         self.page.goto(f"{url}/promos/tsena-kak-podarok/")
+        with allure.step("Проверяю, что статус страницы ok"):
+            response = page_fixture.request.get(url)
+            expect(response).to_be_ok(), f"Акция недоступна, статус страницы: {response}"
         listing_element.add_to_cart()
 
     @allure.step("Добавляю товар для бесплатной доставки")

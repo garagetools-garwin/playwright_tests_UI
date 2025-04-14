@@ -9,6 +9,7 @@ from page_objects.checkout_page import CheckoutPage
 from page_objects.cart_page import CartPage
 from dotenv import load_dotenv
 import os
+import re
 
 load_dotenv()  # Загружаем переменные из .env
 
@@ -80,10 +81,13 @@ def page_fixture(browser, request, base_url):
     # Получение текущей даты и времени
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
+    # Удаляем все символы, которые нельзя использовать в путях Windows
+    safe_name = re.sub(r'[\\/*?:"<>|\[\]]', '_', request.node.name)
+
     # Формирование имени файла с трассировкой
     trace_path = os.path.join(
         os.getcwd(),
-        f'traces/{request.node.name}_{current_time}.zip'
+        f'traces/{safe_name}_{current_time}.zip'
     )
 
     os.makedirs(os.path.dirname(trace_path), exist_ok=True)

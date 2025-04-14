@@ -15,6 +15,7 @@ from pytest import fail
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.checkout_page import CheckoutPage
+from page_objects.companies_page import CompaniesPage
 from page_objects.header_element import HeaderElement
 from page_objects.purchase_page import PurchasePage
 from jsonschema import validate, ValidationError
@@ -59,6 +60,8 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
     header = HeaderElement(page_fixture)
+    companies_page = CompaniesPage(page_fixture)
+    companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
 
     with allure.step("Запоминаю адрес в блоке Получение"):
@@ -82,9 +85,10 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         obtaining_block_adress = checkout_page.obtaining_block.pickup_point_adress().inner_text()
     
     with allure.step("Загружаю JSON-схему"):
+      
         load_dotenv()       
         json_schema_base64 = os.getenv("JSON_SCHEMA")
-    
+        
         if json_schema_base64:
             # Декодируем Base64
             json_schema_str = base64.b64decode(json_schema_base64).decode("utf-8")
@@ -93,14 +97,14 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         else:
             raise ValueError("JSON_SCHEMA is not set")
             # print(json.dumps(response_schema, indent=4))
-        
-        with allure.step("Перехватываю запрос и ответ"):
-            with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
-                  page_fixture.expect_request(os.getenv("METHOD")) as request_info):
-                checkout_page.calculation_block.click_order_button()
+
+    with allure.step("Перехватываю запрос и ответ"):
+        with (page_fixture.expect_response(os.getenv("METHOD")) as response_info,
+              page_fixture.expect_request(os.getenv("METHOD")) as request_info):
+            checkout_page.calculation_block.click_order_button()
 
     with allure.step("Ожидаю номер заказа"):
-        time.sleep(3)
+        time.sleep(5)
         order_number = purchase_page.memorize_the_order_number()
         print(order_number)
 
@@ -127,7 +131,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
 
     with allure.step("Загружаю JSON-схему с проверочными значениями"):
         json_schema_base64_test = os.getenv("JSON_SCHEMA_TEST")
-    
+
         if json_schema_base64_test:
             # Декодируем Base64
             json_schema_str_test = base64.b64decode(json_schema_base64_test).decode("utf-8")
@@ -189,9 +193,6 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
     # with allure.step("Проверяю, что номер заказа соответствует шаблону"):
     #     pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
     #     assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону!"
-
-
-
 
 # db_server = os.getenv('DB_SERVER')
 # db_name = os.getenv('DB_NAME')
