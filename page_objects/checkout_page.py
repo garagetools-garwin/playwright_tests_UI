@@ -45,7 +45,7 @@ class BuyerAndRecipientBlock:
 
     ADD_FIRST_RECIPIENT_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd"
     RECIPIENT_CHANGE_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__Button"
-    CUSTOMER_NAME = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Custom span.SectionInfo__Title"
+    CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
     RECIPIENT_INFO = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Body span.SectionInfo__Title"
 
     def __init__(self, page):
@@ -79,11 +79,11 @@ class BuyerAndRecipientBlock:
 
         # Если хотя бы одно из действий сработало, продолжаем
         if recipient_listing_opened:
-            checkout_page.add_recipient_modal.add_recipient()
+            checkout_page.add_recipient_modal.add_recipient_modal_open()
             with allure.step(
                     "Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
                 name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
-            checkout_page.add_recipient_modal.save_new_recipient()
+            checkout_page.add_recipient_modal.click_save_new_recipient_button()
             with allure.step("Формирую ожидаемый текст"):
                 expected_info = f"{name}, {email}, {phone}"
             checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -98,6 +98,11 @@ class BuyerAndRecipientBlock:
                 checkout_page.recipient_listing.close_recipient_listing()
 
             return name, email, phone
+
+        # Текст имени получателя
+    def customer_name_text(self):
+        return self.page.locator(self.CUSTOMER_NAME).inner_text()
+
 
 """Листинг получателей"""
 
@@ -125,6 +130,14 @@ class RecipientListing:
         self.page = page
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
 
+    @allure.step("Извлекаю ФИО первого получателя")
+    def name_of_first_recipient(self):
+        return self.page.locator(self.INFO_TITLE).nth(0).inner_text()
+    @allure.step("Извлекаю телефон и адресс почты первого получателя")
+    def phone_and_email_of_first_recipient(self):
+        return self.page.locator(self.INFO_DESCRIPTION).nth(0).inner_text()
+
+
     @allure.step("Открываю листинг получателей")
     def open_recipient_listing(self):
         # Ожидаем появления кнопки в течение 3 секунд
@@ -136,8 +149,7 @@ class RecipientListing:
             expect(self.page.locator(self.RECIPIENT_LISTING_MODAL)).to_be_visible(timeout=3000)
 
     def recipient_listing_modal(self):
-        return self.page.locator(self.buyer_and_recipient_block.RECIPIENT_CHANGE_BUTTON)
-
+        return self.page.locator(self.RECIPIENT_LISTING_MODAL)
 
     @allure.step("Открываю листинг получателей")
     def open_recipient_listing_try(self, base_url, page_fixture):
@@ -224,6 +236,16 @@ class RecipientListing:
         else:
             pass
 
+    @allure.step("Считаю количество записей в листинге")
+    def count_number_of_records(self):
+        recipient_titles = self.page.locator(self.INFO_TITLE).all_text_contents()
+
+        number_of_records = 0
+        for title in recipient_titles:
+            number_of_records += 1
+        print(number_of_records)
+        return number_of_records
+
 
 """Модалка Новый получатель"""
 
@@ -236,6 +258,7 @@ class AddRecipientModal:
     EMAIL_FIELD = "div.RecipientSelectionAdd__Input input[type='email']"
     SAVE_RECIPIENT_BUTTON = "button.RecipientSelectionAdd__Button"
     CLOSE_BUTTON = ".RecipientSelectionAdd .KitModal__Closer"
+    FIELD_ERROR_TEXT = ".Field.RecipientSelectionAdd__Input .Field__Text"
 
     def __init__(self, page):
         self.page = page
@@ -243,7 +266,7 @@ class AddRecipientModal:
         self.add_recipient_modal = AddRecipientModal
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
 
-    @allure.step("Закрываю модальное окно нового получателя")
+    # Модальное окно нового получателя
     def add_recipient_modal_(self):
         return self.page.locator(self.RECIPIENT_MODAL)
 
@@ -288,7 +311,7 @@ class AddRecipientModal:
         return name, phone, email
 
     @allure.step("Заполняю поля сгенерированными данными")
-    def fill_in_part_of_data_randomize(self):
+    def fill_in_name_and_phone_data_randomize(self):
         name = fake.name()
         phone = f"+7 ({random.randint(900, 999)}) {random.randint(100, 999)}-{random.randint(10, 99)}-{random.randint(10, 99)}"
 
@@ -297,16 +320,72 @@ class AddRecipientModal:
 
         return name, phone
 
-    @allure.step("Сохраняю нового получателя")
-    def save_new_recipient(self):
-        self.page.locator(self.SAVE_RECIPIENT_BUTTON).click()
-        with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
-            expect(self.page.locator(self.RECIPIENT_MODAL)).not_to_be_visible()
-        with allure.step("Проверяю, что листинг пользователей закрыт"):
-            expect(self.page.locator(self.recipient_listing.RECIPIENT_LISTING_MODAL)).not_to_be_visible()
+    @allure.step("Заполняю поле ФИО сгенерированными данными")
+    def fill_name_data_randomize(self):
+        name = fake.name().replace('.', '')
+        self.page.locator(self.NAME_FIELD).fill(name)
 
-    @allure.step("Добавляю получателя")
-    def add_recipient(self):
+        return name
+
+    @allure.step("Заполняю поле Телефон сгенерированными данными")
+    def fill_phone_data_randomize(self):
+        phone = f"+7 ({random.randint(900, 999)}) {random.randint(100, 999)}-{random.randint(10, 99)}-{random.randint(10, 99)}"
+
+        self.page.locator(self.TEL_FIELD).fill(phone)
+
+        return phone
+
+    @allure.step("Заполняю поле e-mail сгенерированными данными")
+    def fill_email_data_randomize(self):
+        email = fake.email()
+
+        self.page.locator(self.EMAIL_FIELD).fill(email)
+
+        return email
+
+    @allure.step("Заполняю поле ФИО данными заданными в ручную")
+    def fill_name(self, text):
+        self.page.locator(self.NAME_FIELD).fill(text)
+
+        # return text
+
+    @allure.step("Заполняю поле Телефон данными заданными в ручную")
+    def fill_phone(self, text):
+        self.page.locator(self.TEL_FIELD).fill(text)
+
+        # return phone
+
+    @allure.step("Заполняю поле e-mail данными заданными в ручную")
+    def fill_email(self, text):
+        self.page.locator(self.EMAIL_FIELD).fill(text)
+
+        # return email
+
+    @allure.step("Очищаю все поля")
+    def clear_all_fields(self):
+        self.page.locator(self.NAME_FIELD).fill("")
+        self.page.locator(self.TEL_FIELD).fill("")
+        self.page.locator(self.EMAIL_FIELD).fill("")
+
+    @allure.step("Получаю текст ошибки поля ФИО")
+    def name_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(0).inner_text()
+
+    @allure.step("Получаю текст ошибки поля Телефон")
+    def phone_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(1).inner_text()
+
+    @allure.step("Получаю текст ошибки поля email")
+    def email_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(2).inner_text()
+
+
+    @allure.step("Нажимаю на кнопку Сохранить")
+    def click_save_new_recipient_button(self):
+        self.page.locator(self.SAVE_RECIPIENT_BUTTON).click()
+
+    @allure.step("Открываю окно Новый получатель")
+    def add_recipient_modal_open(self):
         self.page.locator(self.recipient_listing.ADD_RECIPIENT_BUTTON).click()
         with allure.step("Проверяю, что модальное окно нового пользователя открыто"):
             expect(self.page.locator(self.add_recipient_modal.RECIPIENT_MODAL)).to_be_visible()
@@ -350,10 +429,14 @@ class EditRecipientModal:
     EMAIL_FIELD = "div.RecipientSelectionEdit__Input input[type='email']"
     SAVE_RECIPIENT_BUTTON = "button.RecipientSelectionEdit__Button"
     CLOSE_BUTTON = ".RecipientSelectionEdit .KitModal__Closer"
+    FIELD_ERROR_TEXT = ".Field.RecipientSelectionEdit__Input .Field__Text"
 
     def __init__(self, page):
         self.page = page
         self.recipient_listing = RecipientListing
+
+    def edit_recipient_modal(self):
+        return self.page.locator(self.RECIPIENT_MODAL)
 
     @allure.step("Закрываю модальное окно изменения получателя")
     def close_edit_recipient_modal(self):
@@ -396,7 +479,7 @@ class EditRecipientModal:
         return name, phone, email
 
     @allure.step("Заполняю поля сгенерированными данными")
-    def fill_in_part_of_data_randomize(self):
+    def fill_in_name_and_phone_data_randomize(self):
         name = fake.name()
         phone = f"+7 ({random.randint(900, 999)}) {random.randint(100, 999)}-{random.randint(10, 99)}-{random.randint(10, 99)}"
 
@@ -405,13 +488,9 @@ class EditRecipientModal:
 
         return name, phone
 
-    @allure.step("Сохраняю отредактированного получателя")
-    def save_edited_recipient(self):
+    @allure.step("Нажимаю на Сохранить")
+    def click_save_edited_recipient_button(self):
         self.page.locator(self.SAVE_RECIPIENT_BUTTON).click()
-        with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
-            expect(self.page.locator(self.RECIPIENT_MODAL)).not_to_be_visible()
-        with allure.step("Проверяю, что листинг пользователей закрыт"):
-            expect(self.page.locator(self.recipient_listing.RECIPIENT_LISTING_MODAL)).not_to_be_visible()
 
     @allure.step("Сохраняю email")
     def save_email(self):
@@ -419,6 +498,65 @@ class EditRecipientModal:
         email_element = self.page.locator(email_selector)
         email_value = email_element.evaluate("(el) => el.shadowRoot ? el.shadowRoot.value : el.value")
         return email_value
+
+    @allure.step("Заполняю поле ФИО сгенерированными данными")
+    def fill_name_data_randomize(self):
+        name = fake.name().replace('.', '')
+        self.page.locator(self.NAME_FIELD).fill(name)
+
+        return name
+
+    @allure.step("Заполняю поле Телефон сгенерированными данными")
+    def fill_phone_data_randomize(self):
+        phone = f"+7 ({random.randint(900, 999)}) {random.randint(100, 999)}-{random.randint(10, 99)}-{random.randint(10, 99)}"
+
+        self.page.locator(self.TEL_FIELD).fill(phone)
+
+        return phone
+
+    @allure.step("Заполняю поле e-mail сгенерированными данными")
+    def fill_email_data_randomize(self):
+        email = fake.email()
+
+        self.page.locator(self.EMAIL_FIELD).fill(email)
+
+        return email
+
+    @allure.step("Заполняю поле ФИО данными заданными в ручную")
+    def fill_name(self, text):
+        self.page.locator(self.NAME_FIELD).fill(text)
+
+        # return text
+
+    @allure.step("Заполняю поле Телефон данными заданными в ручную")
+    def fill_phone(self, text):
+        self.page.locator(self.TEL_FIELD).fill(text)
+
+        # return phone
+
+    @allure.step("Заполняю поле e-mail данными заданными в ручную")
+    def fill_email(self, text):
+        self.page.locator(self.EMAIL_FIELD).fill(text)
+
+        # return email
+
+    @allure.step("Очищаю все поля")
+    def clear_all_fields(self):
+        self.page.locator(self.NAME_FIELD).fill("")
+        self.page.locator(self.TEL_FIELD).fill("")
+        self.page.locator(self.EMAIL_FIELD).fill("")
+
+    @allure.step("Получаю текст ошибки поля ФИО")
+    def name_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(0).inner_text()
+
+    @allure.step("Получаю текст ошибки поля Телефон")
+    def phone_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(1).inner_text()
+
+    @allure.step("Получаю текст ошибки поля email")
+    def email_field_error_text(self):
+        return self.page.locator(self.FIELD_ERROR_TEXT).nth(2).inner_text()
 
 
 """Модалка подтверждения удаления"""
