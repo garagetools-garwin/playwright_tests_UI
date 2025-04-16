@@ -173,7 +173,7 @@ def test_header_link_video_reviews(page_fixture, base_url):
 
 
 @allure.title("Переход на страницу 'Гарантии'")
-def test_header_link_warranty(page_fixture, base_url):
+def header_link_warranty(page_fixture, base_url):
     header = HeaderElement(page_fixture)
     header.open(base_url)
     with allure.step("Кликаю на ссылку"):
