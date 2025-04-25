@@ -9,6 +9,7 @@ on:
     # - cron: '0 */12 * * *'
     # - cron: '0 */24 * * *'
     - cron: '0 5 * * *'    
+    # - cron: '30 6 * * *'    
     - cron: '0 14 * * *'
     # - cron: '*/30 * * * *'
 
@@ -19,7 +20,7 @@ jobs:
     timeout-minutes: 70
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
-    concurrency: playwright-tests
+    concurrency: playwright-tests_new
 
     # запуск на виртуальной машине
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
@@ -95,10 +96,10 @@ jobs:
       JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
 
     # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
-    if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    if: github.event_name == (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
-    concurrency: playwright-tests
+    concurrency: playwright-tests_new
 
     steps:
 
