@@ -24,7 +24,7 @@ from jsonschema import validate, ValidationError
 @pytest.mark.auth
 @pytest.mark.smoke
 @pytest.mark.custom_schedule
-def test_create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
+def create_order(page_fixture, base_url, delete_recipient_fixture, delete_address_fixture):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     purchase_page = PurchasePage(page_fixture)
@@ -103,10 +103,21 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
               page_fixture.expect_request(os.getenv("METHOD")) as request_info):
             checkout_page.calculation_block.click_order_button()
 
-    with allure.step("Ожидаю номер заказа"):
-        time.sleep(5)
-        order_number = purchase_page.memorize_the_order_number()
-        print(order_number)
+    time.sleep(5)
+    order_number = purchase_page.memorize_the_order_number()
+    print(order_number)
+    with allure.step("Проверяю, что номер заказа не пустой"):
+        assert order_number != "", "Номер заказа пустой!"
+    with allure.step(
+            "Проверяю, что номер заказа соответствует одному из шаблонов Х-000000000, ХX000000000, 000000000."):
+        pattern = r'^[А-Яа-я-]*\d{9}[А-Яа-я-]*$'
+
+        assert re.match(pattern, order_number), f"Номер заказа '{order_number}' не соответствует шаблону Х-000000000!"
+
+    # with allure.step("Ожидаю номер заказа"):
+    #     time.sleep(5)
+    #     order_number = purchase_page.memorize_the_order_number()
+    #     print(order_number)
 
     with allure.step("Извлекаю из ответа JSON"):
         response = response_info.value
