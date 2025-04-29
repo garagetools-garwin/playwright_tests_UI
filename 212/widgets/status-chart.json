@@ -1,0 +1,1 @@
+[{"uid":"45e602f580a60e0a","name":"Открытие модального окна авторизации","time":{"start":1745925353170,"stop":1745925364216,"duration":11046},"status":"passed","severity":"normal"},{"uid":"e75e47918ae14d81","name":"Переход в чек-аут","time":{"start":1745925394753,"stop":1745925420867,"duration":26114},"status":"broken","severity":"normal"}]
