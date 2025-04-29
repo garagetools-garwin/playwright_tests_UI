@@ -41,6 +41,7 @@ def test_cart_checkout(page_fixture, base_url):
     autorization.autorization_testmail_app()
     page_fixture.context.storage_state(path=auth_state_path)
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
+    cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     cart_page.click_order_button()
@@ -64,6 +65,7 @@ def test_cart_checkout_empty(page_fixture, base_url):
     cart_page.click_order_button()
     autorization.autorization_testmail_app_empty()
     page_fixture.context.storage_state(path=auth_state_empty_path)
+    cart_page.clear_cart()
     cart_page.add_to_cart(base_url)
     cart_page.open(base_url)
     # cart_page.click_to_checkbox_for_all_products() # При переходе в корзину, галочки сняты, проверить не баг ли это
