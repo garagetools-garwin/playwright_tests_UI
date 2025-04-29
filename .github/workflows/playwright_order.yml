@@ -66,7 +66,7 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest tests\test_cart.py --reruns 2 --reruns-delay 3 --alluredir=allure-results
+        run: pytest tests/test_cart.py --reruns 2 --reruns-delay 3 --alluredir=allure-results
 
      # Сохранение auth_state.json в кеш
       - name: Cache auth state
