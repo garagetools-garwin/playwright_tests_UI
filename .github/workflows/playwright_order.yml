@@ -169,28 +169,28 @@ jobs:
       - name: Wait before checking test job
         run: sleep 30
           
-      # Опрашиваем статус выполнения test
-      - name: Wait for test job to complete
-        run: |
-          echo "Checking status of test job..."
-          while true; do
-            # Получаем статус задачи test через GitHub API
-            STATUS=$(curl -s -H "Authorization: ***" \
-              -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/${{ github.run_id }}/jobs" \
-              | jq -r '.jobs[] | select(.name == "test") | .status')
+      # # Опрашиваем статус выполнения test
+      # - name: Wait for test job to complete
+      #   run: |
+      #     echo "Checking status of test job..."
+      #     while true; do
+      #       # Получаем статус задачи test через GitHub API
+      #       STATUS=$(curl -s -H "Authorization: ***" \
+      #         -H "Accept: application/vnd.github.v3+json" \
+      #         "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/${{ github.run_id }}/jobs" \
+      #         | jq -r '.jobs[] | select(.name == "test") | .status')
           
-            if [[ "$STATUS" == "completed" ]]; then
-              echo "Test job is completed."
-              break
-            elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" || "$STATUS" == "pending" ]]; then
-              echo "Test job is still running, queued, or pending. Waiting..."
-              sleep 60
-            else
-              echo "Test job status is unknown: $STATUS"
-              exit 1
-            fi
-          done
+      #       if [[ "$STATUS" == "completed" ]]; then
+      #         echo "Test job is completed."
+      #         break
+      #       elif [[ "$STATUS" == "in_progress" || "$STATUS" == "queued" || "$STATUS" == "pending" ]]; then
+      #         echo "Test job is still running, queued, or pending. Waiting..."
+      #         sleep 60
+      #       else
+      #         echo "Test job status is unknown: $STATUS"
+      #         exit 1
+      #       fi
+      #     done
 
       # Запуск тестов
       - name: Run only test_create_order
