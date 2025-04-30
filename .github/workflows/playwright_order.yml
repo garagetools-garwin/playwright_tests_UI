@@ -68,12 +68,12 @@ jobs:
       - name: Run tests
         run: pytest tests/test_cart.py tests/test_checkout.py --reruns 2 --reruns-delay 3 --alluredir=allure-results
 
-     # Сохранение auth_state.json в кеш
-      - name: Cache auth state
-        uses: actions/cache@v3
-        with:
-          path: auth_states/auth_state.json
-          key: auth-state-${{ github.run_id }}
+     # # Сохранение auth_state.json в кеш
+     #  - name: Cache auth state
+     #    uses: actions/cache@v3
+     #    with:
+     #      path: auth_states/auth_state.json
+     #      key: auth-state-${{ github.run_id }}
 
       # Загрузка артефактов
       - name: Upload Allure Results
