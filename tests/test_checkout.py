@@ -7,12 +7,10 @@ import allure
 from playwright.sync_api import expect
 
 from conftest import delete_recipient_fixture
-from page_objects.checkout_page import CheckoutPage, CalculationBlock, DeliveryBlock, AddRecipientModal, \
-    EditRecipientModal
+from page_objects.checkout_page import CheckoutPage, CalculationBlock, DeliveryBlock
 from page_objects.cart_page import CartPage
 from page_objects.autorization_modal_element import AutorizationModalElement
 from page_objects.companies_page import CompaniesPage
-from page_objects.header_element import HeaderElement
 
 """Промокод"""
 
@@ -207,7 +205,7 @@ def test_place_an_order_button_disabled_without_recipient_and_adress(page_fixtur
     checkout_page = CheckoutPage(page_fixture)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
     checkout_page.open(base_url)
 
     with allure.step("Проверяю, что кнопка Оформить заказ не активна"):
@@ -224,7 +222,7 @@ def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_a
     companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
     checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
@@ -310,13 +308,9 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient_modal_open()
+    checkout_page.add_recipient_modal.add_recipient()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
-    checkout_page.add_recipient_modal.click_save_new_recipient_button()
-    with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).not_to_be_visible()
-    with allure.step("Проверяю, что листинг пользователей закрыт"):
-        expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
+    checkout_page.add_recipient_modal.save_new_recipient()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
@@ -340,9 +334,9 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient_modal_open()
-    name, phone = checkout_page.add_recipient_modal.fill_in_name_and_phone_data_randomize()
-    checkout_page.add_recipient_modal.click_save_new_recipient_button()
+    checkout_page.add_recipient_modal.add_recipient()
+    name, phone = checkout_page.add_recipient_modal.fill_in_part_of_data_randomize()
+    checkout_page.add_recipient_modal.save_new_recipient()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {phone}"
@@ -366,10 +360,10 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient_modal_open()
+    checkout_page.add_recipient_modal.add_recipient()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
-    checkout_page.add_recipient_modal.click_save_new_recipient_button()
+    checkout_page.add_recipient_modal.save_new_recipient()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
@@ -393,7 +387,7 @@ def test_add_new_recipient_close_madal1(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient_modal_open()
+    checkout_page.add_recipient_modal.add_recipient()
     checkout_page.add_recipient_modal.close_new_recipient_modal()
 
 
@@ -407,7 +401,7 @@ def test_add_new_recipient_close_madal2(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient_modal_open()
+    checkout_page.add_recipient_modal.add_recipient()
     checkout_page.add_recipient_modal.close_new_recipient_modal2()
 
 @pytest.mark.auth_empty
@@ -562,11 +556,7 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     name, phone, email = checkout_page.edit_recipient_modal.fill_in_data_randomize()
-    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-    with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
-        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).not_to_be_visible()
-    with allure.step("Проверяю, что листинг пользователей закрыт"):
-        expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
+    checkout_page.edit_recipient_modal.save_edited_recipient()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -591,9 +581,9 @@ def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
-    name, phone = checkout_page.edit_recipient_modal.fill_in_name_and_phone_data_randomize()
+    name, phone = checkout_page.edit_recipient_modal.fill_in_part_of_data_randomize()
     email = checkout_page.edit_recipient_modal.save_email()
-    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
+    checkout_page.edit_recipient_modal.save_edited_recipient()
     with allure.step("Формирую ожидаемый текст"):
         # Если имейла нет, формируем ожидаемый результат без него
         if email:
@@ -627,7 +617,7 @@ def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url)
     checkout_page.recipient_listing.click_edit_button()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.edit_recipient_modal.fill_in_data()
-    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
+    checkout_page.edit_recipient_modal.save_edited_recipient()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -1171,7 +1161,7 @@ def test_payment_on_receipt_enebled(page_fixture, base_url, delete_address_fixtu
     companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
     checkout_page.obtaining_block.create_address_pvz_garwin(base_url, page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
@@ -1193,7 +1183,7 @@ def test_payment_on_receipt_disabled(page_fixture, base_url, delete_address_fixt
     companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_promo_product(base_url, page_fixture)
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
@@ -1262,541 +1252,4 @@ def test_online_payment_on_receipt_and_payment_by_invoice_enabled(page_fixture, 
         expect(contact_a_manager_button_status).to_be_enabled()
 
 
-"""Блок Покупатель и получатель (низкий приоритет)"""
-
-#TODO: Переместить тест в блок "Блок Покупатель и получатель"
-@pytest.mark.auth
-@allure.title("В блоке отображается название выбранного контрагента")
-def customer_name(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    companies_page = CompaniesPage(page_fixture)
-    header = HeaderElement(page_fixture)
-
-    cart_page.open(base_url)
-    with allure.step("Запоминаю название компании в хедере"):
-        company_name_header = header.company_name_text()
-    cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.open(base_url)
-    with allure.step("Запоминаю название компании в чек-ауте"):
-        company_name_checkout = checkout_page.buyer_and_recipient_block.customer_name_text()
-    with allure.step("Проверяю, что в чек-ауте актуальное имя получателя/название компании"):
-        assert company_name_header == company_name_checkout
-
-    companies_page.select_a_company_with_a_different_type_of_pricing(base_url)
-    with allure.step("Запоминаю название компании в хедере"):
-        company_name_header = header.company_name_text()
-    checkout_page.open(base_url)
-    with allure.step("Запоминаю название компании в чек-ауте"):
-        company_name_checkout = checkout_page.buyer_and_recipient_block.customer_name_text()
-    with allure.step("Проверяю, что в чек-ауте актуальное имя получателя/название компании"):
-        assert company_name_header == company_name_checkout
-
-#TODO: Переместить тест в блок "Блок Покупатель и получатель"
-@pytest.mark.auth
-@allure.title("Сохраниение нового получателя с некоретными даными")
-def add_new_recipient_without_the_required_fields(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    add_recipient_modal = AddRecipientModal(page_fixture)
-
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.open(base_url)
-
-    with allure.step("Пытаюсь сохранить пользователя с пустыми полями"):
-        checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-        with allure.step("Считаю количество записей в листинге(до попыток сделать запись)"):
-            number_of_records_before_saving = checkout_page.recipient_listing.count_number_of_records()
-
-        checkout_page.add_recipient_modal.add_recipient_modal_open()
-        checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.add_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-        assert checkout_page.add_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с ФИО"):
-        add_recipient_modal.fill_name_data_randomize()
-        checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО не появилась ошибка"):
-        assert checkout_page.add_recipient_modal.name_field_error_text() == ""
-    with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-        assert checkout_page.add_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с номером телефона"):
-        checkout_page.add_recipient_modal.clear_all_fields()
-        add_recipient_modal.fill_phone_data_randomize()
-        checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.add_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон не появилась ошибка"):
-        assert checkout_page.add_recipient_modal.phone_field_error_text() == ""
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с e-mail"):
-        checkout_page.add_recipient_modal.clear_all_fields()
-        add_recipient_modal.fill_email_data_randomize()
-        checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.add_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон не появилась ошибка"):
-        assert checkout_page.add_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-    with allure.step("Считаю количество записей в листинге(после попыток сделать запись)"):
-        checkout_page.add_recipient_modal.close_new_recipient_modal()
-        checkout_page.recipient_listing.open_recipient_listing()
-        number_of_records_after_saving = checkout_page.recipient_listing.count_number_of_records()
-
-    with allure.step("Проверяю, что новых записей сделано не было"):
-        assert number_of_records_before_saving == number_of_records_after_saving
-
-#TODO: Переместить тест в блок "Блок Покупатель и получатель"
-@pytest.mark.auth
-@allure.title("Сохраниение нового получателя с некоретным ФИО")
-def add_new_recipient_with_incorrect_data(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    add_recipient_modal = AddRecipientModal(page_fixture)
-
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.open(base_url)
-
-    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-
-    with allure.step("Считаю количество записей в листинге(до попыток сделать запись)"):
-        number_of_records_before_saving = checkout_page.recipient_listing.count_number_of_records()
-
-    with allure.step("Проверяю, недопустимые значения для ФИО"):
-        with allure.step("Вношу в поле ФИО цифры"):
-            checkout_page.add_recipient_modal.add_recipient_modal_open()
-            checkout_page.add_recipient_modal.fill_name("590640563432")
-            add_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.add_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-        with allure.step("Вношу в поле ФИО нижнее подчеркивание"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name("Оле_г")
-            add_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.add_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-        with allure.step("Вношу в поле ФИО более 90 символов"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name("Здесь находится текст из более чем девяноста символов для проверки поля ФИО на максимальное количество допустимых символов")
-            add_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.add_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.add_recipient_modal.add_recipient_modal_()).to_be_visible()
-
-    with allure.step("Проверяю, недопустимые значения для поля email"):
-        with allure.step("Вношу в поле email два символа '@'"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            add_recipient_modal.fill_phone_data_randomize()
-            checkout_page.add_recipient_modal.fill_email("test@@mail.com")
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при двух символах '@'"):
-                assert checkout_page.add_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-        with allure.step("Не вношу в поле email символ '@'"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            add_recipient_modal.fill_phone_data_randomize()
-            checkout_page.add_recipient_modal.fill_email("testmail.com")
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при отсутствии '@'"):
-                assert checkout_page.add_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-        with allure.step("Не вношу в поле email символ '.'"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            add_recipient_modal.fill_phone_data_randomize()
-            checkout_page.add_recipient_modal.fill_email("test@mailcom")
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при отсутствии '.'"):
-                assert checkout_page.add_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-    with allure.step("Проверяю, недопустимые значения для поля Телефон"):
-        with allure.step("Вношу в поле Телефон латинские и кирилические буквы"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            checkout_page.add_recipient_modal.fill_phone("abcABCабвАБВ")
-            checkout_page.add_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при вводе букв"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-        with allure.step("Вношу в поле Телефон только одну цифру"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            checkout_page.add_recipient_modal.fill_phone("7")
-            checkout_page.add_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при вводе 1 символа"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-        with allure.step("Вношу в поле Телефон на одну цифру меньше валидного (требуется 10)"):
-            checkout_page.add_recipient_modal.clear_all_fields()
-            checkout_page.add_recipient_modal.fill_name_data_randomize()
-            checkout_page.add_recipient_modal.fill_phone("79991234")
-            checkout_page.add_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.add_recipient_modal.click_save_new_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при неполном номере"):
-                assert checkout_page.add_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-    with allure.step("Считаю количество записей в листинге(после попыток сделать запись)"):
-        checkout_page.add_recipient_modal.close_new_recipient_modal()
-        checkout_page.recipient_listing.open_recipient_listing()
-        number_of_records_after_saving = checkout_page.recipient_listing.count_number_of_records()
-
-    with allure.step("Проверяю, что новых записей сделано не было"):
-        assert number_of_records_before_saving == number_of_records_after_saving
-
-#TODO: Переместить тест в блок "Именить получателя"
-
-@pytest.mark.auth
-@allure.title("Меняю данные получателя на некорректные")
-def edit_recipient_without_the_required_fields(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    edit_recipient_modal = EditRecipientModal(page_fixture)
-
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.open(base_url)
-
-    with allure.step("Пытаюсь сохранить пользователя с пустыми полями"):
-        checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-
-        with allure.step("Запоминаю данные получателя до попыток его отредактировать"):
-            name_of_first_recipient_before = checkout_page.recipient_listing.name_of_first_recipient()
-            phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
-
-        checkout_page.recipient_listing.open_action_menu()
-        checkout_page.recipient_listing.click_edit_button()
-        checkout_page.edit_recipient_modal.clear_all_fields()
-        checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с ФИО"):
-        edit_recipient_modal.fill_name_data_randomize()
-        checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО не появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.name_field_error_text() == ""
-    with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с номером телефона"):
-        checkout_page.edit_recipient_modal.clear_all_fields()
-        edit_recipient_modal.fill_phone_data_randomize()
-        checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон не появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.phone_field_error_text() == ""
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-    with allure.step("Пытаюсь сохранить пользователя только с e-mail"):
-        checkout_page.edit_recipient_modal.clear_all_fields()
-        edit_recipient_modal.fill_email_data_randomize()
-        checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-    with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.name_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что под под полем Телефон не появилась ошибка"):
-        assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Поле обязательно для заполнения"
-    with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-    checkout_page.edit_recipient_modal.close_edit_recipient_modal()
-    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-
-    with allure.step("Запоминаю данные получателя после попыток его отредактировать"):
-        name_of_first_recipient_after = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_after = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
-
-    with allure.step("Проверяю, что после всех попыток изменить пользователя, он остался неизменным"):
-        assert name_of_first_recipient_before == name_of_first_recipient_after
-        assert phone_and_email_of_first_recipient_before == phone_and_email_of_first_recipient_after
-
-
-@pytest.mark.auth
-@allure.title("Сохраниение нового получателя с некоретным ФИО")
-def edit_recipient_with_incorrect_data(page_fixture, base_url):
-    cart_page = CartPage(page_fixture)
-    checkout_page = CheckoutPage(page_fixture)
-    edit_recipient_modal = EditRecipientModal(page_fixture)
-
-    cart_page.open(base_url)
-    cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
-    checkout_page.open(base_url)
-
-    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-
-    with allure.step("Запоминаю данные получателя до попыток его отредактировать"):
-        name_of_first_recipient_before = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
-
-    with allure.step("Проверяю, недопустимые значения для ФИО"):
-        with allure.step("Вношу в поле ФИО цифры"):
-            checkout_page.recipient_listing.open_action_menu()
-            checkout_page.recipient_listing.click_edit_button()
-            checkout_page.edit_recipient_modal.fill_name("590640563432")
-            edit_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-        with allure.step("Вношу в поле ФИО нижнее подчеркивание"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name("Оле_г")
-            edit_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-        with allure.step("Вношу в поле ФИО более 90 символов"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name("Здесь находится текст из более чем девяноста символов для проверки поля ФИО на максимальное количество допустимых символов")
-            edit_recipient_modal.fill_phone_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под под полем ФИО появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.name_field_error_text() == "Допустимы буквы на латинице и кириллице, пробел, дефис, одинарная кавычка. Не более 90 символов."
-            with allure.step("Проверяю, что под под полем Телефон появилась ошибка"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == ""
-            with allure.step("Проверяю, что модальное окно нового пользователя не закрыто"):
-                expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).to_be_visible()
-
-    with allure.step("Проверяю, недопустимые значения для поля email"):
-        with allure.step("Вношу в поле email два символа '@'"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            edit_recipient_modal.fill_phone_data_randomize()
-            checkout_page.edit_recipient_modal.fill_email("test@@mail.com")
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при двух символах '@'"):
-                assert checkout_page.edit_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-        with allure.step("Не вношу в поле email символ '@'"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            edit_recipient_modal.fill_phone_data_randomize()
-            checkout_page.edit_recipient_modal.fill_email("testmail.com")
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при отсутствии '@'"):
-                assert checkout_page.edit_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-        with allure.step("Не вношу в поле email символ '.'"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            edit_recipient_modal.fill_phone_data_randomize()
-            checkout_page.edit_recipient_modal.fill_email("test@mailcom")
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем E-mail появилась ошибка при отсутствии '.'"):
-                assert checkout_page.edit_recipient_modal.email_field_error_text() == "Некорректный формат e-mail."
-
-    with allure.step("Проверяю, недопустимые значения для поля Телефон"):
-        with allure.step("Вношу в поле Телефон латинские и кирилические буквы"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            checkout_page.edit_recipient_modal.fill_phone("abcABCабвАБВ")
-            checkout_page.edit_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при вводе букв"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-        with allure.step("Вношу в поле Телефон только одну цифру"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            checkout_page.edit_recipient_modal.fill_phone("7")
-            checkout_page.edit_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при вводе 1 символа"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-        with allure.step("Вношу в поле Телефон на одну цифру меньше валидного (требуется 10)"):
-            checkout_page.edit_recipient_modal.clear_all_fields()
-            checkout_page.edit_recipient_modal.fill_name_data_randomize()
-            checkout_page.edit_recipient_modal.fill_phone("79991234")
-            checkout_page.edit_recipient_modal.fill_email_data_randomize()
-
-            checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
-
-            with allure.step("Проверяю, что под полем Телефон появилась ошибка при неполном номере"):
-                assert checkout_page.edit_recipient_modal.phone_field_error_text() == "Некорректный формат телефона."
-
-    checkout_page.edit_recipient_modal.close_edit_recipient_modal()
-    checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-
-    with allure.step("Запоминаю данные получателя после попыток его отредактировать"):
-        name_of_first_recipient_after = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_after = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
-
-    with allure.step("Проверяю, что после всех попыток изменить пользователя, он остался неизменным"):
-        assert name_of_first_recipient_before == name_of_first_recipient_after
-        assert phone_and_email_of_first_recipient_before == phone_and_email_of_first_recipient_after
-
-
-# Функция для перехода в чек-аут
-# def setup_checkout(page_fixture, base_url):
-#     cart_page = CartPage(page_fixture)
-#     checkout_page = CheckoutPage(page_fixture)
-#     add_recipient_modal = AddRecipientModal(page_fixture)
-#
-#     cart_page.open(base_url)
-#     cart_page.clear_cart()
-#     cart_page.add_to_cart_cheap_product(base_url)
-#     checkout_page.open(base_url)
-#
-#     return checkout_page, add_recipient_modal
-
-
-# Вариант с параметризацие, работает дольше
-# @pytest.mark.auth
-# @allure.title("Сохранение нового получателя с некорректными данными")
-# @pytest.mark.parametrize(
-#     "fill_name, fill_phone, expected_name_error, expected_phone_error",
-#     [
-#         (False, False, "Поле обязательно для заполнения", "Поле обязательно для заполнения"),
-#         (True,  False, "", "Поле обязательно для заполнения"),
-#         (False, True,  "Поле обязательно для заполнения", ""),
-#     ],
-#     ids=[
-#         "Пустые поля",
-#         "Только ФИО",
-#         "Только телефон"
-#     ]
-# )
-# def test_add_new_recipient_with_incorrect_dat(
-#     page_fixture, base_url,
-#     fill_name, fill_phone, expected_name_error, expected_phone_error
-# ):
-#     checkout_page, add_recipient_modal = setup_checkout(page_fixture, base_url)
-#
-#     with allure.step("Открываю модалку добавления получателя"):
-#         checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-#         checkout_page.add_recipient_modal.add_recipient_modal_open()
-#
-#     if fill_name:
-#         with allure.step("Заполняю ФИО"):
-#             add_recipient_modal.fill_name_data_randomize()
-#     if fill_phone:
-#         with allure.step("Заполняю телефон"):
-#             add_recipient_modal.fill_phone_data_randomize()
-#
-#     with allure.step("Нажимаю на Сохранить"):
-#         checkout_page.add_recipient_modal.click_save_new_recipient_button()
-#
-#     with allure.step("Проверяю ошибки под полями"):
-#         assert checkout_page.add_recipient_modal.name_field_error_text() == expected_name_error
-#         assert checkout_page.add_recipient_modal.phone_field_error_text() == expected_phone_error
-
-# В конце теста проверяю, что количество записей было как и до теста
-
-
-
-
-
-
-
-
-#TODO: рассмотреть вариант при изменении адреса менять его на ПВЗ и наоборот
-#TODO: Вывести все проверки и переменные в тесты
-#TODO: написать текст для вывода в отчет в случае падения для каждой проверки
-#TODO: написать обработки исключений/ошибок (кинуть запрос в GPT)
-#TODO: включить метод открытия корзины в метод очистки корзины
-#TODO: написать фикстуру которая будет активироватся при запуске любого теста, считать сколько было создано пулучателей,
-# адресов и по завершению всех проиграных тестов удалять требуемое количество сущностей, если их было 0 то фикстура
-# просто закончит свою работу. Понадобится расставить флаги после создания сущностей
-#TODO: Скидка по промокоду и по акции сново считаются в одном поле, пересмотреть написание тестов связаных с этими полями
-#TODO: Убедится, что все сценарии где Уточнить у менеджера и бесплатно в блоке доставка учтены
-#TODO: Убедится, что все сценарии где Не определено в поле доставка блока Итого учтены
-
-
-
-#
+"""Блок доставка"""
