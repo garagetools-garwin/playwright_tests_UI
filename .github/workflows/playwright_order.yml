@@ -79,7 +79,14 @@ jobs:
           timeout 50m pytest tests/test_checkout.py \
             --reruns 2 --reruns-delay 3 \
             --alluredir=allure-results \
-            -v --tb=short --capture=tee-sys
+            -v --tb=short --capture=tee-sys --log-cli-level=DEBUG | tee pytest-output.log
+            
+      - name: Upload full pytest log
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-output
+          path: pytest-output.log
+        
 
      # Сохранение auth_state.json в кеш
       - name: Cache auth state
