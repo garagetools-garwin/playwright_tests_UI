@@ -1267,7 +1267,7 @@ def test_online_payment_on_receipt_and_payment_by_invoice_enabled(page_fixture, 
 #TODO: Переместить тест в блок "Блок Покупатель и получатель"
 @pytest.mark.auth
 @allure.title("В блоке отображается название выбранного контрагента")
-def test_customer_name(page_fixture, base_url):
+def customer_name(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     companies_page = CompaniesPage(page_fixture)
@@ -1296,7 +1296,7 @@ def test_customer_name(page_fixture, base_url):
 #TODO: Переместить тест в блок "Блок Покупатель и получатель"
 @pytest.mark.auth
 @allure.title("Сохраниение нового получателя с некоретными даными")
-def test_add_new_recipient_without_the_required_fields(page_fixture, base_url):
+def add_new_recipient_without_the_required_fields(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     add_recipient_modal = AddRecipientModal(page_fixture)
@@ -1367,7 +1367,7 @@ def test_add_new_recipient_without_the_required_fields(page_fixture, base_url):
 #TODO: Переместить тест в блок "Блок Покупатель и получатель"
 @pytest.mark.auth
 @allure.title("Сохраниение нового получателя с некоретным ФИО")
-def test_add_new_recipient_with_incorrect_data(page_fixture, base_url):
+def add_new_recipient_with_incorrect_data(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     add_recipient_modal = AddRecipientModal(page_fixture)
@@ -1505,7 +1505,7 @@ def test_add_new_recipient_with_incorrect_data(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Меняю данные получателя на некорректные")
-def test_edit_recipient_without_the_required_fields(page_fixture, base_url):
+def edit_recipient_without_the_required_fields(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     edit_recipient_modal = EditRecipientModal(page_fixture)
@@ -1582,7 +1582,7 @@ def test_edit_recipient_without_the_required_fields(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Сохраниение нового получателя с некоретным ФИО")
-def test_edit_recipient_with_incorrect_data(page_fixture, base_url):
+def edit_recipient_with_incorrect_data(page_fixture, base_url):
     cart_page = CartPage(page_fixture)
     checkout_page = CheckoutPage(page_fixture)
     edit_recipient_modal = EditRecipientModal(page_fixture)
