@@ -147,7 +147,7 @@ jobs:
             # Получаем статус задачи test через GitHub API
             STATUS=$(curl -s -H "Authorization: ***" \
               -H "Accept: application/vnd.github.v3+json" \
-              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/13612331399/jobs" \
+              "https://api.github.com/repos/garagetools-garwin/playwright_tests_UI/actions/runs/${{ github.run_id }}/jobs" \
               | jq -r '.jobs[] | select(.name == "test") | .status')
           
             if [[ "$STATUS" == "completed" ]]; then
