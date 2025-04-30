@@ -308,7 +308,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient()
+       checkout_page.add_recipient_modal.add_recipient_modal_open()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
     delete_recipient_fixture()
@@ -334,7 +334,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient()
+       checkout_page.add_recipient_modal.add_recipient_modal_open()
     name, phone = checkout_page.add_recipient_modal.fill_in_part_of_data_randomize()
     checkout_page.add_recipient_modal.save_new_recipient()
     delete_recipient_fixture()
@@ -360,7 +360,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient()
+       checkout_page.add_recipient_modal.add_recipient_modal_open()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
     checkout_page.add_recipient_modal.save_new_recipient()
@@ -387,7 +387,7 @@ def test_add_new_recipient_close_madal1(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient()
+       checkout_page.add_recipient_modal.add_recipient_modal_open()
     checkout_page.add_recipient_modal.close_new_recipient_modal()
 
 
@@ -401,7 +401,7 @@ def test_add_new_recipient_close_madal2(page_fixture, base_url):
     cart_page.add_to_cart(base_url)
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
-    checkout_page.add_recipient_modal.add_recipient()
+       checkout_page.add_recipient_modal.add_recipient_modal_open()
     checkout_page.add_recipient_modal.close_new_recipient_modal2()
 
 @pytest.mark.auth_empty
