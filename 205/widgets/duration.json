@@ -1,1 +1,0 @@
-[{"uid":"98cea168825c2afe","name":"test_create_order[chromium]","time":{"start":1745912816007,"stop":1745912816007,"duration":0},"status":"broken","severity":"normal"},{"uid":"4389020811f1fbb3","name":"Создание заказа с валидацией JSON-схемы","time":{"start":1745912822344,"stop":1745912822344,"duration":0},"status":"broken","severity":"normal"}]
