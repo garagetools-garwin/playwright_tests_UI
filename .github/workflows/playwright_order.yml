@@ -66,14 +66,29 @@ jobs:
 
       # Запуск тестов
       - name: Run tests
-        run: pytest tests/test_cart.py tests/test_checkout.py --reruns 2 --reruns-delay 3 --alluredir=allure-results
+        run: |
+          echo "Running tests with verbosity and fail log"
+          timeout 50m pytest tests/test_cart.py tests/test_checkout.py \
+            --reruns 2 --reruns-delay 3 \
+            --alluredir=allure-results \
+            -v --tb=short
 
-     # # Сохранение auth_state.json в кеш
-     #  - name: Cache auth state
-     #    uses: actions/cache@v3
-     #    with:
-     #      path: auth_states/auth_state.json
-     #      key: auth-state-${{ github.run_id }}
+     # Сохранение auth_state.json в кеш
+      - name: Cache auth state
+        uses: actions/cache@v3
+        with:
+          path: auth_states/auth_state.json
+          key: auth-state-${{ github.run_id }}
+
+      - name: Kill remaining processes
+        if: always()
+        run: |
+          echo "Killing lingering processes"
+          pkill -f playwright || true
+          pkill -f chromium || true
+          pkill -f firefox || true
+          pkill -f node || true
+          pkill -f pytest || true
 
       # Загрузка артефактов
       - name: Upload Allure Results
