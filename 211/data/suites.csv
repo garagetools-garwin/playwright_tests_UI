@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","28699","Переход в чек-аут","tests","Tue Apr 29 11:08:05 GMT 2025","broken","Tue Apr 29 11:08:34 GMT 2025","","test_cart","",""
-"","12512","Открытие модального окна авторизации","tests","Tue Apr 29 11:06:50 GMT 2025","passed","Tue Apr 29 11:07:03 GMT 2025","","test_cart","",""
