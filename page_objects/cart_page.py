@@ -254,8 +254,8 @@ class CartPage:
     @allure.step("Добавляю дешевый товар в корзину")
     def add_to_cart_cheap_product(self, url):
         urls_to_check = [
-            f"{url}/tovar/nakonechnik-kabelnyy-koltsevoy-izolirovannyy-s-pvh-manzhetoy-nki-1-5-3-kvt",
-            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-2-5-6-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-3-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-4-kvt",
             f"{url}/tovar/sverlo-po-metallu-ts-hv-0-8-shlif-118",
             f"{url}/tovar/sverlo-spiralnoe-po-metallu-0-7-mm-hss-g-din-338-5xd-tip-n"
         ]
