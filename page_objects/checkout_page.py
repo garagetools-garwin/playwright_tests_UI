@@ -12,11 +12,13 @@ class CheckoutPage:
     PATH = "/checkout"
 
     ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primary"
+    LOGO_BUTTON = ".Logotype.nuxt-link-active"
 
     def __init__(self, page):
         self.page = page
 
         self.buyer_and_recipient_block = BuyerAndRecipientBlock(page)
+        self.buyer_listing = BuyerListing(page)
         self.recipient_listing = RecipientListing(page)
         self.add_recipient_modal = AddRecipientModal(page)
         self.edit_recipient_modal = EditRecipientModal(page)
@@ -37,6 +39,11 @@ class CheckoutPage:
         with allure.step(f"Открываю {url + self.PATH}"):
             self.page.goto(url + self.PATH)
 
+    def click_logo_button(self, url):
+        with allure.step(f"Открываю {url + self.PATH}"):
+            self.page.locator(self.LOGO_BUTTON).click()
+
+
 
 """Блок Покупатель и получатель"""
 
@@ -45,6 +52,7 @@ class BuyerAndRecipientBlock:
 
     ADD_FIRST_RECIPIENT_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd"
     RECIPIENT_CHANGE_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__Button"
+    BYUER_CHANGE_BUTTON = "#contacts .CheckoutSection__Custom .SectionInfo__Button"
     CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
     RECIPIENT_INFO = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Body span.SectionInfo__Title"
 
@@ -104,6 +112,87 @@ class BuyerAndRecipientBlock:
         return self.page.locator(self.CUSTOMER_NAME).inner_text()
 
 
+"""Листинг покупателей"""
+
+
+class BuyerListing:
+
+    BUYER_LISTING_MODAL = ".ContextSelection .flexColumn.KitModal__Inner"
+    SELECTED_RADIO_BUTTON = "input[type='radio']:checked"
+    UNSELECTED_RADIO_BUTTON = ".Radio__Inner >> input[type='radio']:not(:checked)"
+    SPECIFIC_CUSTOMER = 'li#delivery-point:has(.ContextSelection__InfoTitle:has-text("ООО \\"У КУПЦА\\"")) label'
+    BUYER_BLOCK = "#delivery-point"
+    INFO_TITLE = ".ContextSelection__InfoTitle"
+    CHECKED_BUYER_BLOCK = "li#delivery-point:has(input[type='radio']:checked)"
+    BUYER_SELECTION_BUTTON = "button.ContextSelection__ButtonChange"
+    CLOSE_BUTTON = ".ContextSelection .KitModal__Closer"
+
+    def __init__(self, page):
+        self.page = page
+        self.buyer_and_recipient_block = BuyerAndRecipientBlock
+
+    @allure.step("Открываю листинг покупателей")
+    def buyer_listing(self):
+        return self.page.locator(self.BUYER_LISTING_MODAL)
+
+    @allure.step("Закрываю модальное окно листинга покупателей")
+    def close_buyer_listing_modal1(self):
+        self.page.locator(self.CLOSE_BUTTON).click()
+        with allure.step("Проверяю, что окно закрыто"):
+            expect(self.page.locator(self.BUYER_LISTING_MODAL)).not_to_be_visible()
+
+    @allure.step("Закрываю модальное окно листинга покупателей")
+    def close_buyer_listing_modal2(self):
+        self.page.mouse.click(0, 0)
+        with allure.step("Проверяю, что окно закрыто"):
+            expect(self.page.locator(self.BUYER_LISTING_MODAL)).not_to_be_visible()
+
+    @allure.step("Открываю листинг покупателей")
+    def open_buyer_listing(self):
+        # Ожидаем появления кнопки в течение 3 секунд
+        self.page.locator(self.buyer_and_recipient_block.BYUER_CHANGE_BUTTON).wait_for(timeout=3000)
+        self.page.locator(self.buyer_and_recipient_block.BYUER_CHANGE_BUTTON).click()
+
+    @allure.step("Переключаюсь на неактивного покупателя")
+    def switch_on_inactive_buyer(self):
+        # Локатор для первого невыбранного радио-баттона
+        radio_locator = self.page.locator(self.UNSELECTED_RADIO_BUTTON).nth(0)
+
+        # Клик по соседнему span.Radio__Button
+        radio_locator.locator("xpath=..").locator("span.Radio__Button").click()
+
+    @allure.step("Переключаюсь на конкретного покупателя")
+    def switch_a_specific_customer(self):
+        locator = self.page.locator(self.SPECIFIC_CUSTOMER)
+        locator.click()
+
+    @allure.step("Выбираю неактивного покупателя")
+    def select_inactive_buyer(self):
+        with allure.step("Нахожу блок с активной радиокнопкой"):
+            # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
+            parent_block = self.page.locator(self.CHECKED_BUYER_BLOCK)
+            assert parent_block.is_visible(), "Блок с активной радиокнопкой не найден."
+
+        with allure.step("Ищу информацию в выбранном блоке"):
+            # Извлекаем текст заголовка и описания
+            actual_info_listing = parent_block.locator(self.INFO_TITLE).inner_text()
+
+        with allure.step("Нажимаю кнопку Выбрать"):
+            self.page.locator(self.BUYER_SELECTION_BUTTON).click()
+
+        with allure.step("Извлекаю текст из блока Покупатель"):
+            actual_info_check_out = self.page.locator(self.buyer_and_recipient_block.CUSTOMER_NAME).inner_text()
+
+        with allure.step("Сравниваю информацию в блоке Покупатель с покупателем выбранным в листинге "):
+            assert actual_info_check_out.lower() == actual_info_listing.lower(), f"Expected '{actual_info_listing}', but got '{actual_info_check_out}'"
+
+
+    @allure.step("Считаю количество записей в листинге")
+    def counting_the_number_of_customers(self):
+        count_of_customers = self.page.locator(self.BUYER_BLOCK).count()
+        print(count_of_customers)
+        return count_of_customers
+
 """Листинг получателей"""
 
 
@@ -133,10 +222,10 @@ class RecipientListing:
     @allure.step("Извлекаю ФИО первого получателя")
     def name_of_first_recipient(self):
         return self.page.locator(self.INFO_TITLE).nth(0).inner_text()
+
     @allure.step("Извлекаю телефон и адресс почты первого получателя")
     def phone_and_email_of_first_recipient(self):
         return self.page.locator(self.INFO_DESCRIPTION).nth(0).inner_text()
-
 
     @allure.step("Открываю листинг получателей")
     def open_recipient_listing(self):
@@ -176,9 +265,7 @@ class RecipientListing:
         if recipient_listing_opened:
             pass
 
-
-
-    @allure.step("Выбираю неактивного пользователя")
+    @allure.step("Переключаюсь на неактивного получателя")
     def switch_on_inactive_recipient(self):
         # Локатор для первого невыбранного радио-баттона
         radio_locator = self.page.locator(self.UNSELECTED_RADIO_BUTTON).nth(0)
@@ -186,7 +273,7 @@ class RecipientListing:
         # Клик по соседнему span.Radio__Button
         radio_locator.locator("xpath=..").locator("span.Radio__Button").click()
 
-    @allure.step("Выбираю неактичного пользователя")
+    @allure.step("Выбираю неактивного получателя")
     def select_inactive_recipient(self):
         with allure.step("Нахожу блок с активной радиокнопкой"):
             # Ищем `li` с id="delivery-point", внутри которого активна радиокнопка
@@ -387,7 +474,7 @@ class AddRecipientModal:
     @allure.step("Открываю окно Новый получатель")
     def add_recipient_modal_open(self):
         self.page.locator(self.recipient_listing.ADD_RECIPIENT_BUTTON).click()
-        with allure.step("Проверяю, что модальное окно нового пользователя открыто"):
+        with allure.step("Проверяю, что модальное окно нового получателя открыто"):
             expect(self.page.locator(self.add_recipient_modal.RECIPIENT_MODAL)).to_be_visible()
 
     @allure.step("Проверяю текст в блоке получателя")
@@ -1234,6 +1321,8 @@ class DeliveryBlock:
     DELIVERY_PRICE = "span .SelectButton__Button__Description"
     DELIVERY_DATE = "#delivery span .SelectButton__Button__Title"
     PRODUCT_PRICE = "p.CheckoutDeliveryProduct__Price"
+    DELIVERY_SUMM_PRICE = "p.CheckoutDeliveryInfo__Total"
+
 
     def __init__(self, page):
         self.page = page
@@ -1244,6 +1333,13 @@ class DeliveryBlock:
         base_price_number = float(text_base_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.').replace(' ₽/шт.', '')
                                   .replace('\xa0', ''))
         return base_price_number
+
+    @allure.step("Запоминаю первоначальную стоимость товара + доставка")
+    def delivery_summ_price(self):
+        text_delivery_summ_price = self.page.locator(self.DELIVERY_SUMM_PRICE).inner_text()
+        delivery_summ_price_number = float(text_delivery_summ_price.replace('\n\n\xa0\n\n₽', '').replace(',', '.')
+                                           .replace(' ₽/шт.', '').replace('\xa0', '').replace('Сумма:', '').replace('₽', ''))
+        return delivery_summ_price_number
 
     @allure.step("Считываю стоимость доставки")
     def delivery_price(self):
