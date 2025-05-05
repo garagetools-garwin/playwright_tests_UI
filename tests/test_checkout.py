@@ -310,7 +310,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient_modal_open()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
-    checkout_page.add_recipient_modal.save_new_recipient()
+    checkout_page.add_recipient_modal.click_save_new_recipient_button()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
@@ -335,8 +335,8 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     checkout_page.open(base_url)
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient_modal_open()
-    name, phone = checkout_page.add_recipient_modal.fill_in_part_of_data_randomize()
-    checkout_page.add_recipient_modal.save_new_recipient()
+    name, phone = checkout_page.add_recipient_modal.fill_in_name_and_phone_data_randomize()
+    checkout_page.add_recipient_modal.click_save_new_recipient_button()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {phone}"
@@ -363,7 +363,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     checkout_page.add_recipient_modal.add_recipient_modal_open()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.add_recipient_modal.fill_in_data()
-    checkout_page.add_recipient_modal.save_new_recipient()
+    checkout_page.add_recipient_modal.click_save_new_recipient_button()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
@@ -556,7 +556,7 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
     name, phone, email = checkout_page.edit_recipient_modal.fill_in_data_randomize()
-    checkout_page.edit_recipient_modal.save_edited_recipient()
+    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
@@ -581,9 +581,9 @@ def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
-    name, phone = checkout_page.edit_recipient_modal.fill_in_part_of_data_randomize()
+    name, phone = checkout_page.edit_recipient_modal.fill_in_name_and_phone_data_randomize()
     email = checkout_page.edit_recipient_modal.save_email()
-    checkout_page.edit_recipient_modal.save_edited_recipient()
+    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
     with allure.step("Формирую ожидаемый текст"):
         # Если имейла нет, формируем ожидаемый результат без него
         if email:
