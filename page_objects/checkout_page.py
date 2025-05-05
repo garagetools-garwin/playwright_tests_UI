@@ -176,12 +176,15 @@ class BuyerListing:
         with allure.step("Ищу информацию в выбранном блоке"):
             # Извлекаем текст заголовка и описания
             actual_info_listing = parent_block.locator(self.INFO_TITLE).inner_text()
+            print(actual_info_listing)
 
         with allure.step("Нажимаю кнопку Выбрать"):
             self.page.locator(self.BUYER_SELECTION_BUTTON).click()
 
         with allure.step("Извлекаю текст из блока Покупатель"):
+            time.sleep(1)
             actual_info_check_out = self.page.locator(self.buyer_and_recipient_block.CUSTOMER_NAME).inner_text()
+            print(actual_info_check_out)
 
         with allure.step("Сравниваю информацию в блоке Покупатель с покупателем выбранным в листинге "):
             assert actual_info_check_out.lower() == actual_info_listing.lower(), f"Expected '{actual_info_listing}', but got '{actual_info_check_out}'"
