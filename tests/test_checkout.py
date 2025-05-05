@@ -1363,7 +1363,7 @@ def test_add_new_recipient_without_the_required_fields(page_fixture, base_url):
 
     with allure.step("Считаю количество записей в листинге(после попыток сделать запись)"):
         checkout_page.add_recipient_modal.close_new_recipient_modal()
-        checkout_page.recipient_listing.open_recipient_listing()
+        checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
         number_of_records_after_saving = checkout_page.recipient_listing.count_number_of_records()
 
     with allure.step("Проверяю, что новых записей сделано не было"):
@@ -1500,7 +1500,7 @@ def test_add_new_recipient_with_incorrect_data(page_fixture, base_url):
 
     with allure.step("Считаю количество записей в листинге(после попыток сделать запись)"):
         checkout_page.add_recipient_modal.close_new_recipient_modal()
-        checkout_page.recipient_listing.open_recipient_listing()
+        checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
         number_of_records_after_saving = checkout_page.recipient_listing.count_number_of_records()
 
     with allure.step("Проверяю, что новых записей сделано не было"):
