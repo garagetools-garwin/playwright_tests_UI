@@ -311,9 +311,9 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
     checkout_page.add_recipient_modal.click_save_new_recipient_button()
     with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
-	    expect(checkout_page.add_recipient_modal.add_recipient_modal_()).not_to_be_visible()
+        expect(checkout_page.add_recipient_modal.add_recipient_modal_()).not_to_be_visible()
     with allure.step("Проверяю, что листинг пользователей закрыт"):
-	    expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
+        expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
     checkout_page.add_recipient_modal.click_save_new_recipient_button()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
