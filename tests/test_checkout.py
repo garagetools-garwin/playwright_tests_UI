@@ -561,6 +561,10 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     checkout_page.recipient_listing.click_edit_button()
     name, phone, email = checkout_page.edit_recipient_modal.fill_in_data_randomize()
     checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
+    with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
+        expect(checkout_page.edit_recipient_modal.edit_recipient_modal()).not_to_be_visible()
+    with allure.step("Проверяю, что листинг пользователей закрыт"):
+        expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
