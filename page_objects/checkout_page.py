@@ -1,6 +1,7 @@
 import random
 import allure
 import re
+import time
 from faker import Faker
 from playwright.sync_api import expect
 
