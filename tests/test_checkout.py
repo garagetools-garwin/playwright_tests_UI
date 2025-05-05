@@ -212,7 +212,7 @@ def test_place_an_order_button_disabled_without_recipient_and_adress(page_fixtur
         order_button_status = checkout_page.calculation_block.order_button_status()
         expect(order_button_status).to_be_disabled()
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Переход на страницы Политика конфиденциальности и Договор-оферта")
 def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
@@ -297,7 +297,7 @@ def test_delivery_cost_not_determined(page_fixture, base_url, delete_address_fix
 
         """Блок Покупатель и получатель"""
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Добавление нового получателя со всеми полями")
 def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipient_fixture):
@@ -323,7 +323,7 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     with allure.step("Проверяю информацию о выбранном получателе"):
         checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title, expected_info_description)
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Добавление нового получателя только с обязательными полями")
 def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delete_recipient_fixture):
@@ -349,7 +349,7 @@ def test_add_new_recipient_with_part_of_the_fields(page_fixture, base_url, delet
     with allure.step("Проверяю информацию о выбранном получателе"):
         checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title, expected_info_description)
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Создание нового получателя со всеми валидными символами в ФИО")
 def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_url,delete_recipient_fixture):
@@ -376,7 +376,7 @@ def test_add_new_recipient_with_name_with_all_valid_simbols(page_fixture, base_u
     with allure.step("Проверяю информацию о выбранном получателе"):
         checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title, expected_info_description)
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Закрытие окна Новый получатель через крестик")
 def test_add_new_recipient_close_madal1(page_fixture, base_url):
@@ -390,7 +390,7 @@ def test_add_new_recipient_close_madal1(page_fixture, base_url):
     checkout_page.add_recipient_modal.add_recipient_modal_open()
     checkout_page.add_recipient_modal.close_new_recipient_modal()
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Закрытие окна Новый получатель через нажатие на пространство вне окна")
 def test_add_new_recipient_close_madal2(page_fixture, base_url):
@@ -543,6 +543,7 @@ def test_open_recipient_edit_modal(page_fixture, base_url):
     checkout_page.recipient_listing.open_action_menu()
     checkout_page.recipient_listing.click_edit_button()
 
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Изменение всех полей получателя")
 def test_change_recipient_with_all_fields(page_fixture, base_url):
@@ -568,7 +569,7 @@ def test_change_recipient_with_all_fields(page_fixture, base_url):
     with allure.step("Проверяю информацию о выбранном получателе"):
         checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title, expected_info_description)
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Изменение только обязательных полей получателя")
 def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
@@ -602,7 +603,7 @@ def test_edit_part_of_the_fields_of_recipient(page_fixture, base_url):
     with allure.step("Проверяю информацию о выбранном получателе"):
         checkout_page.add_recipient_modal.verify_selected_recipient_info(expected_info_title, expected_info_description)
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Изменение получателя со всеми валидными символами в ФИО")
 def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url):
@@ -1151,7 +1152,7 @@ def test_open_map_from_courier_adress_button(page_fixture, base_url):
 
 """Тесты для блока Оплата"""
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Способ 'Оплата при получении' доступен")
 def test_payment_on_receipt_enebled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
@@ -1173,7 +1174,7 @@ def test_payment_on_receipt_enebled(page_fixture, base_url, delete_address_fixtu
         contact_a_manager_button_status = checkout_page.payment_block.contact_a_manager_button_status()
         expect(contact_a_manager_button_status).to_be_enabled()
 
-
+@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Способ 'Оплата при получении' не доступен")
 def test_payment_on_receipt_disabled(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
