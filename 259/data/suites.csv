@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","27709","При переключении покупателя меняется цена в блоках Итого и Доставка","tests","Mon May 05 16:31:38 GMT 2025","broken","Mon May 05 16:32:06 GMT 2025","","test_checkout","",""
