@@ -1,14 +1,4 @@
-import random
-import playwright
 import allure
-from bs4 import BeautifulSoup
-from playwright.sync_api import Error
-from playwright.sync_api import TimeoutError
-
-import pytest
-from playwright.sync_api import expect
-
-from page_objects.companies_page import CompaniesPage
 
 
 class HeaderElement:
@@ -23,6 +13,10 @@ class HeaderElement:
     CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton"
     INACTIVE_CUSTOMER_IN_LIST = "button.AuthMenuCustomersButton:not([class*='--is-selected'])"
     SELECTED_COMPANY_NAME = ".Header__UserButton .NavigationButton__Text"
+    ACCOUNT_BUTTONS = "button.AuthMenuAccounts__Button"
+    MY_ACCOUNT = 'div.AuthMenuAccounts button:has(span.AuthMenuAccounts__Subtitle)'
+    OTHER_ACCOUNT = 'div.AuthMenuAccounts button:not(:has(span.AuthMenuAccounts__Subtitle))'
+
 
     def __init__(self, page):
         self.page = page
@@ -63,4 +57,14 @@ class HeaderElement:
     # Локатор для названия выбранной компании
     def company_name_text(self):
         return self.page.locator(self.SELECTED_COMPANY_NAME).inner_text()
+
+    @allure.step("Переключаюсь на аккаунт пользователя")
+    def switching_to_user_account(self):
+        self.account_header_menu_activation()
+        self.page.locator(self.MY_ACCOUNT).click()
+
+    @allure.step("Переключаюсь на приглашенный аккаунт")
+    def switching_to_other_account(self):
+        self.account_header_menu_activation()
+        self.page.locator(self.OTHER_ACCOUNT).click()
 
