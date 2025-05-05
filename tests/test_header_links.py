@@ -50,7 +50,7 @@ def test_header_link_contacts(page_fixture, base_url):
         page1 = page1_info.value
         page1.wait_for_load_state("domcontentloaded")
     with allure.step("Проверяю, что url страницы содержит требуемое значение"):
-        expect(page1).to_have_url(re.compile('contacts'))
+        expect(page1).to_have_url(re.compile('contact'))
     with allure.step("Проверяю, что статус страницы ok"):
         response = page1.request.get(page1.url)
         expect(response).to_be_ok()
