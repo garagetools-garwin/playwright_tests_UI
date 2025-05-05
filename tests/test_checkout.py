@@ -617,7 +617,7 @@ def test_edit_recipient_with_name_with_all_valid_simbols(page_fixture, base_url)
     checkout_page.recipient_listing.click_edit_button()
     with allure.step("Ввожу текст в котором включены все допустимые буквы и символы, их максимальное количество"):
         name, phone, email = checkout_page.edit_recipient_modal.fill_in_data()
-    checkout_page.edit_recipient_modal.save_edited_recipient()
+    checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
     with allure.step("Формирую ожидаемый текст"):
         expected_info = f"{name}, {email}, {phone}"
     checkout_page.add_recipient_modal.verify_recipient_info(expected_info)
