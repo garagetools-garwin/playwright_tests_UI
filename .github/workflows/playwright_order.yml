@@ -76,8 +76,7 @@ jobs:
       - name: Run tests
         run: |
           echo "Running tests with verbosity and fail log"
-          timeout 50m pytest tests/test_checkout.py \
-            --reruns 2 --reruns-delay 3 \
+          timeout 50m pytest --reruns 2 --reruns-delay 3 -m "test_ci" \
             --alluredir=allure-results \
             -v --tb=short --capture=tee-sys --log-cli-level=DEBUG | tee pytest-output.log
             
