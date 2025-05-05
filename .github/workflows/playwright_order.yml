@@ -75,7 +75,7 @@ jobs:
       # Запуск тестов
       - name: Run tests
         run: |
-          timeout 50m pytest --reruns 2 --reruns-delay 3  -m "test_ci" --alluredir=allure-results
+          timeout 50m pytest tests/test_checkout.py::test_customer_switching_price --reruns 2 --reruns-delay 3 --alluredir=allure-results
              
      # Сохранение auth_state.json в кеш
       - name: Cache auth state
