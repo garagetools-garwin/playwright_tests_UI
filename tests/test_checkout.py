@@ -212,7 +212,6 @@ def test_place_an_order_button_disabled_without_recipient_and_adress(page_fixtur
         order_button_status = checkout_page.calculation_block.order_button_status()
         expect(order_button_status).to_be_disabled()
 
-@pytest.mark.test_ci
 @pytest.mark.auth
 @allure.title("Переход на страницы Политика конфиденциальности и Договор-оферта")
 def test_navigating_to_user_documentation_pages(page_fixture, base_url, delete_address_fixture, delete_recipient_fixture):
@@ -310,6 +309,11 @@ def test_add_new_recipient_with_all_fields(page_fixture, base_url, delete_recipi
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
     checkout_page.add_recipient_modal.add_recipient_modal_open()
     name, phone, email = checkout_page.add_recipient_modal.fill_in_data_randomize()
+    checkout_page.add_recipient_modal.click_save_new_recipient_button()
+	with allure.step("Проверяю, что модальное окно нового пользователя закрыто"):
+	    expect(checkout_page.add_recipient_modal.add_recipient_modal_()).not_to_be_visible()
+    with allure.step("Проверяю, что листинг пользователей закрыт"):
+	    expect(checkout_page.recipient_listing.recipient_listing_modal()).not_to_be_visible()
     checkout_page.add_recipient_modal.click_save_new_recipient_button()
     delete_recipient_fixture()
     with allure.step("Формирую ожидаемый текст"):
