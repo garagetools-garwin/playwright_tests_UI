@@ -1,1 +1,0 @@
-DEBUG    root:step.py:63 Step "Lj," was started
