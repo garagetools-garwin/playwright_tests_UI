@@ -1,3 +1,0 @@
-Quantity found: ['1 шт.']
-Quantity found: ['2 шт.']
-Quantity found: ['1 шт.']

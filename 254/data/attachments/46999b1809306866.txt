@@ -1,2 +1,0 @@
-DEBUG    urllib3.connectionpool:connectionpool.py:1055 Starting new HTTPS connection (1): api.testmail.app:443
-DEBUG    urllib3.connectionpool:connectionpool.py:549 https://api.testmail.app:443 "GET /api/json?apikey=6d17c165-ffaf-4af3-909e-3b43aa273b70&namespace=tsz1n&pretty=true HTTP/1.1" 200 None
