@@ -12,7 +12,8 @@ from playwright.sync_api import expect
 from page_objects.companies_page import CompaniesPage
 from page_objects.header_element import HeaderElement
 from page_objects.checkout_page import CheckoutPage
-from page_objects.listing_element import ListingElement
+from page_objects.product_listing_element import ProductListingElement
+from page_objects.promo_listing_element import PromoListingElement
 
 
 class CartPage:
@@ -275,12 +276,15 @@ class CartPage:
 
     @allure.step("Добавляю товар по акции в корзину")
     def add_to_cart_promo_product(self, url, page_fixture):
-        listing_element = ListingElement(page_fixture)
-        self.page.goto(f"{url}/promos/tsena-kak-podarok/")
+        product_listing_element = ProductListingElement(page_fixture)
+        promo_listing_element = PromoListingElement(page_fixture)
+
+        promo_listing_element.open(url)
+        promo_listing_element.click_first_promo()
         with allure.step("Проверяю, что статус страницы ok"):
             response = page_fixture.request.get(url)
             expect(response).to_be_ok(), f"Акция недоступна, статус страницы: {response}"
-        listing_element.add_to_cart()
+        product_listing_element.add_to_cart()
 
     @allure.step("Добавляю товар для бесплатной доставки")
     def add_to_cart_product_for_free_delivery(self, url):
