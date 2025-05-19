@@ -4,7 +4,7 @@ import time
 import pytest
 import allure
 
-from page_objects.listing_element import ListingElement
+from page_objects.product_listing_element import ProductListingElement
 
 url = "https://garwin.ru"
 
@@ -12,7 +12,7 @@ url = "https://garwin.ru"
 @pytest.mark.smoke
 @allure.title("Добавление товара из листинга")
 def test_add_to_cart_from_listing(page_fixture):
-    listing_element = ListingElement(page_fixture)
+    listing_element = ProductListingElement(page_fixture)
     page_fixture.goto(f'{url}')
     time.sleep(2) #TODO: Убрать когда закончится акция деда мороза
     page_fixture.goto("https://garwin.ru/catalog/ruchnoy-instrument")

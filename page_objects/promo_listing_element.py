@@ -12,13 +12,11 @@ from playwright.sync_api import expect
 from page_objects.header_element import HeaderElement
 
 
-class ProductListingElement:
+class PromoListingElement:
 
-    PATH = "/catalog/pnevmoinstrument"
+    PATH = "/promos"
 
-    """Промокод"""
-    ADD_TO_CART_BUTTON = ".ProductListingControls__AddToCartButton.Button.flexRow.size--normal.color--primary"
-    #.ProductListingMobileControls.ProductTile__Row.ProductTile__MobileControls
+    PROMO_CARD = "a.PromoCard__Link"
 
     def __init__(self, page):
         self.page = page
@@ -27,7 +25,7 @@ class ProductListingElement:
         with allure.step(f"Открываю {url + self.PATH}"):
             self.page.goto(url + self.PATH)
 
-    @allure.step("Добавляю товар в корзину")
-    def add_to_cart(self):
-        self.page.locator(self.ADD_TO_CART_BUTTON).nth(0).click()
+    @allure.step("Перехожу в первую акцию в листинге")
+    def click_first_promo(self):
+        self.page.locator(self.PROMO_CARD).nth(0).click()
 

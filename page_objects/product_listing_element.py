@@ -12,11 +12,10 @@ from playwright.sync_api import expect
 from page_objects.header_element import HeaderElement
 
 
-class ListingElement:
+class ProductListingElement:
 
     PATH = "/catalog/pnevmoinstrument"
 
-    """Промокод"""
     ADD_TO_CART_BUTTON = ".ProductListingControls__AddToCartButton.Button.flexRow.size--normal.color--primary"
     #.ProductListingMobileControls.ProductTile__Row.ProductTile__MobileControls
 
