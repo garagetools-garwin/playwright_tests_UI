@@ -2,7 +2,7 @@ import random
 import allure
 import re
 from faker import Faker
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Page
 
 fake = Faker('ru_RU')
 
@@ -13,7 +13,7 @@ class PurchasePage:
 
     ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primary"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     def open(self, url):

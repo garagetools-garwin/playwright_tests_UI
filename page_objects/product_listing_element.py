@@ -2,7 +2,7 @@ import random
 import testit
 import playwright
 from bs4 import BeautifulSoup
-from playwright.sync_api import Error
+from playwright.sync_api import Error, Page
 from playwright.sync_api import TimeoutError
 
 import pytest
@@ -19,7 +19,7 @@ class ProductListingElement:
     ADD_TO_CART_BUTTON = ".ProductListingControls__AddToCartButton.Button.flexRow.size--normal.color--primary"
     #.ProductListingMobileControls.ProductTile__Row.ProductTile__MobileControls
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     def open(self, url):

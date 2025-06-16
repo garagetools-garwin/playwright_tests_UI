@@ -1,4 +1,5 @@
 import allure
+from playwright.sync_api import Page
 
 
 class HeaderElement:
@@ -18,7 +19,7 @@ class HeaderElement:
     OTHER_ACCOUNT = 'div.AuthMenuAccounts button:not(:has(span.AuthMenuAccounts__Subtitle))'
 
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     def open(self, url):

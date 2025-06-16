@@ -1,6 +1,6 @@
 import allure
 import re
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Page
 
 
 class CompaniesPage:
@@ -14,7 +14,7 @@ class CompaniesPage:
     RETAIL_COMPANY_CARD = ".CompanyCard.CompaniesPage__List__Item .CompanyCard__Block__Info span:has-text('Розничный')"
     BY_CONTRACT_COMPANY_CARD = ".CompanyCard.CompaniesPage__List__Item .CompanyCard__Block__Info span:has-text('По договору')"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Открываю страницу Мои компании")

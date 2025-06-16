@@ -4,6 +4,7 @@ import allure
 import os
 
 import requests
+from playwright.sync_api import Page
 
 
 class AutorizationModalElement:
@@ -13,7 +14,7 @@ class AutorizationModalElement:
     GET_CODE_BUTTON = ".Button.size--big.color--primary"
 
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.autorization_modal = page.locator(self.AUTORIZATION_MODAL)
 

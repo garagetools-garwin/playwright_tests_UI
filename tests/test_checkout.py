@@ -1217,7 +1217,7 @@ def test_online_payment_on_receipt_and_payment_by_invoice_disabled(page_fixture,
     companies_page.select_company_with_retail_price(base_url)
     cart_page.open(base_url)
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_product_out_of_stock(base_url)
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
     checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     delete_address_fixture()
