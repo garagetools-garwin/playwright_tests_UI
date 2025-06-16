@@ -2,7 +2,7 @@ import random
 import testit
 import playwright
 from bs4 import BeautifulSoup
-from playwright.sync_api import Error
+from playwright.sync_api import Error, Page
 from playwright.sync_api import TimeoutError
 
 import pytest
@@ -18,7 +18,7 @@ class PromoListingElement:
 
     PROMO_CARD = "a.PromoCard__Link"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     def open(self, url):

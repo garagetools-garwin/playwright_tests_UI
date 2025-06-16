@@ -1,8 +1,10 @@
 import random
+from asyncio import timeout
+
 import testit
 import playwright
 from bs4 import BeautifulSoup
-from playwright.sync_api import Error
+from playwright.sync_api import Error, Page
 from playwright.sync_api import TimeoutError
 
 import pytest
@@ -55,7 +57,7 @@ class CartPage:
     NOT_AVAILABLE_FOR_ORDER_BLOCK = "div.CartUnavailableList"
     COUNTER_BUTTON = "button.Counter__Element"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.change_info_block = page.locator(self.CHANGE_INFO_BLOCK)
         self.change_info_modal = page.locator(self.CHANGE_INF0_MODAL)
@@ -89,7 +91,7 @@ class CartPage:
 
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -109,7 +111,7 @@ class CartPage:
             self.page.goto(url)
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
             except Exception as e:
                 print(f"Add to cart button not found on {url}. Exception: {e}")
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -130,7 +132,7 @@ class CartPage:
             self.page.goto(url)
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
             except Exception as e:
                 print(f"Add to cart button not found on {url}. Exception: {e}")
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -155,7 +157,7 @@ class CartPage:
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
                 # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -178,7 +180,7 @@ class CartPage:
 
         try:
             # Пытаемся найти и нажать кнопку "Добавить в корзину" для первого товара
-            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
             print("Первый товар успешно добавлен в корзину.")
             return  # Прерываем выполнение, если товар добавлен
         except Exception as e:
@@ -187,7 +189,7 @@ class CartPage:
             # Если первый товар не был добавлен, переходим ко второму товару
         try:
             self.page.goto(f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm")
-            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+            self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
             print("Второй товар успешно добавлен в корзину.")
         except Exception as e:
             # Если кнопка не найдена, выбрасываем ошибку
@@ -217,7 +219,7 @@ class CartPage:
                 self.page.goto(url)
                 try:
                     # Попытка найти и нажать кнопку "Добавить в корзину"
-                    self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                    self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
                 except Exception as e:
                     print(f"Add to cart button not found on {url}. Exception: {e}")
                     continue  # Переходим к следующей ссылке, если кнопка не найдена
@@ -242,7 +244,7 @@ class CartPage:
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
                 # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -255,10 +257,11 @@ class CartPage:
     @allure.step("Добавляю дешевый товар в корзину")
     def add_to_cart_cheap_product(self, url):
         urls_to_check = [
-            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-3-kvt",
-            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-4-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-2-5-6-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-shtiftovoy-ploskiy-izolirovannyy-s-pvh-manzhetoy-nshpi-6-0-14-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-koltsevoy-izolirovannyy-s-pvh-manzhetoy-nki-1-5-5-kvt",
             f"{url}/tovar/sverlo-po-metallu-ts-hv-0-8-shlif-118",
-            f"{url}/tovar/sverlo-spiralnoe-po-metallu-0-7-mm-hss-g-din-338-5xd-tip-n"
+            f"{url}/tovar/sverlo-po-metallu-ts-hv-0-9-shlif-118"
         ]
 
         for url in urls_to_check:
@@ -266,7 +269,7 @@ class CartPage:
 
             try:
                 # Попытка найти и нажать кнопку "Добавить в корзину"
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click()
+                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -331,6 +334,32 @@ class CartPage:
                 continue  # Переходим к следующей ссылке, если кнопка не найдена
         else:
             raise ValueError("Product not available, please select another product")
+
+    @allure.step("Добавляю товар не в наличии")
+    def add_to_cart_product_out_of_stock(self, url):
+        urls_to_check = [
+            f"{url}/tovar/generator-benzinovyy-ps-180ead-3-18-kvt",
+            f"{url}/tovar/elektrogenerator-dy13000lx",
+            f"{url}/tovar/generator-benzinovyy-ps-80ea-8-0-kvt",
+            f"{url}/tovar/generator-benzinovyy-ps-70ea-7-0-kvt-230v-25-l-konnektor-avtomatiki-elektrostarter"
+        ]
+
+        for url in urls_to_check:
+            self.page.goto(url)
+
+            try:
+                # Попытка найти и нажать кнопку "Добавить в корзину"
+                self.page.locator(
+                    ".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(
+                    timeout=3000)
+                break  # Прерываем цикл, если кнопка найдена и товар добавлен
+            except Exception:
+                print(f"Add to cart button not found on {url}")
+                continue  # Переходим к следующей ссылке, если кнопка не найдена
+        else:
+            raise ValueError("Product not available, please select another product")
+
+        #TODO Нужно обращатся через апи, чтобы узнать наверняка товар в наличии или нет, через фронт не узнать
 
     """ Блок 'Промокод' """
 

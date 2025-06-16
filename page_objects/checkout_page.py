@@ -3,7 +3,7 @@ import allure
 import re
 import time
 from faker import Faker
-from playwright.sync_api import expect
+from playwright.sync_api import expect, Page
 
 fake = Faker('ru_RU')
 
@@ -15,7 +15,7 @@ class CheckoutPage:
     ORDER_BUTTON = ".OrderTotal__Button.Button.size--medium.color--primary"
     LOGO_BUTTON = ".Logotype.nuxt-link-active"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
         self.buyer_and_recipient_block = BuyerAndRecipientBlock(page)
@@ -57,13 +57,14 @@ class BuyerAndRecipientBlock:
     CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
     RECIPIENT_INFO = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Body span.SectionInfo__Title"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Открываю окно Нового получателя")
     def click_add_first_recipient_button(self):
         self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).wait_for(timeout=3000)
         self.page.locator(self.ADD_FIRST_RECIPIENT_BUTTON).click()
+
 
     @allure.step("Создаю нового получателя")
     def create_recipient(self, base_url, page_fixture):
@@ -128,7 +129,7 @@ class BuyerListing:
     BUYER_SELECTION_BUTTON = "button.ContextSelection__ButtonChange"
     CLOSE_BUTTON = ".ContextSelection .KitModal__Closer"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
 
@@ -219,7 +220,7 @@ class RecipientListing:
     DELETE_CONFIRMATION_MODAL = "p:has-text('Вы уверены, что хотите удалить получателя?')"
     CLOSE_BUTTON = ".RecipientSelection .KitModal__Closer"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
 
@@ -351,7 +352,7 @@ class AddRecipientModal:
     CLOSE_BUTTON = ".RecipientSelectionAdd .KitModal__Closer"
     FIELD_ERROR_TEXT = ".Field.RecipientSelectionAdd__Input .Field__Text"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.recipient_listing = RecipientListing
         self.add_recipient_modal = AddRecipientModal
@@ -522,7 +523,7 @@ class EditRecipientModal:
     CLOSE_BUTTON = ".RecipientSelectionEdit .KitModal__Closer"
     FIELD_ERROR_TEXT = ".Field.RecipientSelectionEdit__Input .Field__Text"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.recipient_listing = RecipientListing
 
@@ -659,7 +660,7 @@ class DeleteConformationModal:
     CONFIRM_DELETE_BUTTON = "div.RecipientSelectionConfirm__Buttons span:has-text('Удалить')"
     CANCEL_DELETE_BUTTON = "div.RecipientSelectionConfirm__Buttons span:has-text('Отмена')"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.recipient_listing = RecipientListing(page)
         self.adress_listing = AdressListing(page)
         self.obtaining_block = ObtainingBlock(page)
@@ -838,7 +839,7 @@ class ObtainingBlock:
     PICKUP_POINT_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Пункт выдачи')"
     COURIER_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Курьером')"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.adress_listing = AdressListing(page)
 
@@ -1019,7 +1020,7 @@ class AdressListing:
     #TODO: нужны два локатора при нажатии на редактировать, убедится, что пункт выдачи кнопка выделена, курьер выделен при выделения курьера и полявились поля
     # CHANGE_ADRESS_MODAL = "p:has-text('Изменить получателя')"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.obtaining_block = ObtainingBlock
         self.adress_listing = AdressListing
@@ -1217,7 +1218,7 @@ class Map:
     BACK_BUTTON = "button.CheckoutButtonPrev"
     CONTROL_PANEL = "div.CheckoutChooseMethod"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
         self.buyer_and_recipient_block = BuyerAndRecipientBlock
 
@@ -1328,7 +1329,7 @@ class DeliveryBlock:
     DELIVERY_SUMM_PRICE = "p.CheckoutDeliveryInfo__Total"
 
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Запоминаю первоначальную стоимость товара")
@@ -1379,7 +1380,7 @@ class CalculationBlock:
     PRIVACY_POLICY_BUTTON = "a[href='/web-customer-terms']"
     OFFER_CONTRACT_BUTTON = "a[href='/oferta']"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Читаю сумму в блоке Калькуляция")
@@ -1459,7 +1460,7 @@ class PromoCode:
     PROMO_CODE_TOGGLE_BUTTON = ".PromoWidget__ToggleButton"
     PROMO_CODE_APPLY_BUTTON = ".PromoWidget__SubmitButton.Button.size--normal.color--secondary"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Активирую валидный промокод")
@@ -1559,7 +1560,7 @@ class PaymentBlock:
     ONLINE_PAYMENT_BUTTON = "#payment button:has-text('Онлайн-оплата')"
     CONTACT_A_MANAGER_BUTTON = "#payment button:has-text('Уточнить у менеджера')"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Получаю статус кнопки Оплата при получении")
@@ -1603,7 +1604,7 @@ class CommentaryBlock:
     COMMENTARY_TOGGLE_BUTTON = "button.CheckoutSection__Toggle"
     COMMENTARY_TEXTAREA = "textarea.kit-textarea"
 
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     @allure.step("Нажимаю на кнопку Комментарий к заказу")

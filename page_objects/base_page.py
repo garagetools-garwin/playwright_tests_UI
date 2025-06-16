@@ -3,9 +3,11 @@
 1) Можно будет убрать инициализацию из всех остальных страниц
 2) Можно будет заменить привычную конструкцию self.page.locator(selector) на get_element
 """
+from playwright.sync_api import Page
+
 
 class BasePage:
-    def __init__(self, page):
+    def __init__(self, page: Page):
         self.page = page
 
     def close_onboarding(self, url):

@@ -17,7 +17,7 @@ AUTH_USERNAME = os.getenv("AUTH_USERNAME")
 AUTH_PASSWORD = os.getenv("AUTH_PASSWORD")
 
 
-# Фильтрация секций отчета
+"""Хук для фильтрации отчётов Allure (Перехватывает результат и выводит метку rerun в отчет, если тест был перезапущен)"""
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):
     outcome = yield
@@ -34,6 +34,8 @@ def pytest_runtest_makereport(item, call):
 #     auth_states_dir = os.path.join(project_root, 'auth_states')
 #     os.makedirs(auth_states_dir, exist_ok=True)
 
+
+"""Основная фикстура для управления браузером, авторизацией, логами и трассировкой (кастомная фикстура, расширяющая стандартную page)."""
 @pytest.fixture(scope="function")
 def page_fixture(browser, request, base_url):
 
@@ -71,6 +73,7 @@ def page_fixture(browser, request, base_url):
         page.goto(auth_url)
         context.storage_state(path=auth_state_path)
 
+    # Задаем размер экрана для браузера
     page.set_viewport_size({"width": 1920, "height": 1080})
     # Задаем куки онбордингов для того, чтобы они не всплывали в тестах
     context.add_cookies([{"name": "onboarding__search", "value": "true", "url": f"{base_url}"},
@@ -78,6 +81,7 @@ def page_fixture(browser, request, base_url):
                          {"name": "onboarding__legalEntities", "value": "true", "url": f"{base_url}"}
                          ])
 
+    """Настройка трассировки"""
     # Получение текущей даты и времени
     current_time = datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
 
@@ -140,16 +144,21 @@ def page_fixture(browser, request, base_url):
             attachment_type='application/zip',
             extension='.zip')
 
+        # Добавляем скриншот как артефакт в Allure-отчет
         allure.attach(
             name="failure_screenshot",
             body=page.screenshot(full_page=True),
             attachment_type=allure.attachment_type.PNG
         )
+
+        # Добавляем исходный код страницы как артефакт в Allure-отчет
         allure.attach(
             name="page_source",
             body=page.content(),
             attachment_type=allure.attachment_type.HTML
         )
+
+        # Добавляем логи сетевых запросов как артефакт в Allure-отчет
         allure.attach.file(
             log_path,
             name="network_logs",
@@ -162,6 +171,7 @@ def page_fixture(browser, request, base_url):
     # Закрываем контекст браузера
     page.context.close()
 
+# Добавляем опции
 def pytest_addoption(parser):
     # TODO Здесь будет настройка переключения браузера
     # parser.addoption(
@@ -171,15 +181,14 @@ def pytest_addoption(parser):
     # parser.addoption(
     #     "--headless", action="store_true"
     # )
+
+    # Добавляет опцию --url для выбора окружения
     parser.addoption(
         "--url", default="https://garwin.ru"
         # "--url", default="https://stage.garagetools.ru/"
     )
 
-
-"""Фикстура для подмены нового контекста авторизованным"""
-
-
+# Фикстура для подмены нового контекста авторизованным
 @pytest.fixture(scope="function")
 def authorized_context(browser):
     # Передаем состояние авторизации для создания контекста
@@ -187,7 +196,7 @@ def authorized_context(browser):
         "storage_state": "auth_state.json"
     }
 
-
+# Возвращаем базовый URL из параметров командной строки через --url
 @pytest.fixture(scope="session")
 def base_url(request):
     url = request.config.getoption('--url')
