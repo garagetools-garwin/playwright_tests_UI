@@ -338,6 +338,11 @@ class CartPage:
     @allure.step("Добавляю товар не в наличии")
     def add_to_cart_product_out_of_stock(self, url):
         urls_to_check = [
+            f"{url}/tovar/nakonechnik-kabelnyy-shtiftovoy-ploskiy-izolirovannyy-s-pvh-manzhetoy-nshpi-2-5-10-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-3-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-koltsevoy-izolirovannyy-s-neylonovoy-manzhetoy-nki-n-1-5-4-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-2-5-4-kvt",
+            f"{url}/tovar/nakonechnik-kabelnyy-vilochnyy-izolirovannyy-s-pvh-manzhetoy-nvi-1-5-4-kvt",
             f"{url}/tovar/generator-benzinovyy-ps-180ead-3-18-kvt",
             f"{url}/tovar/elektrogenerator-dy13000lx",
             f"{url}/tovar/generator-benzinovyy-ps-80ea-8-0-kvt",
