@@ -68,7 +68,7 @@ def test_create_order_schema(page_fixture, base_url, delete_recipient_fixture, d
         company_name = header.company_name_text()
 
     cart_page.clear_cart()
-    cart_page.add_to_cart_cheap_product(base_url)
+    cart_page.add_to_cart_product_out_of_stock(base_url)
 
     name, email, phone = checkout_page.buyer_and_recipient_block.create_recipient(base_url, page_fixture)
     checkout_page.obtaining_block.create_address(base_url, page_fixture)
