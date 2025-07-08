@@ -246,3 +246,28 @@ jobs:
       #       --configuration-id 36238c9d-da5e-4cca-a8c4-f0d8316d3f6b \
       #       --testrun-name "GitHubtestrun" \
       #       --results results/test-results.xml
+
+      
+  notify-on-failure:
+    if: failure()  # ❗Запуск только при падении предыдущих jobs
+    runs-on: ubuntu-latest
+    needs: test
+    steps:
+      - name: Send failure email
+        uses: dawidd6/action-send-mail@v3
+        with:
+          server_address: smtp.gmail.com
+          server_port: 465
+          secure: true
+          username: ${{ secrets.GMAIL_USERNAME }}
+          password: ${{ secrets.GMAIL_APP_PASSWORD }}
+          subject: "❌ GitHub Actions FAILED in ${{ github.repository }}"
+          body: |
+            ❗ Workflow [${{ github.workflow }}] failed.
+
+            🔗 View it here: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+
+            📦 Commit: ${{ github.sha }}
+            👤 Triggered by: ${{ github.actor }}
+          to: urin.a@garagetools.ru,timofeev.a@garagetools.ru
+          from: GitHub Actions <${{ secrets.GMAIL_USERNAME }}>
