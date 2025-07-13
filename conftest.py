@@ -68,7 +68,7 @@ def page_fixture(browser, request, base_url):
     page = context.new_page()
 
     # Если платформа тестовая, автоматически авторизуемся через URL
-    if "https://stage.garwin.ru" in base_url or "https://review-site" in base_url:
+    if "https://stage" in base_url or "https://review-site" in base_url:
         auth_url = base_url.replace("https://", f"https://{AUTH_USERNAME}:{AUTH_PASSWORD}@")
         page.goto(auth_url)
         context.storage_state(path=auth_state_path)

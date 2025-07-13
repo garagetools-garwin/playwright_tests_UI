@@ -51,11 +51,11 @@ class CheckoutPage:
 
 class BuyerAndRecipientBlock:
 
-    ADD_FIRST_RECIPIENT_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd"
-    RECIPIENT_CHANGE_BUTTON = "#contacts .CheckoutSection__WrapperBottom .SectionInfo__Button"
+    ADD_FIRST_RECIPIENT_BUTTON = "#shipping .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd" #TODO перенести в блок получения
+    RECIPIENT_CHANGE_BUTTON = "#shipping .CheckoutSection__Footer .SectionInfo__Button" #TODO перенести в блок получения
     BYUER_CHANGE_BUTTON = "#contacts .CheckoutSection__Custom .SectionInfo__Button"
     CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
-    RECIPIENT_INFO = "#contacts .CheckoutSection__WrapperBottom .CheckoutSection__Body span.SectionInfo__Title"
+    RECIPIENT_INFO = "#shipping .CheckoutSection__Footer span.SectionInfo__Title" #TODO перенести в блок получения
 
     def __init__(self, page: Page):
         self.page = page
