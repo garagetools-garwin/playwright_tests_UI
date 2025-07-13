@@ -51,7 +51,7 @@ class CheckoutPage:
 
 class BuyerAndRecipientBlock:
 
-    ADD_FIRST_RECIPIENT_BUTTON = "#shipping .CheckoutSection__WrapperBottom .SectionInfo__ButtonAdd" #TODO перенести в блок получения
+    ADD_FIRST_RECIPIENT_BUTTON = "#shipping .CheckoutSection__Footer .SectionInfo__ButtonAdd" #TODO перенести в блок получения
     RECIPIENT_CHANGE_BUTTON = "#shipping .CheckoutSection__Footer .SectionInfo__Button" #TODO перенести в блок получения
     BYUER_CHANGE_BUTTON = "#contacts .CheckoutSection__Custom .SectionInfo__Button"
     CUSTOMER_NAME = "#contacts .CheckoutSection__Custom span.SectionInfo__Title"
@@ -831,11 +831,11 @@ class DeleteConformationModal:
 
 class ObtainingBlock:
 
-    ADD_FIRST_ADRESS_BUTTON = "#shipping .SectionInfo__ButtonAdd"
-    CHANGE_BUTTON = "#shipping .SectionInfo__Button"
+    ADD_FIRST_ADRESS_BUTTON = "#shipping .CheckoutSection__Body .SectionInfo__ButtonAdd"
+    CHANGE_BUTTON = "#shipping .CheckoutSection__Body .SectionInfo__Button"
     ADRESS_INFO = "#shipping .CheckoutSection__Body span.SectionInfo__Title"
     TYPE_PICKUP_POINT = "#shipping .CheckoutSection__Body span.SectionInfo__Info"
-    PICKUP_POINT_ADRESS = "#shipping .SectionInfo__Title"
+    PICKUP_POINT_ADRESS = "#shipping .CheckoutSection__Body .SectionInfo__Title"
     PICKUP_POINT_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Пункт выдачи')"
     COURIER_BUTTON = "button.CheckoutShippingControl__Button span:has-text('Курьером')"
 
@@ -1004,7 +1004,7 @@ class AdressListing:
 
     ADRESS_LISTING_MODAL = ".AddressSelection .flexColumn.KitModal__Inner"
     ADD_ADRESS_BUTTON = "button.AddressSelection__ButtonAdd"
-    ACTION_MENU = ".AddressSelection__ButtonEdit"
+    ACTION_MENU = ".AddressSelection__Item .AddressSelection__ButtonEdit"
     ACTION_MENU_MODAL = ".AddressSelection__Item__Tooltip.--open-tooltip"
     EDIT_BUTTON = ".AddressSelection__Item__Tooltip.--open-tooltip span:has-text('Редактировать')"
     DELETE_BUTTON = ".AddressSelection__Item__Tooltip.--open-tooltip span:has-text('Удалить')"
@@ -1069,7 +1069,7 @@ class AdressListing:
     def click_add_adress_button(self):
         return self.page.locator(self.ADD_ADRESS_BUTTON).click()
 
-    @allure.step("ереключаю на неактивный адрес")
+    @allure.step("Переключаю на неактивный адрес")
     def switch_on_inactive_adress(self):
         # Локатор для первого невыбранного радио-баттона
         radio_locator = self.page.locator(self.UNSELECTED_RADIO_BUTTON).nth(0)

@@ -678,7 +678,7 @@ def test_map_opening(page_fixture, base_url):
     checkout_page.open(base_url)
     checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
-    with allure.step("Провряю, что карты отображается на странице"):
+    with allure.step("Проверяю, что карты отображается на странице"):
         expect(checkout_page.map.map_modal()).to_be_visible()
 
 
@@ -1028,7 +1028,7 @@ def test_courier_button_preselected(page_fixture, base_url):
 
 @pytest.mark.test_ci
 @pytest.mark.auth
-@allure.title("Отработка кнопки Назад м Домой")
+@allure.title("Отработка кнопки Назад и Домой")
 def test_back_button(page_fixture, base_url):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)
