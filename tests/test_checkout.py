@@ -482,7 +482,7 @@ def test_activate_delete_confirmation_modal_recipient(page_fixture, base_url):
 #TODO: удалить paramitrize и удалить run из функции
 @pytest.mark.auth
 @allure.title("Удаление получателя")
-# @pytest.mark.parametrize("run", range(220))
+# @pytest.mark.parametrize("run", range(220)) # добавить run в параметры функции
 def test_deletion_recipient(page_fixture, base_url, delete_recipient_fixture):
     checkout_page = CheckoutPage(page_fixture)
     # cart_page = CartPage(page_fixture)
@@ -950,6 +950,7 @@ def test_activate_delete_confirmation_modal_obtaining(page_fixture, base_url):
 
 @pytest.mark.auth
 @allure.title("Удаление адреса")
+# @pytest.mark.parametrize("run", range(140))
 def test_deletion_adress(page_fixture, base_url, delete_address_fixture):
     checkout_page = CheckoutPage(page_fixture)
     cart_page = CartPage(page_fixture)

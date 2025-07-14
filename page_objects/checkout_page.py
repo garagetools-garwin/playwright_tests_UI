@@ -1102,42 +1102,40 @@ class AdressListing:
         with allure.step("Сравниваю информацию в блоке Получние с адресом выбранным в листинге "):
             assert actual_info_check_out.lower() == actual_info_listing.lower(), f"Expected '{actual_info_listing}', but got '{actual_info_check_out}'"
 
+    # @allure.step("Открываю экшн меню")
+    # def open_action_menu(self):
+    #     with allure.step("Нахожу блок с активной радиокнопкой"):
+    #         parent_block = self.page.locator(self.CHECKED_ADRESS_BLOCK)
+    #
+    #         if parent_block.count() > 0:  # Проверяем, есть ли активный блок
+    #             with allure.step("Нажимаю на экшн меню в активном блоке"):
+    #                 self.page.locator(self.ACTION_MENU).nth(0).click()
+    #         else:
+    #             with allure.step("Блок с активной радиокнопкой не найден, выбираю первый невыбранный"):
+    #                 parent_block = self.page.locator(self.UNSELECTED_RADIO_BUTTON).first.locator("xpath=ancestor::li")
+    #                 with allure.step("Нажимаю на экшн меню в новом выбранном блоке"):
+    #                     parent_block.locator(self.ACTION_MENU).click()
+    #
+    #     # self.page.locator(self.ACTION_MENU).nth(0).click()
+    #     with allure.step("Проверяю, что экшн меню открыто"):
+    #         try:
+    #             expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
+    #         except AssertionError:
+    #             with allure.step("Экшн меню не открылось, пробую еще раз"):
+    #                 parent_block.locator(self.ACTION_MENU).click()
+    #                 expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
+    #     with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
+    #         expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
+    #         expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
+
     @allure.step("Открываю экшн меню")
     def open_action_menu(self):
-        with allure.step("Нахожу блок с активной радиокнопкой"):
-            parent_block = self.page.locator(self.CHECKED_ADRESS_BLOCK)
-
-            if parent_block.count() > 0:  # Проверяем, есть ли активный блок
-                with allure.step("Нажимаю на экшн меню в активном блоке"):
-                    parent_block.locator(self.ACTION_MENU).click()
-            else:
-                with allure.step("Блок с активной радиокнопкой не найден, выбираю первый невыбранный"):
-                    parent_block = self.page.locator(self.UNSELECTED_RADIO_BUTTON).first.locator("xpath=ancestor::li")
-                    with allure.step("Нажимаю на экшн меню в новом выбранном блоке"):
-                        parent_block.locator(self.ACTION_MENU).click()
-
-        # self.page.locator(self.ACTION_MENU).nth(0).click()
-        with allure.step("Проверяю, что экшн меню открыто"):
-            try:
-                expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
-            except AssertionError:
-                with allure.step("Экшн меню не открылось, пробую еще раз"):
-                    parent_block.locator(self.ACTION_MENU).click()
-                    expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
-        with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
-            expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
-            expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
-
-    @allure.step("Открываю экшн меню")
-    def open_action_menu_true(self):
         self.page.locator(self.ACTION_MENU).nth(0).click()
         with allure.step("Проверяю, что экшн меню открыто"):
             expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
         with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
             expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
             expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
-
-
 
     @allure.step("Нажимаю на Редактировать")
     def click_edit_button(self):
