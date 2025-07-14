@@ -249,7 +249,10 @@ jobs:
 
       
   notify-on-failure:
-    if: failure()  # ❗Запуск только при падении предыдущих jobs
+    if: |
+     (failure()) ||
+     (needs.test.result == 'error') ||
+     (contains(needs.*.result, 'error'))
     runs-on: ubuntu-latest
     needs: test
     steps:
@@ -263,7 +266,7 @@ jobs:
           password: ${{ secrets.GMAIL_APP_PASSWORD }}
           subject: "❌ GitHub Actions FAILED in ${{ github.repository }}"
           body: |
-            ❗ Workflow [${{ github.workflow }}] failed.
+           ❗ Workflow [${{ github.workflow }}] failed.
 
             🔗 View it here: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
