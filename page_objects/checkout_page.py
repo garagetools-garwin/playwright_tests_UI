@@ -1615,15 +1615,6 @@ class CommentaryBlock:
 
 
 
-
-
-
-
-
-
-
-
-
 #
 # page-url: https://garwin.ru/checkout
 # pointer-click: rn:710765266:x:32504:y:23772:t:85958:p:****AAA3AAAA1A1AA1A2AA1AA2AA1A1:X:1167:Y:246
