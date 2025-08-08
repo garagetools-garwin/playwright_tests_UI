@@ -904,7 +904,7 @@ def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, d
             actual_listing_adress = checkout_page.adress_listing.get_selected_adress_info()
             assert expected_data_listing == actual_listing_adress
 
-        checkout_page.adress_listing.open_action_menu()
+        checkout_page.adress_listing.open_action_menu_of_the_selected_adress()
         checkout_page.adress_listing.click_edit_button()
 
         # Проверяю что значение каждого поля соотвествует задуманному
