@@ -64,12 +64,12 @@ jobs:
         run: |
           sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
 
-      # Восстанавливаем кеш auth_state.json
-      - name: Restore cached auth state
+      # Восстанавливаем последний кэш (если есть)
+      - name: Restore latest auth state
         uses: actions/cache@v3
         with:
           path: auth_states/auth_state.json
-          key: auth-state-${{ github.run_id }}
+          key: auth-state-latest
           restore-keys: auth-state-
 
       # Запуск тестов
@@ -77,12 +77,24 @@ jobs:
         run: |
           pytest --reruns 2 --reruns-delay 3 -m "not custom_schedule" --alluredir=allure-results
              
-     # Сохранение auth_state.json в кеш
-      - name: Cache auth state
+     # Сохраняем кэш с уникальным ключом (история)
+      - name: Cache auth state (history)
         uses: actions/cache@v3
         with:
           path: auth_states/auth_state.json
-          key: auth-state-${{ github.run_id }}
+          key: auth-state-${{ github.run_id }}-${{ github.run_number }}
+
+      # Перезаписываем «вечный» кэш для order-test
+      - name: Cache auth state (latest)
+      uses: actions/cache@v3
+      with:
+        path: auth_states/auth_state.json
+        key: auth-state-latest
+
+
+
+
+      
 
       # Загрузка артефактов
       - name: Upload Allure Results
@@ -141,7 +153,7 @@ jobs:
         uses: actions/cache@v3
         with:
           path: auth_states/auth_state.json
-          key: auth-state-${{ github.run_id }}
+          key: auth-state-latest
           restore-keys: auth-state-
           
       # Задержка перед опросом статуса выполнения test
