@@ -86,15 +86,10 @@ jobs:
 
       # Перезаписываем «вечный» кэш для order-test
       - name: Cache auth state (latest)
-      uses: actions/cache@v3
-      with:
-        path: auth_states/auth_state.json
-        key: auth-state-latest
-
-
-
-
-      
+        uses: actions/cache@v3
+        with:
+          path: auth_states/auth_state.json
+          key: auth-state-latest
 
       # Загрузка артефактов
       - name: Upload Allure Results
