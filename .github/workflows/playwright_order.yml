@@ -102,7 +102,7 @@ jobs:
 
   # Тест на создание заказа
   order-test:
-    needs: test  # order-test ждет окончания test если он запущен
+    # needs: test  # order-test ждет окончания test если он запущен
     # запуск на виртуальной машине
     runs-on: ubuntu-22.04
     env:
