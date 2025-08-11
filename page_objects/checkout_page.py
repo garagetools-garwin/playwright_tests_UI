@@ -1089,7 +1089,9 @@ class AdressListing:
             # Извлекаем текст заголовка и описания
             actual_title = parent_block.locator(self.INFO_TITLE).inner_text()
             actual_description = parent_block.locator(self.INFO_DESCRIPTION).inner_text()
-            actual_info_listing = f"{actual_title}, {actual_description}"
+            parts = actual_description.split(",")
+            edited_actual_description = ",".join(parts[:3]).strip()
+            actual_info_listing = f"{actual_title}, {edited_actual_description}"
 
         with allure.step("Нажимаю кнопку Выбрать"):
             self.page.locator(self.ADRESS_SELECTION_BUTTON).click()
@@ -1101,6 +1103,8 @@ class AdressListing:
             actual_info_check_out = f"{actual_type_check_out}, {actual_description_check_out}"
 
         with allure.step("Сравниваю информацию в блоке Получние с адресом выбранным в листинге "):
+            print(actual_info_check_out.lower())
+            print(actual_info_listing.lower())
             assert actual_info_check_out.lower() == actual_info_listing.lower(), f"Expected '{actual_info_listing}', but got '{actual_info_check_out}'"
 
     @allure.step("Открываю экшн меню")

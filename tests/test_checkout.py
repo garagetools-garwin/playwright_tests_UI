@@ -842,7 +842,7 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
 
     with allure.step("Редактирую адрес"):
         checkout_page.obtaining_block.courier_adress_listing_activation()
-        checkout_page.adress_listing.open_action_menu()
+        checkout_page.adress_listing.open_action_menu_of_the_selected_adress()
         checkout_page.adress_listing.click_edit_button()
         checkout_page.map.type_in_textaria("г Санкт-Петербург, ул Ленина, д 31")
 
