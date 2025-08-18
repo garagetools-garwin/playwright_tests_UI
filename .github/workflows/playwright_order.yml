@@ -260,11 +260,6 @@ jobs:
       failure() ||
       (needs.test && needs.test.result != 'success') ||
       (needs.order-test && needs.order-test.result != 'success')
-      # failure() ||
-      # (needs.test.result == 'error') ||
-      # (needs.order-test.result == 'error') ||
-      # (needs.test.result == 'failure') ||
-      # (needs.order-test.result == 'failure')
     runs-on: ubuntu-latest
     # needs: test
     needs: [test, order-test]
