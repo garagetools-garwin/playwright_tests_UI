@@ -260,8 +260,10 @@ jobs:
   notify-on-failure:
     if: |
       failure() ||
-      (needs.test && needs.test.result != 'success' || 'skipped') ||
-      (needs.order-test && needs.order-test.result != 'success' || 'skipped')
+      (needs.test && needs.test.result != 'success' && needs.test.result != 'skipped') ||
+      (needs.order-test && needs.order-test.result != 'success' && needs.order-test.result != 'skipped')
+      # (needs.test && needs.test.result != 'success') ||
+      # (needs.order-test && needs.order-test.result != 'success')
     runs-on: ubuntu-latest
     # needs: test
     needs: [test, order-test]
