@@ -1,3 +1,0 @@
-"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
-"","35157","Добавление товара из листинга","tests","Mon Aug 18 11:04:34 UTC 2025","broken","Mon Aug 18 11:05:09 UTC 2025","","test_add_to_cart","",""
-"","31097","Добавление товара из карточки товара","tests","Mon Aug 18 11:06:18 UTC 2025","broken","Mon Aug 18 11:06:49 UTC 2025","","test_add_to_cart","",""
