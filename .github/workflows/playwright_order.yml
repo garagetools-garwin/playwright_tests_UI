@@ -5,13 +5,11 @@ on:
   workflow_dispatch:
   # pull_request:
   #   branches: [ main, master ]
-  # schedule:
+  schedule:
     # - cron: '0 */12 * * *'
     # - cron: '0 */24 * * *'
-    
-    - cron: '0 5 * * *'    
+    - cron: '0 8 * * *'    
     # - cron: '30 6 * * *'   
-    
     - cron: '0 14 * * *'
     # - cron: '*/30 * * * *'
 
@@ -25,8 +23,8 @@ jobs:
     concurrency: playwright-tests_new
 
     # запуск на виртуальной машине
-    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
-    if: github.event_name == (github.event_name == 'schedule' && (github.event.schedule == '0 5 * * *' || github.event.schedule == '0 14 * * *'))
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '0 8 * * *' || github.event.schedule == '0 14 * * *'))
+    if: github.event_name == (github.event_name == 'schedule' && (github.event.schedule == '0 8 * * *' || github.event.schedule == '0 14 * * *'))
     runs-on: ubuntu-22.04
     env:
       USER_PASS: ${{ secrets.USER_PASS }}
@@ -115,8 +113,8 @@ jobs:
       JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
 
     # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
-    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
-    if: github.event_name == (github.event_name == 'schedule' && github.event.schedule == '0 5 * * *')
+    # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *')
+    if: github.event_name == (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *')
 
     # Уникальный ключ для группы задач предназначен для того, чтобы повторный запуск Джобы вставал в ожидание, не конфликтуая с первым
     concurrency: playwright-tests_new
