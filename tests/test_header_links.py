@@ -37,6 +37,9 @@ def test_header_link_brands(page_fixture, base_url):
         url = page_fixture.url
         response = page_fixture.request.get(url)
         expect(response).to_be_ok()
+        # page_fixture.goto("https://api.ipify.org?format=json")
+        # data = page_fixture.text_content("body")
+        # print("Текущий IP:", data)
 
 
 @allure.title("Переход на страницу 'Магазины'")
