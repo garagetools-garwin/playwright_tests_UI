@@ -42,6 +42,11 @@ jobs:
       JSON_SCHEMA_TEST: ${{ secrets.JSON_SCHEMA_TEST}}
       METHOD: ${{ secrets.METHOD}}
 
+      PROXY_HOST: ${{ secrets.PROXY_HOST}}
+      PROXY_PORT: ${{ secrets.PROXY_PORT}}
+      PROXY_USER: ${{ secrets.PROXY_USER}}
+      PROXY_PASS: ${{ secrets.PROXY_PASS}}
+
     steps:
 
       # Клонирование репозитория
