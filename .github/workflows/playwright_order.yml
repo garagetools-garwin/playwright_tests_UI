@@ -120,6 +120,11 @@ jobs:
       METHOD: ${{ secrets.METHOD}}
       JSON_SCHEMA_BASE64: ${{ secrets.JSON_SCHEMA_BASE64 }}
 
+      PROXY_HOST: ${{ secrets.PROXY_HOST}}
+      PROXY_PORT: ${{ secrets.PROXY_PORT}}
+      PROXY_USER: ${{ secrets.PROXY_USER}}
+      PROXY_PASS: ${{ secrets.PROXY_PASS}}
+
     # if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && (github.event.schedule == '*/30 * * * *'))
     if: github.event_name == 'workflow_dispatch' || (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *')
     # if: github.event_name == (github.event_name == 'schedule' && github.event.schedule == '0 8 * * *')
