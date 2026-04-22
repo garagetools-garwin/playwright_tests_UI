@@ -791,6 +791,7 @@ def test_courier_adress_adding(page_fixture, base_url, delete_address_fixture):
     checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
     checkout_page.adress_listing.click_add_adress_button()
     checkout_page.map.click_courier_button()
+    time.sleep(3)
 
     with allure.step("Проверяю, что появилось поле Адрес"):
         expect(checkout_page.map.adress_textaria_status()).to_be_visible()
@@ -829,6 +830,7 @@ def test_courier_adress_editing(page_fixture, base_url, delete_address_fixture):
         checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
         checkout_page.adress_listing.click_add_adress_button()
         checkout_page.map.click_courier_button()
+        time.sleep(3)
 
         with allure.step("Ввожу адрес в поле Адрес"):
             checkout_page.map.type_in_textaria("Санкт-Петербург, Невский проспект, 64")
@@ -879,6 +881,7 @@ def test_courier_adress_editing_with_additional_fields(page_fixture, base_url, d
         checkout_page.obtaining_block.adress_listing_activation_try(base_url, page_fixture)
         checkout_page.adress_listing.click_add_adress_button()
         checkout_page.map.click_courier_button()
+        time.sleep(3)
 
         with allure.step("Ввожу адрес в поле Адрес"):
             checkout_page.map.type_in_textaria("Санкт-Петербург, Невский проспект, 64")
