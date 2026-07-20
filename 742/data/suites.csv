@@ -1,0 +1,2 @@
+"DESCRIPTION","DURATION IN MS","NAME","PARENT SUITE","START TIME","STATUS","STOP TIME","SUB SUITE","SUITE","TEST CLASS","TEST METHOD"
+"","11197","Создание заказа с валидацией JSON-схемы","tests","2026-07-20","failed","2026-07-20","","test_create_order","",""
