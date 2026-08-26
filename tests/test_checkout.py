@@ -1854,25 +1854,44 @@ def test_account_switching_changes_customers(page_fixture, base_url):
     cart_page.clear_cart()
     cart_page.add_to_cart_cheap_product(base_url)
 
-    header.switching_to_other_account()
+    with allure.step("Запоминаю исходный аккаунт, чтобы вернуть сессию в конце"):
+        account_at_start = header.current_account_name()
 
-    checkout_page.open(base_url)
-    checkout_page.buyer_listing.open_buyer_listing()
+    try:
+        # Жмём доступную кнопку аккаунта, а не «другой»/«мой»: тест не должен зависеть от
+        # того, на каком аккаунте застали сессию. Два переключения подряд возвращают её обратно
+        header.switching_to_available_account()
 
-    with allure.step("Считаю количество записей в листинге"):
-        number_of_customers_before = checkout_page.buyer_listing.counting_the_number_of_customers()
-    cart_page.open(base_url)
+        checkout_page.open(base_url)
+        checkout_page.buyer_listing.open_buyer_listing()
 
-    header.switching_to_user_account()
+        with allure.step("Считаю количество записей в листинге"):
+            number_of_customers_before = checkout_page.buyer_listing.counting_the_number_of_customers()
+        cart_page.open(base_url)
 
-    checkout_page.open(base_url)
-    checkout_page.buyer_listing.open_buyer_listing()
+        header.switching_to_available_account()
 
-    with allure.step("Считаю количество записей в листинге"):
-        number_of_customers_after = checkout_page.buyer_listing.counting_the_number_of_customers()
+        checkout_page.open(base_url)
+        checkout_page.buyer_listing.open_buyer_listing()
 
-    with allure.step("Проверяю, что количестов записей изменилось после переключения аккаунта"):
-        assert number_of_customers_before != number_of_customers_after
+        with allure.step("Считаю количество записей в листинге"):
+            number_of_customers_after = checkout_page.buyer_listing.counting_the_number_of_customers()
+
+        with allure.step("Проверяю, что количестов записей изменилось после переключения аккаунта"):
+            assert number_of_customers_before != number_of_customers_after
+    finally:
+        # Возвращаем аккаунт в любом случае: падение теста не должно оставлять
+        # сессию на чужом аккаунте и ломать следующие прогоны
+        with allure.step("Возвращаю сессию на исходный аккаунт"):
+            try:
+                cart_page.open(base_url)
+                restored = header.restore_account(account_at_start)
+                allure.attach(
+                    "Аккаунт возвращён на «%s»" % account_at_start if restored
+                    else "Аккаунт уже был исходным «%s»" % account_at_start,
+                    name="Восстановление аккаунта")
+            except Exception as error:
+                allure.attach(str(error), name="Не удалось вернуть аккаунт")
 
 
 

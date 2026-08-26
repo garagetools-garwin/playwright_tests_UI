@@ -1,5 +1,5 @@
 import allure
-from playwright.sync_api import Page
+from playwright.sync_api import Page, expect
 
 
 class HeaderElement:
@@ -17,6 +17,11 @@ class HeaderElement:
     ACCOUNT_BUTTONS = "button.AuthMenuAccounts__Button"
     MY_ACCOUNT = 'div.AuthMenuAccounts button:has(span.AuthMenuAccounts__Subtitle)'
     OTHER_ACCOUNT = 'div.AuthMenuAccounts button:not(:has(span.AuthMenuAccounts__Subtitle))'
+    # Кнопка аккаунта, на который сейчас МОЖНО переключиться: у текущего аккаунта
+    # кнопка отключена (disabled), поэтому доступная всегда ровно одна
+    AVAILABLE_ACCOUNT = 'div.AuthMenuAccounts button:not([disabled])'
+    # Кнопка текущего аккаунта — она отключена; по ней узнаём, где мы сейчас
+    CURRENT_ACCOUNT = 'div.AuthMenuAccounts button[disabled] span.AuthMenuAccounts__Title'
 
 
     def __init__(self, page: Page):
@@ -38,8 +43,12 @@ class HeaderElement:
 
     @allure.step("Активирую меню аккаунта")
     def account_header_menu_activation(self):
+        # Меню раскрывается по наведению: контейнер имеет нулевую высоту и
+        # "проявляется" через opacity, поэтому проверка to_be_visible тут не работает
+        # (Playwright считает такой контейнер скрытым). Ждём именно раскрытия — opacity=1,
+        # иначе клик уходит в ещё прозрачное меню и висит до таймаута (падало в CI).
         self.page.locator(self.ACCOUNT_BUTTON).hover()
-        # expect(self.page.locator(self.ACCOUNT_MENU)).to_be_visible()
+        expect(self.page.locator(self.ACCOUNT_MENU)).to_have_css("opacity", "1")
 
     @allure.step("Открываю список контрагентов")
     def get_customers_list(self):
@@ -62,10 +71,60 @@ class HeaderElement:
     @allure.step("Переключаюсь на аккаунт пользователя")
     def switching_to_user_account(self):
         self.account_header_menu_activation()
-        self.page.locator(self.MY_ACCOUNT).click()
+        my_account = self.page.locator(self.MY_ACCOUNT)
+        # наводимся на сам пункт: мышь остаётся внутри меню, и оно не схлопывается
+        my_account.hover()
+        my_account.click()
+
+    @allure.step("Переключаюсь на доступный аккаунт")
+    def switching_to_available_account(self):
+        """Переключается на тот аккаунт, который сейчас не выбран.
+
+        Не зависит от того, на каком аккаунте застали сессию: кнопка текущего
+        аккаунта отключена, поэтому жмём единственную доступную. Два вызова
+        подряд возвращают сессию в исходное состояние.
+        Возвращает название аккаунта, на который переключились.
+        """
+        # в шапке выводится название выбранного контрагента, а не имя аккаунта,
+        # поэтому переключение подтверждаем по смене этого текста
+        company_before = self.page.locator(self.SELECTED_COMPANY_NAME).inner_text().strip()
+        self.account_header_menu_activation()
+        account = self.page.locator(self.AVAILABLE_ACCOUNT)
+        expect(account).to_be_enabled()
+        name = account.locator("span.AuthMenuAccounts__Title").inner_text().strip()
+        # наводимся на сам пункт: мышь остаётся внутри меню, и оно не схлопывается
+        account.hover()
+        account.click()
+        expect(self.page.locator(self.SELECTED_COMPANY_NAME)).not_to_have_text(company_before)
+        return name
+
+    @allure.step("Узнаю текущий аккаунт")
+    def current_account_name(self):
+        """Название аккаунта, в котором сейчас сессия.
+
+        Определяем по отключённой кнопке в меню, а не по шапке: в шапке выводится
+        название выбранного контрагента, а оно меняется и внутри одного аккаунта.
+        """
+        self.account_header_menu_activation()
+        return self.page.locator(self.CURRENT_ACCOUNT).inner_text().strip()
+
+    @allure.step("Возвращаю исходный аккаунт")
+    def restore_account(self, account_name):
+        """Возвращает сессию на аккаунт account_name, если она не на нём.
+
+        Зовётся из finally: тест не должен оставлять сессию на чужом аккаунте
+        даже при падении, иначе следующий прогон стартует не с того состояния.
+        """
+        if self.current_account_name() == account_name:
+            return False
+        self.switching_to_available_account()
+        return True
 
     @allure.step("Переключаюсь на приглашенный аккаунт")
     def switching_to_other_account(self):
         self.account_header_menu_activation()
-        self.page.locator(self.OTHER_ACCOUNT).click()
+        other_account = self.page.locator(self.OTHER_ACCOUNT)
+        # наводимся на сам пункт: мышь остаётся внутри меню, и оно не схлопывается
+        other_account.hover()
+        other_account.click()
 
