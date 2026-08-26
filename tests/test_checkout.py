@@ -1528,10 +1528,12 @@ def test_edit_recipient_without_the_required_fields(page_fixture, base_url):
         checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
         with allure.step("Запоминаю данные получателя до попыток его отредактировать"):
+            # Адресуемся к получателю по ФИО, а не по позиции: порядок в листинге
+            # непостоянный, после переоткрытия первым оказывается другой
             name_of_first_recipient_before = checkout_page.recipient_listing.name_of_first_recipient()
-            phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
+            phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_recipient(name_of_first_recipient_before)
 
-        checkout_page.recipient_listing.open_action_menu()
+        checkout_page.recipient_listing.open_action_menu_of_recipient(name_of_first_recipient_before)
         checkout_page.recipient_listing.click_edit_button()
         checkout_page.edit_recipient_modal.clear_all_fields()
         checkout_page.edit_recipient_modal.click_save_edited_recipient_button()
@@ -1581,8 +1583,14 @@ def test_edit_recipient_without_the_required_fields(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Запоминаю данные получателя после попыток его отредактировать"):
-        name_of_first_recipient_after = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_after = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
+        # Ищем того же получателя по ФИО: если он на месте и контакты прежние,
+        # значит ни одна попытка сохранить некорректные данные не прошла
+        recipient_block = checkout_page.recipient_listing.recipient_block_by_name(name_of_first_recipient_before)
+        name_of_first_recipient_after = (
+            name_of_first_recipient_before if recipient_block.count() == 1 else "получатель не найден в листинге")
+        phone_and_email_of_first_recipient_after = (
+            checkout_page.recipient_listing.phone_and_email_of_recipient(name_of_first_recipient_before)
+            if recipient_block.count() == 1 else "")
 
     with allure.step("Проверяю, что после всех попыток изменить пользователя, он остался неизменным"):
         assert name_of_first_recipient_before == name_of_first_recipient_after
@@ -1603,12 +1611,14 @@ def test_edit_recipient_with_incorrect_data(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Запоминаю данные получателя до попыток его отредактировать"):
+        # Адресуемся к получателю по ФИО, а не по позиции: порядок в листинге
+        # непостоянный, после переоткрытия первым оказывается другой
         name_of_first_recipient_before = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
+        phone_and_email_of_first_recipient_before = checkout_page.recipient_listing.phone_and_email_of_recipient(name_of_first_recipient_before)
 
     with allure.step("Проверяю, недопустимые значения для ФИО"):
         with allure.step("Вношу в поле ФИО цифры"):
-            checkout_page.recipient_listing.open_action_menu()
+            checkout_page.recipient_listing.open_action_menu_of_recipient(name_of_first_recipient_before)
             checkout_page.recipient_listing.click_edit_button()
             checkout_page.edit_recipient_modal.fill_name("590640563432")
             checkout_page.edit_recipient_modal.fill_phone_data_randomize()
@@ -1722,8 +1732,14 @@ def test_edit_recipient_with_incorrect_data(page_fixture, base_url):
     checkout_page.recipient_listing.open_recipient_listing_try(base_url, page_fixture)
 
     with allure.step("Запоминаю данные получателя после попыток его отредактировать"):
-        name_of_first_recipient_after = checkout_page.recipient_listing.name_of_first_recipient()
-        phone_and_email_of_first_recipient_after = checkout_page.recipient_listing.phone_and_email_of_first_recipient()
+        # Ищем того же получателя по ФИО: если он на месте и контакты прежние,
+        # значит ни одна попытка сохранить некорректные данные не прошла
+        recipient_block = checkout_page.recipient_listing.recipient_block_by_name(name_of_first_recipient_before)
+        name_of_first_recipient_after = (
+            name_of_first_recipient_before if recipient_block.count() == 1 else "получатель не найден в листинге")
+        phone_and_email_of_first_recipient_after = (
+            checkout_page.recipient_listing.phone_and_email_of_recipient(name_of_first_recipient_before)
+            if recipient_block.count() == 1 else "")
 
     with allure.step("Проверяю, что после всех попыток изменить пользователя, он остался неизменным"):
         assert name_of_first_recipient_before == name_of_first_recipient_after

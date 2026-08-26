@@ -232,6 +232,30 @@ class RecipientListing:
     def phone_and_email_of_first_recipient(self):
         return self.page.locator(self.INFO_DESCRIPTION).nth(0).inner_text()
 
+    @allure.step("Нахожу блок получателя по ФИО")
+    def recipient_block_by_name(self, name):
+        """Карточка получателя с указанным ФИО.
+
+        Порядок получателей в листинге не постоянный: сервер отдаёт их
+        вперемешку, и после переоткрытия листинга первым оказывается уже
+        другой. Поэтому адресуемся по ФИО, а не по позиции nth(0).
+        """
+        return self.page.locator(self.RECIPIENT_BLOCK).filter(
+            has=self.page.locator(self.INFO_TITLE, has_text=name))
+
+    @allure.step("Извлекаю телефон и адрес почты получателя по ФИО")
+    def phone_and_email_of_recipient(self, name):
+        return self.recipient_block_by_name(name).locator(self.INFO_DESCRIPTION).inner_text()
+
+    @allure.step("Открываю экшн меню получателя по ФИО")
+    def open_action_menu_of_recipient(self, name):
+        self.recipient_block_by_name(name).locator(self.ACTION_MENU).click()
+        with allure.step("Проверяю, что экшн меню открыто"):
+            expect(self.page.locator(self.ACTION_MENU_MODAL)).to_be_enabled()
+        with allure.step("Проверяю, что в меню отображаются кнопки Редактировать и Удалить"):
+            expect(self.page.locator(self.EDIT_BUTTON)).to_be_visible()
+            expect(self.page.locator(self.DELETE_BUTTON)).to_be_visible()
+
     @allure.step("Открываю листинг получателей")
     def open_recipient_listing(self):
         # Ожидаем появления кнопки в течение 3 секунд
