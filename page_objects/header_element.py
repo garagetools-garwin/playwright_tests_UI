@@ -85,9 +85,6 @@ class HeaderElement:
         подряд возвращают сессию в исходное состояние.
         Возвращает название аккаунта, на который переключились.
         """
-        # в шапке выводится название выбранного контрагента, а не имя аккаунта,
-        # поэтому переключение подтверждаем по смене этого текста
-        company_before = self.page.locator(self.SELECTED_COMPANY_NAME).inner_text().strip()
         self.account_header_menu_activation()
         account = self.page.locator(self.AVAILABLE_ACCOUNT)
         expect(account).to_be_enabled()
@@ -95,7 +92,11 @@ class HeaderElement:
         # наводимся на сам пункт: мышь остаётся внутри меню, и оно не схлопывается
         account.hover()
         account.click()
-        expect(self.page.locator(self.SELECTED_COMPANY_NAME)).not_to_have_text(company_before)
+        # Подтверждаем переключение по активному аккаунту в меню, а не по шапке:
+        # в шапке название контрагента, а один и тот же контрагент может быть
+        # выбран в обоих аккаунтах — тогда текст шапки не меняется
+        self.account_header_menu_activation()
+        expect(self.page.locator(self.CURRENT_ACCOUNT)).to_have_text(name)
         return name
 
     @allure.step("Узнаю текущий аккаунт")
