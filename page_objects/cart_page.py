@@ -66,7 +66,17 @@ class CartPage:
 
     def open(self, url):
         with allure.step(f"Открываю {url + self.PATH}"):
-            self.page.goto(url + self.PATH)
+            # Первый переход на свежем браузере через прокси иногда таймаутит
+            # (net::ERR_TIMED_OUT), причём кластером из нескольких сбоев подряд по ~8с,
+            # а затем проходит. Ретраим первый goto с запасом.
+            for attempt in range(5):
+                try:
+                    self.page.goto(url + self.PATH, timeout=30000)
+                    return
+                except Exception:
+                    if attempt == 4:
+                        raise
+                    self.page.wait_for_timeout(1000)
 
     """Методы добваления в корзину"""
     #.ProductCardControls__AddToCartButton.Button.flexRow.size--normal.color--primary - кнопка добавления в корзину

@@ -20,7 +20,16 @@ class CompaniesPage:
     @allure.step("Открываю страницу Мои компании")
     def open(self, url):
         with allure.step(f"Открываю {url + self.PATH}"):
-            self.page.goto(url + self.PATH)
+            # Первый переход на свежем браузере через прокси иногда таймаутит
+            # (net::ERR_TIMED_OUT) кластером по ~8с, затем проходит — ретраим.
+            for attempt in range(5):
+                try:
+                    self.page.goto(url + self.PATH, timeout=30000)
+                    return
+                except Exception:
+                    if attempt == 4:
+                        raise
+                    self.page.wait_for_timeout(1000)
 
     @allure.step("Выбираю контрагента с не розничным типом цен")
     def select_company_with_not_retail_price(self, base_url):

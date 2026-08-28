@@ -1527,7 +1527,12 @@ class PromoCode:
 
     @allure.step("Нажимаю 'Применить'")
     def click_apply_button(self):
-        self.page.locator(self.PROMO_CODE_APPLY_BUTTON).click()
+        # Кнопка "Применить" заблокирована, пока поле промокода пустое, и
+        # разблокируется после ввода. Под нагрузкой клик мог уйти в ещё
+        # заблокированную кнопку — ждём её активности перед кликом.
+        apply = self.page.locator(self.PROMO_CODE_APPLY_BUTTON)
+        expect(apply).to_be_enabled()
+        apply.click()
 
     # Версия активации когда не нужно запоминать цену
     # @allure.step("Активирую валидный промокод")
