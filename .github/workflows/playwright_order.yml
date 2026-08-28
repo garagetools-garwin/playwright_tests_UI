@@ -93,12 +93,12 @@ jobs:
           path: auth_states/auth_state.json
           key: auth-state-${{ github.run_id }}-${{ github.run_number }}
 
-      # Перезаписываем «вечный» кэш для order-test
-      - name: Cache auth state (latest)
-        uses: actions/cache@v3
-        with:
-          path: auth_states/auth_state.json
-          key: auth-state-latest
+#      # Перезаписываем «вечный» кэш для order-test
+#      - name: Cache auth state (latest)
+#        uses: actions/cache@v3
+#        with:
+#          path: auth_states/auth_state.json
+#          key: auth-state-latest
 
       # Загрузка артефактов
       - name: Upload Allure Results
@@ -159,11 +159,11 @@ jobs:
           sed -i 's/{TMS_TOKEN}/${{ secrets.TMS_TOKEN }}/g' connection_config.ini
 
       # Восстанавливаем кеш auth_state.json
-      - name: Restore cached auth state
+      - name: Restore auth state
         uses: actions/cache@v3
         with:
           path: auth_states/auth_state.json
-          key: auth-state-latest
+          key: auth-state-${{ github.run_id }}-${{ github.run_number }}
           restore-keys: auth-state-
           
       # Задержка перед опросом статуса выполнения test
