@@ -89,7 +89,8 @@ def test_checkout_aplying_a_valid_promo_code_on_not_stm_product(page_fixture, ba
     cart_page.add_to_cart_not_stm_product(base_url)
     checkout_page.open(base_url)
     checkout_page.promo_code.check_promo_code()
-    checkout_page.promo_code.activate_valid_promo_code()
+    # промокод к неподходящему товару НЕ применяется — не ждём кнопку "Отменить"
+    checkout_page.promo_code.activate_valid_promo_code(wait_applied=False)
     with allure.step("Проверяю, что на странице отображается подсказка 'В корзине нет товаров, к которым можно применить введенный промокод'"):
         expect(checkout_page.promo_code.promo_code_field_info()).to_have_text("В корзине нет товаров, к которым можно применить введенный промокод")
 

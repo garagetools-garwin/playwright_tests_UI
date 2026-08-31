@@ -1543,13 +1543,16 @@ class PromoCode:
     #     self.click_apply_button()
 
     @allure.step("Активирую валидный промокод")
-    def activate_valid_promo_code(self):
+    def activate_valid_promo_code(self, wait_applied: bool = True):
+        # wait_applied=False, когда промокод НЕ должен примениться (неподходящий
+        # товар): скидки не будет, кнопка "Отменить" не появится — ждать её нельзя.
         self.fill_valid_promo_code()
         self.click_apply_button()
-        # Ждём, пока промокод реально применится и цена пересчитается: появляется
-        # кнопка "Отменить скидку". Без этого цену читают до пересчёта — отсюда
-        # флак проверки "цена = базовая - 5%".
-        expect(self.page.locator(self.CANCEL_PROMO_CODE_BUTTON)).to_be_visible()
+        if wait_applied:
+            # Ждём, пока промокод реально применится и цена пересчитается: появляется
+            # кнопка "Отменить скидку". Без этого цену читают до пересчёта — отсюда
+            # флак проверки "цена = базовая - 5%".
+            expect(self.page.locator(self.CANCEL_PROMO_CODE_BUTTON)).to_be_visible()
 
     @allure.step("Активирую невалидный промокод")
     def activate_invalid_promo_code(self):
