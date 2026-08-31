@@ -1546,6 +1546,10 @@ class PromoCode:
     def activate_valid_promo_code(self):
         self.fill_valid_promo_code()
         self.click_apply_button()
+        # Ждём, пока промокод реально применится и цена пересчитается: появляется
+        # кнопка "Отменить скидку". Без этого цену читают до пересчёта — отсюда
+        # флак проверки "цена = базовая - 5%".
+        expect(self.page.locator(self.CANCEL_PROMO_CODE_BUTTON)).to_be_visible()
 
     @allure.step("Активирую невалидный промокод")
     def activate_invalid_promo_code(self):
