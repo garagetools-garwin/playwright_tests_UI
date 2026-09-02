@@ -137,6 +137,17 @@ def page_fixture(browser, request, base_url):
     #     print(f"Request failed with error: {getattr(request.failure, 'error_text', 'Unknown error')}")
     # ))
 
+    # Прогрев соединения: первый переход через прокси на свежем браузере иногда
+    # таймаутит (net::ERR_TIMED_OUT) кластером по ~8с, затем всё работает.
+    # Поглощаем это здесь один раз, чтобы навигации самих тестов (любые .open())
+    # не несли этот риск. wait_until="commit" — быстро при прогретом соединении.
+    for _ in range(6):
+        try:
+            page.goto(base_url, wait_until="commit", timeout=15000)
+            break
+        except Exception:
+            page.wait_for_timeout(1000)
+
     yield page
 
     # Проверяем, был ли тест успешным
