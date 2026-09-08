@@ -71,7 +71,7 @@ class CartPage:
             # а затем проходит. Ретраим первый goto с запасом.
             for attempt in range(5):
                 try:
-                    self.page.goto(url + self.PATH, timeout=30000)
+                    self.page.goto(url + self.PATH, wait_until="domcontentloaded", timeout=30000)
                     return
                 except Exception:
                     if attempt == 4:

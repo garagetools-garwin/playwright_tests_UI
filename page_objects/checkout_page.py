@@ -38,7 +38,18 @@ class CheckoutPage:
 
     def open(self, url):
         with allure.step(f"Открываю {url + self.PATH}"):
-            self.page.goto(url + self.PATH)
+            # garwin.ru/checkout тяжёлая (чат/карты/аналитика) — событие 'load' под
+            # нагрузкой CI может не наступить в срок, а первый переход через прокси
+            # изредка таймаутит. Ждём domcontentloaded (достаточно для взаимодействия)
+            # и ретраим переход.
+            for attempt in range(5):
+                try:
+                    self.page.goto(url + self.PATH, wait_until="domcontentloaded", timeout=30000)
+                    return
+                except Exception:
+                    if attempt == 4:
+                        raise
+                    self.page.wait_for_timeout(1000)
 
     def click_logo_button(self, url):
         with allure.step(f"Открываю {url + self.PATH}"):

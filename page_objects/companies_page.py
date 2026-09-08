@@ -24,7 +24,7 @@ class CompaniesPage:
             # (net::ERR_TIMED_OUT) кластером по ~8с, затем проходит — ретраим.
             for attempt in range(5):
                 try:
-                    self.page.goto(url + self.PATH, timeout=30000)
+                    self.page.goto(url + self.PATH, wait_until="domcontentloaded", timeout=30000)
                     return
                 except Exception:
                     if attempt == 4:
