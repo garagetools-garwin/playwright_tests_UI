@@ -35,8 +35,14 @@ def test_checkout_aplying_a_valid_promo_code(page_fixture, base_url):
         checkout_page.promo_code.activate_valid_promo_code()
     with allure.step("Запоминаю цену товара после активации промокода"):
         discounted_price = checkout_page.delivery_block.base_price()
-    with allure.step("Проверяю, что цена товара равна его первоначальной стоимости - 5%"):
-        assert discounted_price == round(base_price * 0.95, 2)
+    with allure.step("Проверяю, что промокод дал скидку 5% от прайс-листа"):
+        # Промокод "НАЧАЛО" даёт -5% от ПРАЙС-ЛИСТА (строка "Товары"), а не от цены
+        # покупателя (у неё может быть контрактная скидка). Поэтому сравнивать с
+        # base_price*0.95 неверно и мигает от товара. Инвариант: цена снизилась ровно
+        # на 5% прайса. Пример: 106 прайс, 100.7 цена покупателя, 95.4 после промокода
+        # -> 100.7-95.4 = 5.3 = 106*0.05.
+        list_price = checkout_page.calculation_block.products_price()
+        assert round(base_price - discounted_price, 2) == round(list_price * 0.05, 2)
 
 
 @pytest.mark.auth

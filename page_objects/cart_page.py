@@ -161,13 +161,14 @@ class CartPage:
             f"{url}/tovar/shtangentsirkul-noniusnyy-0-02-mm-0-130-mm-s-mikropodachey"
         ]
 
+        btn = ".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary"
         for url in urls_to_check:
-            self.page.goto(url)
-
+            # domcontentloaded: страница товара тяжёлая, 'load' изредка не наступает
+            # за 30с (Timeout). Кнопку ждём явно — иначе домкл вернётся раньше отрисовки.
+            self.page.goto(url, wait_until="domcontentloaded")
             try:
-                # Попытка найти и нажать кнопку "Добавить в корзину"
-                # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
+                self.page.wait_for_selector(btn, state="visible", timeout=8000)
+                self.page.locator(btn).click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
@@ -248,13 +249,14 @@ class CartPage:
             f"{url}/tovar/bita-udarnaya-1-4-ph1-25mm"
         ]
 
+        btn = ".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary"
         for url in urls_to_check:
-            self.page.goto(url)
-
+            # domcontentloaded: страница товара тяжёлая, 'load' изредка не наступает
+            # за 30с (Timeout). Кнопку ждём явно — иначе домкл вернётся раньше отрисовки.
+            self.page.goto(url, wait_until="domcontentloaded")
             try:
-                # Попытка найти и нажать кнопку "Добавить в корзину"
-                # assert self.page.locator("flexRow-AIFE Price.ProductCardControls__Pricing__BasePrice.is--discounted").is_visible()
-                self.page.locator(".ProductDetailControls__AddToCartButton.Button.flexRow.size--normal.color--primary").click(timeout=3000)
+                self.page.wait_for_selector(btn, state="visible", timeout=8000)
+                self.page.locator(btn).click()
                 break  # Прерываем цикл, если кнопка найдена и товар добавлен
             except Exception:
                 print(f"Add to cart button not found on {url}")
